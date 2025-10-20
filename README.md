@@ -131,6 +131,8 @@ DevFlow brings structure, automation, and intelligence to feature development:
 # Navigate to your project
 cd /path/to/your/project
 
+# Windows users: Open Git Bash terminal (not PowerShell)
+
 # Install DevFlow (creates .claude/ and .devflow/ directories)
 curl -sSL https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/install-devflow.sh | bash
 
@@ -143,12 +145,30 @@ curl -sSL https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/in
 
 **That's it!** DevFlow is now managing your feature development.
 
+**Windows Note:** All commands above should be run in Git Bash, not PowerShell.
+
 ---
 
 ### Requirements
 
 - **Claude Code CLI** (latest version)
 - **Node.js** (for state.json utilities)
+- **Bash shell**
+  - **Linux/Mac:** Already installed ✓
+  - **Windows:** Git Bash (comes with [Git for Windows](https://git-scm.com/download/win))
+
+### Why Git Bash on Windows?
+
+DevFlow's slash commands use bash for file operations and state queries. Git Bash provides these POSIX utilities on Windows.
+
+**Checking if you have it:**
+```bash
+bash --version
+# Should show: GNU bash, version X.X.X
+```
+
+**If not installed:**
+Download [Git for Windows](https://git-scm.com/download/win) - Git Bash is included in the installation.
 
 ### Bash Installation (Linux/Mac/Git Bash on Windows)
 
@@ -264,6 +284,135 @@ The installer creates:
 # Step 6: Check progress anytime
 /status
 # See active feature, progress, all features
+```
+
+---
+
+## Optional: Consolidate Existing Documentation
+
+If you're adding DevFlow to an **existing project** with scattered documentation, use `/consolidate-docs` to organize it into DevFlow's structured domain system.
+
+### What It Does
+
+`/consolidate-docs` automatically:
+- **Scans** all markdown files in your project
+- **Analyzes** content to detect topics (authentication, database, API, caching, etc.)
+- **Consolidates** information into structured domain files
+- **Provides** clear recommendations for archiving old docs
+
+### When to Use
+
+✅ **Use consolidation if you have:**
+- Multiple documentation files scattered across folders
+- Technical docs mixed with general project info
+- Documentation for authentication, APIs, database, infrastructure
+- Wiki or docs/ folders with technical content
+
+❌ **Skip consolidation if:**
+- Fresh project with no existing docs
+- Only have README, CONTRIBUTING, CHANGELOG (general project files)
+- Prefer to document as you build features
+
+### Usage
+
+```bash
+# After running /init
+/consolidate-docs
+
+# Review the consolidation report
+# Verify domain files created correctly
+# Archive old documentation using provided commands
+```
+
+### Example: Before & After
+
+**Before consolidation:**
+```
+my-project/
+├── docs/
+│   ├── auth.md              # Authentication details
+│   ├── database.md          # Database conventions
+│   ├── api-design.md        # API patterns
+│   ├── caching.md           # Cache strategy
+│   └── deployment.md        # Deployment guide
+├── wiki/
+│   ├── permissions.md       # RBAC system
+│   └── login-flow.md        # Login sequence
+├── README.md                # Mixed content
+└── ARCHITECTURE.md          # System overview
+```
+
+**After consolidation:**
+```
+my-project/
+├── .devflow/
+│   └── domains/
+│       ├── _index.md                           # Auto-updated index
+│       ├── security/
+│       │   ├── authentication.md               # From: docs/auth.md, wiki/login-flow.md, README.md
+│       │   └── authorization.md                # From: wiki/permissions.md
+│       ├── data/
+│       │   └── database-conventions.md         # From: docs/database.md, ARCHITECTURE.md
+│       ├── infrastructure/
+│       │   └── caching.md                      # From: docs/caching.md
+│       └── integration/
+│           └── third-party-apis.md             # From: docs/api-design.md, README.md
+├── archive/
+│   └── 20251020/                               # Old docs safely archived
+│       ├── auth.md
+│       ├── database.md
+│       ├── api-design.md
+│       ├── caching.md
+│       ├── permissions.md
+│       └── login-flow.md
+├── README.md                                   # General info preserved
+└── ARCHITECTURE.md                             # System overview preserved
+```
+
+### Benefits
+
+✅ **Centralized** - All technical documentation in one structured location
+✅ **Organized** - Consistent format across all domains
+✅ **Smart loading** - Claude Code only loads relevant domains per feature
+✅ **Safe migration** - Original files preserved until you archive them
+✅ **Source tracked** - Each domain file notes where information came from
+✅ **Maintainable** - Update one domain file instead of scattered docs
+
+### What Gets Consolidated
+
+The command detects and consolidates:
+
+| Domain Category | Detects Content About |
+|-----------------|----------------------|
+| **Security** | Authentication, authorization, encryption, access control |
+| **Data** | Database conventions, migrations, audit trails |
+| **Infrastructure** | Caching, logging, error handling, multi-tenancy |
+| **Integration** | API design, third-party APIs, message queues, webhooks |
+
+General project files (README, CONTRIBUTING, CHANGELOG, LICENSE) are **never consolidated** - they stay in your project root.
+
+### Consolidation Report
+
+After running, you'll get a detailed report showing:
+- Which domain files were created
+- Source files for each domain
+- Files safe to archive
+- Commands to archive old docs
+
+**Example report snippet:**
+```
+✅ Documentation consolidated successfully!
+
+Created Domain Files:
+  • security/authentication.md (from 3 files)
+  • security/authorization.md (from 2 files)
+  • data/database-conventions.md (from 2 files)
+
+Archival Recommendations:
+  ⚠️ docs/auth.md → consolidated into security/authentication.md
+  ⚠️ docs/database.md → consolidated into data/database-conventions.md
+
+Archive commands provided to safely move old files.
 ```
 
 ---
@@ -749,6 +898,65 @@ Create ADR? (y): y
 ---
 
 ## Troubleshooting
+
+### Windows: Commands Fail with "command not found"
+
+**Problem:** Slash commands fail with errors like:
+```
+'test' is not recognized as an internal or external command
+'find' is not recognized as an internal or external command
+```
+
+**Cause:** You're running Claude Code in PowerShell or cmd without Git Bash.
+
+**Solution:**
+
+1. **Install Git for Windows** (includes Git Bash):
+   ```
+   Download: https://git-scm.com/download/win
+   ```
+   - During installation, ensure "Git Bash Here" is selected
+   - Accept default options
+
+2. **Verify installation:**
+   Open a new terminal and run:
+   ```bash
+   bash --version
+   ```
+   Should show: `GNU bash, version 5.x.x`
+
+3. **Use Git Bash with Claude Code:**
+   - Open Git Bash terminal (not PowerShell)
+   - Navigate to your project
+   - Run Claude Code from Git Bash
+   - DevFlow commands will now work
+
+**Alternative:** Use WSL (Windows Subsystem for Linux) for native bash support.
+
+### Commands Work Sometimes But Not Always
+
+**Cause:** You're switching between Git Bash and PowerShell terminals.
+
+**Solution:** Always use Git Bash on Windows. DevFlow slash commands require bash syntax.
+
+### Git Bash Installed But Commands Still Fail
+
+**Check these:**
+
+1. **Git Bash in PATH?**
+   ```bash
+   where bash
+   # Should show path to bash.exe
+   ```
+
+2. **Running from Git Bash terminal?**
+   - Terminal title should say "MINGW64" or "Git Bash"
+   - NOT "PowerShell" or "Windows PowerShell"
+
+3. **Restart terminal after Git installation**
+   - Close all terminals
+   - Open new Git Bash terminal
+   - Try commands again
 
 ### State file corrupted
 

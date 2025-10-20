@@ -5,6 +5,8 @@ description: Generate technical implementation plan using Architect agent
 model: sonnet
 ---
 
+> **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
+
 # Generate Technical Plan
 
 Create comprehensive technical plan for: **$1** (or active feature)

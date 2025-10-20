@@ -5,6 +5,8 @@ description: Break technical plan into atomic executable tasks
 model: sonnet
 ---
 
+> **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
+
 # Generate Executable Tasks
 
 Break down technical plan for: **$1** (or active feature)

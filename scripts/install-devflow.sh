@@ -106,6 +106,32 @@ detect_download_tool() {
     fi
 }
 
+# Check for bash availability (especially important on Windows)
+check_bash_availability() {
+    # We're already running in bash, but check version
+    if [ -z "$BASH_VERSION" ]; then
+        print_error "This script requires bash to run."
+        echo ""
+        echo "Installation:"
+        echo "  • Linux/Mac: Bash is already installed"
+        echo "  • Windows: Install Git for Windows (includes Git Bash)"
+        echo "    Download: https://git-scm.com/download/win"
+        echo ""
+        exit 1
+    fi
+
+    # Extract major.minor version
+    bash_major=$(echo $BASH_VERSION | cut -d. -f1)
+    bash_minor=$(echo $BASH_VERSION | cut -d. -f2)
+
+    # Check for minimum bash 3.2
+    if [ "$bash_major" -lt 3 ] || ([ "$bash_major" -eq 3 ] && [ "$bash_minor" -lt 2 ]); then
+        print_warning "Bash version $BASH_VERSION detected. Bash 3.2+ recommended."
+    else
+        print_info "Bash version $BASH_VERSION detected ✓"
+    fi
+}
+
 # Download file with retries
 download_file() {
     local url="$1"
@@ -274,6 +300,9 @@ show_success() {
     echo ""
     echo "  2. Start building: /spec your-feature-name"
     echo ""
+    echo "Note: DevFlow commands require bash."
+    echo "      Windows users: Use Git Bash terminal"
+    echo ""
     echo "Documentation: https://github.com/mathewtaylor/devflow"
     echo ""
 }
@@ -283,6 +312,10 @@ main() {
     echo ""
     echo "DevFlow Installer"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    # Check bash availability
+    check_bash_availability
     echo ""
 
     # Resolve target directory

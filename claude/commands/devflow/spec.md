@@ -5,6 +5,8 @@ description: Create feature specification through interactive wizard
 model: sonnet
 ---
 
+> **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
+
 # Create Feature Specification
 
 Create a comprehensive specification for: **$ARGUMENTS**

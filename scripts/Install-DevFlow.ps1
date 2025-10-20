@@ -111,6 +111,58 @@ function Write-ErrorMsg {
     Write-Host $Message
 }
 
+# Check for bash availability on Windows
+function Test-BashAvailability {
+    Write-Host ""
+    Write-Host "Checking for bash..." -NoNewline
+
+    try {
+        $bashPath = Get-Command bash -ErrorAction SilentlyContinue
+        if ($bashPath) {
+            $bashVersion = bash --version 2>$null | Select-Object -First 1
+            Write-Host " ✓" -ForegroundColor Green
+            Write-Info "Found: $bashVersion"
+            Write-Info "Location: $($bashPath.Source)"
+            return $true
+        }
+    }
+    catch {
+        # Bash not found
+    }
+
+    Write-Host " ✗" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Yellow
+    Write-Host "⚠ Bash Not Detected" -ForegroundColor Yellow
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "DevFlow requires bash to run slash commands." -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "To install Git Bash:" -ForegroundColor Cyan
+    Write-Host "  1. Download Git for Windows"
+    Write-Host "     https://git-scm.com/download/win"
+    Write-Host ""
+    Write-Host "  2. Run the installer (accept defaults)"
+    Write-Host ""
+    Write-Host "  3. Restart your terminal"
+    Write-Host ""
+    Write-Host "  4. Verify with: bash --version"
+    Write-Host ""
+    Write-Host "After installing Git Bash, use it instead of PowerShell"
+    Write-Host "for running DevFlow commands."
+    Write-Host ""
+
+    $continue = Read-Host "Continue installation anyway? (y/n)"
+    if ($continue -notmatch '^[Yy]$') {
+        Write-Info "Installation cancelled."
+        Write-Info "Install Git Bash and run this script again from Git Bash."
+        exit 0
+    }
+
+    Write-Warning2 "Installation will proceed, but DevFlow commands may not work without bash."
+    return $false
+}
+
 # Download file with retries
 function Download-FileWithRetry {
     param(
@@ -310,6 +362,9 @@ function Show-SuccessMessage {
     Write-Host ""
     Write-Host "  2. Start building: /spec your-feature-name"
     Write-Host ""
+    Write-Host "Note: DevFlow commands require bash." -ForegroundColor Yellow
+    Write-Host "      Windows users: Use Git Bash terminal, not PowerShell" -ForegroundColor Yellow
+    Write-Host ""
     Write-Host "Documentation: https://github.com/mathewtaylor/devflow"
     Write-Host ""
 }
@@ -332,6 +387,9 @@ function Install-DevFlow {
     $targetDir = $resolvedPath.Path
     Write-Info "Installing DevFlow to: $targetDir"
     Write-Host ""
+
+    # Check for bash availability
+    Test-BashAvailability
 
     # Check for existing installation
     Test-ExistingInstallation -BasePath $targetDir

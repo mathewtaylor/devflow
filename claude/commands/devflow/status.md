@@ -5,6 +5,8 @@ description: Show DevFlow status, active features, and progress
 model: haiku
 ---
 
+> **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
+
 # DevFlow Status
 
 Display comprehensive overview of DevFlow state and progress.

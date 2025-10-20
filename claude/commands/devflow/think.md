@@ -5,6 +5,8 @@ description: Deep analysis with extended thinking for complex technical decision
 model: opus
 ---
 
+> **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
+
 # Deep Analysis and Decision Making
 
 **Question:** $ARGUMENTS

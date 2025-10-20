@@ -5,6 +5,8 @@ description: Initialize DevFlow - create constitution and architecture documenta
 model: sonnet
 ---
 
+> **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
+
 # Initialize DevFlow
 
 Create personalized constitution and architecture documentation for this project.
@@ -130,6 +132,37 @@ Create `.devflow/state.json`:
 
 ---
 
+## Documentation Discovery Notification
+
+Check for existing documentation files:
+
+- Markdown count: !`find . -type f -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/build/*" -not -path "*/.devflow/*" -not -name "CLAUDE.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -not -name "CHANGELOG.md" -not -name "LICENSE.md" 2>/dev/null | wc -l`
+
+**If markdown count > 5:**
+
+Display notification:
+```
+📚 Documentation Detected
+
+Found {{count}} markdown files in your project with technical documentation.
+
+You can consolidate them into DevFlow's domain structure:
+  /consolidate-docs
+
+This will:
+  • Analyze existing documentation
+  • Extract technical information (auth, database, API, etc.)
+  • Organize into structured .devflow/domains/
+  • Provide archival recommendations for old docs
+
+Run this now or later. DevFlow works great either way!
+```
+
+**If markdown count ≤ 5:**
+- Skip notification (too few files to warrant consolidation)
+
+---
+
 ## CLAUDE.md Integration
 
 Automatically integrate DevFlow instructions with project's CLAUDE.md file.
@@ -202,6 +235,10 @@ Files created:
 
 CLAUDE.md: {{status}}
   (Status: "✓ DevFlow section added" | "✓ DevFlow section updated" | "✓ Created with DevFlow instructions")
+
+{{#if docs_detected}}
+📚 Optional: Run /consolidate-docs to organize existing documentation
+{{/if}}
 
 Next: Run /spec [feature-name] to create your first feature
 Example: /spec user-authentication
