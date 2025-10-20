@@ -116,7 +116,7 @@ Agents automatically load full concern docs when they detect:
 To document a new cross-cutting concern:
 
 1. Create a file in the appropriate `domains/` subfolder
-2. Follow the [concern document template](../lib/concern-template.md)
+2. Follow the [concern document template](concern.md.template)
 3. Add a one-line summary to this index
 4. Update the loading triggers table
 
