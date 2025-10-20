@@ -119,6 +119,12 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Single active feature enforcement
 - Progress tracking
 
+**Git Operations Manager** (Sonnet)
+- Git workflow automation (commits, pushes, pulls)
+- Branch and worktree management
+- Conventional commit standards enforcement
+- Conflict detection and resolution guidance
+
 ---
 
 ## Installation
@@ -226,7 +232,7 @@ cd /path/to/your-project
 ### What Gets Installed
 
 The installer creates:
-- `.claude/agents/` - 5 specialized AI agents
+- `.claude/agents/` - 6 specialized AI agents
 - `.claude/commands/devflow/` - 7 slash commands
 - `.devflow/` - Templates and utilities
 
