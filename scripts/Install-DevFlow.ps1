@@ -40,12 +40,18 @@ $GitHubRepo = "https://raw.githubusercontent.com/mathewtaylor/devflow/main"
 $MaxRetries = 3
 
 # File list to download
+# ⚠️ IMPORTANT: When adding new agents or commands, update this list!
+# Current counts: 6 agents, 7 commands, 8 templates/utilities
 $FilesToDownload = @(
+    # Agents (6 total)
     ".claude/agents/architect.md",
     ".claude/agents/planner.md",
     ".claude/agents/reviewer.md",
     ".claude/agents/state-manager.md",
     ".claude/agents/tester.md",
+    ".claude/agents/git-operations-manager.md",
+
+    # Commands (7 total)
     ".claude/commands/devflow/init.md",
     ".claude/commands/devflow/spec.md",
     ".claude/commands/devflow/plan.md",
@@ -54,6 +60,8 @@ $FilesToDownload = @(
     ".claude/commands/devflow/status.md",
     ".claude/commands/devflow/think.md",
     ".claude/commands/devflow/consolidate-docs.md",
+
+    # Templates and utilities (8 total)
     ".devflow/lib/state-io.js",
     ".devflow/state.json.schema",
     ".devflow/templates/constitution.md.template",
@@ -80,8 +88,8 @@ function Show-Help {
     Write-Host "  .\Install-DevFlow.ps1 -TargetPath C:\MyProject"
     Write-Host ""
     Write-Host "What gets installed:"
-    Write-Host "  • 5 agents in .claude/agents/"
-    Write-Host "  • 8 commands in .claude/commands/devflow/"
+    Write-Host "  • 6 agents in .claude/agents/"
+    Write-Host "  • 7 commands in .claude/commands/devflow/"
     Write-Host "  • 8 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "After installation, run: /init"
@@ -322,7 +330,7 @@ function Test-Installation {
     $criticalFiles = @(
         ".devflow\lib\state-io.js",
         ".devflow\state.json.schema",
-        ".devflow\constitution.md.template",
+        ".devflow\templates\constitution.md.template",
         ".claude\commands\devflow\init.md"
     )
 
@@ -352,8 +360,8 @@ function Show-SuccessMessage {
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
     Write-Host ""
     Write-Host "Files installed:"
-    Write-Host "  • 5 agents in .claude/agents/"
-    Write-Host "  • 8 commands in .claude/commands/devflow/"
+    Write-Host "  • 6 agents in .claude/agents/"
+    Write-Host "  • 7 commands in .claude/commands/devflow/"
     Write-Host "  • 8 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "Next steps:"

@@ -19,12 +19,18 @@ TARGET_DIR="${1:-.}"
 MAX_RETRIES=3
 
 # File list to download
+# ⚠️ IMPORTANT: When adding new agents or commands, update this list!
+# Current counts: 6 agents, 7 commands, 8 templates/utilities
 declare -a FILES=(
+    # Agents (6 total)
     ".claude/agents/architect.md"
     ".claude/agents/planner.md"
     ".claude/agents/reviewer.md"
     ".claude/agents/state-manager.md"
     ".claude/agents/tester.md"
+    ".claude/agents/git-operations-manager.md"
+
+    # Commands (7 total)
     ".claude/commands/devflow/init.md"
     ".claude/commands/devflow/spec.md"
     ".claude/commands/devflow/plan.md"
@@ -33,6 +39,8 @@ declare -a FILES=(
     ".claude/commands/devflow/status.md"
     ".claude/commands/devflow/think.md"
     ".claude/commands/devflow/consolidate-docs.md"
+
+    # Templates and utilities (8 total)
     ".devflow/lib/state-io.js"
     ".devflow/state.json.schema"
     ".devflow/templates/constitution.md.template"
@@ -61,8 +69,8 @@ Example:
   $0 /path/to/project  # Install in specific directory
 
 What gets installed:
-  • 5 agents in .claude/agents/
-  • 8 commands in .claude/commands/devflow/
+  • 6 agents in .claude/agents/
+  • 7 commands in .claude/commands/devflow/
   • 8 templates and utilities in .devflow/
 
 After installation, run: /init
@@ -278,7 +286,7 @@ validate_installation() {
     local critical_files=(
         ".devflow/lib/state-io.js"
         ".devflow/state.json.schema"
-        ".devflow/constitution.md.template"
+        ".devflow/templates/constitution.md.template"
         ".claude/commands/devflow/init.md"
     )
 
@@ -305,8 +313,8 @@ show_success() {
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     echo "Files installed:"
-    echo "  • 5 agents in .claude/agents/"
-    echo "  • 8 commands in .claude/commands/devflow/"
+    echo "  • 6 agents in .claude/agents/"
+    echo "  • 7 commands in .claude/commands/devflow/"
     echo "  • 8 templates and utilities in .devflow/"
     echo ""
     echo "Next steps:"
