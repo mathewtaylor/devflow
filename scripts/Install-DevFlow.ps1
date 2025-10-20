@@ -267,7 +267,9 @@ function Get-DevFlowFiles {
 
     foreach ($file in $FilesToDownload) {
         $current++
-        $url = "$GitHubRepo/$($file.Replace('\', '/'))"
+        # Strip leading dot for GitHub URL (repo uses claude/ not .claude/)
+        $sourcePath = $file.TrimStart('.')
+        $url = "$GitHubRepo/$($sourcePath.Replace('\', '/'))"
         $outputPath = Join-Path $BasePath $file
 
         # Show progress

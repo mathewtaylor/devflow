@@ -225,7 +225,9 @@ download_files() {
 
     for file in "${FILES[@]}"; do
         current=$((current + 1))
-        local url="${GITHUB_REPO}/${file}"
+        # Strip leading dot for GitHub URL (repo uses claude/ not .claude/)
+        local source_path="${file#.}"
+        local url="${GITHUB_REPO}/${source_path}"
         local output="${TARGET_DIR}/${file}"
 
         # Show progress
