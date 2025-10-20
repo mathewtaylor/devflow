@@ -213,18 +213,6 @@ check_existing_installation() {
     return 0
 }
 
-# Backup existing file
-backup_file() {
-    local file="$1"
-
-    if [ -f "$file" ]; then
-        local timestamp=$(date +"%Y%m%d-%H%M%S")
-        local backup="${file}.bak.${timestamp}"
-        cp "$file" "$backup"
-        print_info "Backed up: $(basename "$file") → $(basename "$backup")"
-    fi
-}
-
 # Download all files
 download_files() {
     local total=${#FILES[@]}

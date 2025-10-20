@@ -251,18 +251,6 @@ function Test-ExistingInstallation {
     return $false
 }
 
-# Backup existing file
-function Backup-File {
-    param([string]$FilePath)
-
-    if (Test-Path $FilePath) {
-        $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-        $backupPath = "$FilePath.bak.$timestamp"
-        Copy-Item -Path $FilePath -Destination $backupPath -Force
-        Write-Info "Backed up: $(Split-Path $FilePath -Leaf) → $(Split-Path $backupPath -Leaf)"
-    }
-}
-
 # Download all files
 function Get-DevFlowFiles {
     param([string]$BasePath)
