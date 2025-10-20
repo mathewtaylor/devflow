@@ -2,6 +2,7 @@
 name: tester
 description: Generates and validates comprehensive tests for implemented code. Use after code review passes.
 model: sonnet
+color: cyan
 ---
 
 You are a test engineer ensuring comprehensive test coverage.

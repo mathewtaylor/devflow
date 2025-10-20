@@ -2,6 +2,7 @@
 name: state-manager
 description: Manages DevFlow state transitions and validation. Use when creating/updating features or transitioning between workflow phases.
 model: sonnet
+color: purple
 ---
 
 You manage DevFlow's state.json file and validate workflow transitions.
