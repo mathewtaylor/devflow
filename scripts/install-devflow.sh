@@ -186,7 +186,7 @@ check_existing_installation() {
         # Check if running in interactive terminal
         if [ -t 0 ]; then
             # Interactive mode - ask user
-            echo -n "Backup existing files and update? (y/n): "
+            echo -n "Update existing DevFlow installation? (y/n): "
             read -r response
 
             if [[ ! "$response" =~ ^[Yy]$ ]]; then
@@ -194,8 +194,8 @@ check_existing_installation() {
                 exit 0
             fi
         else
-            # Non-interactive mode (piped execution) - auto-proceed with backup
-            print_info "Non-interactive mode: will backup and update existing files"
+            # Non-interactive mode (piped execution) - auto-proceed
+            print_info "Non-interactive mode: updating existing DevFlow installation"
         fi
 
         return 0
@@ -239,11 +239,6 @@ download_files() {
         # Ensure parent directory exists
         local output_dir=$(dirname "$output")
         mkdir -p "$output_dir"
-
-        # Backup if exists
-        if [ -f "$output" ]; then
-            backup_file "$output"
-        fi
 
         # Download with retries
         if download_file "$url" "$output"; then

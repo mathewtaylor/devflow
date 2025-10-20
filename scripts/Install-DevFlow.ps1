@@ -229,7 +229,7 @@ function Test-ExistingInstallation {
 
     if (Test-Path $constitutionPath) {
         Write-Warning2 "DevFlow appears to be already installed in this directory."
-        $response = Read-Host "Backup existing files and update? (y/n)"
+        $response = Read-Host "Update existing DevFlow installation? (y/n)"
 
         if ($response -notmatch '^[Yy]$') {
             Write-Info "Installation cancelled."
@@ -280,11 +280,6 @@ function Get-DevFlowFiles {
         $parentDir = Split-Path $outputPath -Parent
         if (-not (Test-Path $parentDir)) {
             New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
-        }
-
-        # Backup if exists
-        if (Test-Path $outputPath) {
-            Backup-File -FilePath $outputPath
         }
 
         # Download with retries
