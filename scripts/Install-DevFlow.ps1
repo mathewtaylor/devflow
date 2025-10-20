@@ -56,12 +56,12 @@ $FilesToDownload = @(
     ".claude/commands/devflow/consolidate-docs.md",
     ".devflow/lib/state-io.js",
     ".devflow/state.json.schema",
-    ".devflow/constitution.md.template",
-    ".devflow/architecture.md.template",
-    ".devflow/.devflowignore.template",
-    ".devflow/CLAUDE.md.template",
-    ".devflow/domains/_index.md.template",
-    ".devflow/domains/concern.md.template"
+    ".devflow/templates/constitution.md.template",
+    ".devflow/templates/architecture.md.template",
+    ".devflow/templates/.devflowignore.template",
+    ".devflow/templates/CLAUDE.md.template",
+    ".devflow/templates/domains/_index.md.template",
+    ".devflow/templates/domains/concern.md.template"
 )
 
 # Show help
@@ -225,9 +225,10 @@ function New-DirectoryStructure {
 function Test-ExistingInstallation {
     param([string]$BasePath)
 
-    $constitutionPath = Join-Path $BasePath ".devflow\constitution.md.template"
+    $constitutionPathNew = Join-Path $BasePath ".devflow\templates\constitution.md.template"
+    $constitutionPathOld = Join-Path $BasePath ".devflow\constitution.md.template"
 
-    if (Test-Path $constitutionPath) {
+    if ((Test-Path $constitutionPathNew) -or (Test-Path $constitutionPathOld)) {
         Write-Warning2 "DevFlow appears to be already installed in this directory."
         $response = Read-Host "Update existing DevFlow installation? (y/n)"
 

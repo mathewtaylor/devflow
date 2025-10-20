@@ -185,7 +185,7 @@ Automatically integrate DevFlow instructions with project's CLAUDE.md file.
 
 3. **If DevFlow section NOT present:**
    - Append delimiter: `\n---\n\n`
-   - Append full content from `@../../../.devflow/CLAUDE.md.template`
+   - Append full content from `@../../../.devflow/templates/CLAUDE.md.template`
    - Replace `{{LAST_UPDATED}}` with current date (YYYY-MM-DD format)
    - Write back to CLAUDE.md
    - Track result: "✓ DevFlow instructions added to CLAUDE.md"
@@ -201,7 +201,7 @@ Automatically integrate DevFlow instructions with project's CLAUDE.md file.
 
 **If CLAUDE.md DOES NOT EXIST:**
 
-1. Read full content from `@../../../.devflow/CLAUDE.md.template`
+1. Read full content from `@../../../.devflow/templates/CLAUDE.md.template`
 2. Replace `{{LAST_UPDATED}}` with current date (YYYY-MM-DD format)
 3. Write to `CLAUDE.md` in project root
 4. Track result: "✓ Created CLAUDE.md with DevFlow instructions"

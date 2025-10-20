@@ -35,12 +35,12 @@ declare -a FILES=(
     ".claude/commands/devflow/consolidate-docs.md"
     ".devflow/lib/state-io.js"
     ".devflow/state.json.schema"
-    ".devflow/constitution.md.template"
-    ".devflow/architecture.md.template"
-    ".devflow/.devflowignore.template"
-    ".devflow/CLAUDE.md.template"
-    ".devflow/domains/_index.md.template"
-    ".devflow/domains/concern.md.template"
+    ".devflow/templates/constitution.md.template"
+    ".devflow/templates/architecture.md.template"
+    ".devflow/templates/.devflowignore.template"
+    ".devflow/templates/CLAUDE.md.template"
+    ".devflow/templates/domains/_index.md.template"
+    ".devflow/templates/domains/concern.md.template"
 )
 
 # Help message
@@ -180,7 +180,7 @@ create_directories() {
 
 # Check for existing installation
 check_existing_installation() {
-    if [ -f "$TARGET_DIR/.devflow/constitution.md.template" ]; then
+    if [ -f "$TARGET_DIR/.devflow/templates/constitution.md.template" ] || [ -f "$TARGET_DIR/.devflow/constitution.md.template" ]; then
         print_warning "DevFlow appears to be already installed in this directory."
 
         # Check if running in interactive terminal

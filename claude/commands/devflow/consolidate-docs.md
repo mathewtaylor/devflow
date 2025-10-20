@@ -236,7 +236,7 @@ For each file mapped to this domain:
 
 #### 5.3 Create Domain File
 
-Use `@devflow/domains/concern.md.template` as base:
+Use `.devflow/templates/domains/concern.md.template` as base:
 
 1. **Fill template variables:**
    - `{{CONCERN_NAME}}` → Domain name (e.g., "Authentication")
@@ -451,7 +451,7 @@ The markdown files found don't contain detectable patterns for:
 - Integration (APIs, message queues)
 
 You can still manually create domain files in .devflow/domains/
-using the template at .devflow/domains/concern.md.template
+using the template at .devflow/templates/domains/concern.md.template
 ```
 
 ---
