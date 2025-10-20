@@ -32,12 +32,15 @@ declare -a FILES=(
     ".claude/commands/devflow/execute.md"
     ".claude/commands/devflow/status.md"
     ".claude/commands/devflow/think.md"
+    ".claude/commands/devflow/consolidate-docs.md"
     ".devflow/lib/state-io.js"
     ".devflow/state.json.schema"
     ".devflow/constitution.md.template"
     ".devflow/architecture.md.template"
     ".devflow/.devflowignore.template"
+    ".devflow/CLAUDE.md.template"
     ".devflow/domains/_index.md.template"
+    ".devflow/domains/concern.md.template"
 )
 
 # Help message
@@ -59,8 +62,8 @@ Example:
 
 What gets installed:
   • 5 agents in .claude/agents/
-  • 7 commands in .claude/commands/devflow/
-  • 6 templates and utilities in .devflow/
+  • 8 commands in .claude/commands/devflow/
+  • 8 templates and utilities in .devflow/
 
 After installation, run: /init
 EOF
@@ -176,12 +179,20 @@ create_directories() {
 check_existing_installation() {
     if [ -f "$TARGET_DIR/.devflow/constitution.md.template" ]; then
         print_warning "DevFlow appears to be already installed in this directory."
-        echo -n "Backup existing files and update? (y/n): "
-        read -r response
 
-        if [[ ! "$response" =~ ^[Yy]$ ]]; then
-            print_info "Installation cancelled."
-            exit 0
+        # Check if running in interactive terminal
+        if [ -t 0 ]; then
+            # Interactive mode - ask user
+            echo -n "Backup existing files and update? (y/n): "
+            read -r response
+
+            if [[ ! "$response" =~ ^[Yy]$ ]]; then
+                print_info "Installation cancelled."
+                exit 0
+            fi
+        else
+            # Non-interactive mode (piped execution) - auto-proceed with backup
+            print_info "Non-interactive mode: will backup and update existing files"
         fi
 
         return 0
@@ -290,8 +301,8 @@ show_success() {
     echo ""
     echo "Files installed:"
     echo "  • 5 agents in .claude/agents/"
-    echo "  • 7 commands in .claude/commands/devflow/"
-    echo "  • 6 templates and utilities in .devflow/"
+    echo "  • 8 commands in .claude/commands/devflow/"
+    echo "  • 8 templates and utilities in .devflow/"
     echo ""
     echo "Next steps:"
     echo "  1. Run: /init"

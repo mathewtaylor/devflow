@@ -53,12 +53,15 @@ $FilesToDownload = @(
     ".claude/commands/devflow/execute.md",
     ".claude/commands/devflow/status.md",
     ".claude/commands/devflow/think.md",
+    ".claude/commands/devflow/consolidate-docs.md",
     ".devflow/lib/state-io.js",
     ".devflow/state.json.schema",
     ".devflow/constitution.md.template",
     ".devflow/architecture.md.template",
     ".devflow/.devflowignore.template",
-    ".devflow/domains/_index.md.template"
+    ".devflow/CLAUDE.md.template",
+    ".devflow/domains/_index.md.template",
+    ".devflow/domains/concern.md.template"
 )
 
 # Show help
@@ -78,8 +81,8 @@ function Show-Help {
     Write-Host ""
     Write-Host "What gets installed:"
     Write-Host "  • 5 agents in .claude/agents/"
-    Write-Host "  • 7 commands in .claude/commands/devflow/"
-    Write-Host "  • 6 templates and utilities in .devflow/"
+    Write-Host "  • 8 commands in .claude/commands/devflow/"
+    Write-Host "  • 8 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "After installation, run: /init"
     Write-Host ""
@@ -352,8 +355,8 @@ function Show-SuccessMessage {
     Write-Host ""
     Write-Host "Files installed:"
     Write-Host "  • 5 agents in .claude/agents/"
-    Write-Host "  • 7 commands in .claude/commands/devflow/"
-    Write-Host "  • 6 templates and utilities in .devflow/"
+    Write-Host "  • 8 commands in .claude/commands/devflow/"
+    Write-Host "  • 8 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "Next steps:"
     Write-Host "  1. Run: /init"
