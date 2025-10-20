@@ -144,11 +144,13 @@ download_file() {
 
     while [ $retries -lt $MAX_RETRIES ]; do
         if [ "$tool" = "curl" ]; then
-            if curl -fsSL -o "$output" "$url" 2>/dev/null; then
+            # Show errors to help debug issues
+            if curl -fsSL -o "$output" "$url" 2>&1; then
                 return 0
             fi
         else
-            if wget -q -O "$output" "$url" 2>/dev/null; then
+            # Show errors to help debug issues
+            if wget -O "$output" "$url" 2>&1; then
                 return 0
             fi
         fi
@@ -167,10 +169,11 @@ download_file() {
 create_directories() {
     print_info "Creating directory structure..."
 
-    mkdir -p "$TARGET_DIR/.claude/agents"
-    mkdir -p "$TARGET_DIR/.claude/commands/devflow"
-    mkdir -p "$TARGET_DIR/.devflow/lib"
-    mkdir -p "$TARGET_DIR/.devflow/domains"
+    # Create all necessary parent directories from FILES array
+    for file in "${FILES[@]}"; do
+        local dir=$(dirname "$TARGET_DIR/$file")
+        mkdir -p "$dir"
+    done
 
     print_success "Directories created"
 }
@@ -232,6 +235,10 @@ download_files() {
 
         # Show progress
         printf "[%2d/%2d] Downloading %s... " "$current" "$total" "$(basename "$file")"
+
+        # Ensure parent directory exists
+        local output_dir=$(dirname "$output")
+        mkdir -p "$output_dir"
 
         # Backup if exists
         if [ -f "$output" ]; then
