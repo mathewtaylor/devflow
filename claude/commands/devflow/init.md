@@ -130,6 +130,64 @@ Create `.devflow/state.json`:
 
 ---
 
+## CLAUDE.md Integration
+
+Automatically integrate DevFlow instructions with project's CLAUDE.md file.
+
+### Check for existing CLAUDE.md
+
+- CLAUDE.md exists: !`test -f CLAUDE.md && echo "yes" || echo "no"`
+
+### Integration Logic
+
+**If CLAUDE.md EXISTS:**
+
+1. Read existing CLAUDE.md content
+2. Check if DevFlow section already present (search for any of these markers):
+   - `# DevFlow` (heading)
+   - `## DevFlow Integration` (heading)
+   - `This project uses **DevFlow**` (content text)
+
+3. **If DevFlow section NOT present:**
+   - Append delimiter: `\n---\n\n`
+   - Append full content from `@.devflow/CLAUDE.md.template`
+   - Replace `{{LAST_UPDATED}}` with current date (YYYY-MM-DD format)
+   - Write back to CLAUDE.md
+   - Track result: "✓ DevFlow instructions added to CLAUDE.md"
+
+4. **If DevFlow section ALREADY present:**
+   - Find section boundaries:
+     - Start: First line containing "DevFlow" in a heading (# or ##)
+     - End: Next `---` separator OR next top-level `#` heading OR end of file
+   - Replace entire DevFlow section with latest content from template
+   - Replace `{{LAST_UPDATED}}` with current date
+   - Write back to CLAUDE.md
+   - Track result: "✓ DevFlow instructions updated in CLAUDE.md"
+
+**If CLAUDE.md DOES NOT EXIST:**
+
+1. Read full content from `@.devflow/CLAUDE.md.template`
+2. Replace `{{LAST_UPDATED}}` with current date (YYYY-MM-DD format)
+3. Write to `CLAUDE.md` in project root
+4. Track result: "✓ Created CLAUDE.md with DevFlow instructions"
+
+### Implementation Notes
+
+- Use current date: `$(date +%Y-%m-%d)`
+- Detection is case-insensitive for "DevFlow"
+- When appending, use clean delimiter:
+  ```
+  ---
+
+  ## DevFlow Integration
+
+  This project uses **DevFlow**...
+  ```
+- When updating, preserve all content before and after DevFlow section
+- DevFlow section always starts with heading and ends at next major delimiter
+
+---
+
 ## Output
 
 ```
@@ -141,6 +199,9 @@ Files created:
 - .devflow/state.json
 - .devflow/domains/_index.md
 {{domain docs created}}
+
+CLAUDE.md: {{status}}
+  (Status: "✓ DevFlow section added" | "✓ DevFlow section updated" | "✓ Created with DevFlow instructions")
 
 Next: Run /spec [feature-name] to create your first feature
 Example: /spec user-authentication

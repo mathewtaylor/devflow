@@ -123,29 +123,94 @@ DevFlow brings structure, automation, and intelligence to feature development:
 
 ## Installation
 
+### 🚀 Quick Start (30 seconds)
+
+**From your project directory:**
+
+```bash
+# Navigate to your project
+cd /path/to/your/project
+
+# Install DevFlow (creates .claude/ and .devflow/ directories)
+curl -sSL https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/install-devflow.sh | bash
+
+# Initialize (creates constitution, architecture, integrates with CLAUDE.md)
+/init
+
+# Create your first feature
+/spec user-authentication
+```
+
+**That's it!** DevFlow is now managing your feature development.
+
+---
+
 ### Requirements
 
 - **Claude Code CLI** (latest version)
 - **Node.js** (for state.json utilities)
-- **Git** (optional, for change tracking)
 
-### Setup
+### Bash Installation (Linux/Mac/Git Bash on Windows)
 
 ```bash
-# 1. Clone DevFlow
-git clone https://github.com/yourusername/devflow.git
+# 1. Navigate to your project directory
+cd /path/to/your/project
+
+# 2. Install DevFlow
+curl -sSL https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/install-devflow.sh | bash
+
+# Or download, review, then run
+curl -O https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/install-devflow.sh
+chmod +x install-devflow.sh
+./install-devflow.sh
+
+# 3. Initialize DevFlow
+/init
+```
+
+### PowerShell Installation (Windows)
+
+```powershell
+# 1. Navigate to your project directory
+cd C:\path\to\your\project
+
+# 2. Download and run installer
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/Install-DevFlow.ps1" -OutFile "Install-DevFlow.ps1"
+.\Install-DevFlow.ps1
+
+# Optional: Install to different directory without navigating
+.\Install-DevFlow.ps1 -TargetPath "C:\MyProject"
+
+# 3. Initialize DevFlow
+/init
+```
+
+### Manual Installation
+
+If you prefer manual setup:
+
+```bash
+# 1. Clone repository
+git clone https://github.com/mathewtaylor/devflow.git
 cd devflow
 
-# 2. Copy to your project
+# 2. Copy files to your project
 cp -r claude/ /path/to/your-project/.claude/
 cp -r devflow/ /path/to/your-project/.devflow/
-cp devflow/CLAUDE.md.template /path/to/your-project/CLAUDE.md
 
-# 3. Initialize in your project
+# 3. Initialize DevFlow
 cd /path/to/your-project
 /init
-# Follow the interactive wizard
 ```
+
+### What Gets Installed
+
+The installer creates:
+- `.claude/agents/` - 5 specialized AI agents
+- `.claude/commands/devflow/` - 7 slash commands
+- `.devflow/` - Templates and utilities
+
+**Note:** Installation does NOT modify existing files. The `/init` command will automatically integrate DevFlow instructions with your existing CLAUDE.md if present.
 
 ---
 
