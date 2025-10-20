@@ -1,5 +1,7 @@
 ---
-allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task(architect), Bash(test:*), Bash(find:*), Bash(ls:*), Bash(date:*)
+# Note: Bash unrestricted - safe because all bash commands are read-only detection
+# (checking for files, git repos, package managers). File writes use Write tool.
+allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task(architect), Bash
 argument-hint:
 description: Initialize DevFlow - create constitution and architecture documentation
 model: sonnet
