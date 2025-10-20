@@ -38,20 +38,30 @@ The system consists of:
 
 ```
 .devflow/
-├── constitution.md              # Project principles (always loaded)
-├── architecture.md              # Living system docs (always loaded)
-├── state.json                   # Progress tracking
-├── lib/state-io.js             # State utilities
-├── domains/                    # Cross-cutting concerns
-│   ├── _index.md               # Quick reference (always loaded)
+├── templates/                  # Infrastructure templates (overwritten on update)
+│   ├── constitution.md.template
+│   ├── architecture.md.template
+│   ├── .devflowignore.template
+│   ├── CLAUDE.md.template
+│   └── domains/
+│       ├── _index.md.template
+│       └── concern.md.template
+├── lib/                        # Utilities
+│   └── state-io.js
+├── state.json.schema          # Validation schema
+├── constitution.md            # Project principles (always loaded)
+├── architecture.md            # Living system docs (always loaded)
+├── state.json                 # Progress tracking
+├── domains/                   # Cross-cutting concerns (user-created)
+│   ├── _index.md              # Quick reference (always loaded)
 │   └── {category}/{concern}.md # Full docs (loaded on-demand)
-└── features/                   # Per-feature lifecycle
+└── features/                  # Per-feature lifecycle
     └── yyyymmdd-feature-name/
-        ├── spec.md             # Requirements
-        ├── plan.md             # Technical design
-        ├── tasks.md            # Executable checklist
-        ├── implementation.md   # Execution log
-        └── retrospective.md    # Lessons learned
+        ├── spec.md            # Requirements
+        ├── plan.md            # Technical design
+        ├── tasks.md           # Executable checklist
+        ├── implementation.md  # Execution log
+        └── retrospective.md   # Lessons learned
 ```
 
 ## Core Workflow Commands
@@ -300,6 +310,13 @@ node -pe "const s=require('./.devflow/state.json'); Object.values(s.features).fi
 3. Use `!` for dynamic state, `@` for context loading
 4. Invoke existing agents via `Task()` when possible
 
+**CRITICAL: @ Path Resolution**
+- `@` file references resolve **relative to the command file**, not project root
+- Command location: `.claude/commands/devflow/command.md`
+- To reference templates: `@../../../.devflow/templates/file.template`
+- Three levels up (`../../../`) reaches project root from command file
+- Do NOT use `@.devflow/` as it will look in `.claude/commands/devflow/.devflow/`
+
 ### Adding New Agents
 1. Create `.claude/agents/new-agent.md`
 2. Use YAML frontmatter (name, description, model)
@@ -337,6 +354,13 @@ node -pe "const s=require('./.devflow/state.json'); Object.values(s.features).fi
 - `.claude/agents/planner.md` - Task breakdown (sonnet)
 - `.claude/agents/reviewer.md` - Code review (opus + extended thinking)
 - `.claude/agents/tester.md` - Test generation and validation (sonnet)
+
+**Installation scripts:**
+- `scripts/install-devflow.sh` - Bash installer (Linux/Mac/Git Bash)
+- `scripts/Install-DevFlow.ps1` - PowerShell installer (Windows)
+- Both download files from `devflow/` repo folder to `.devflow/` in target project
+- Path mapping: `devflow/templates/` → `.devflow/templates/` (strip leading dot)
+- Template files NOT backed up on update (infrastructure, not user data)
 
 ## Philosophy and Design Goals
 
