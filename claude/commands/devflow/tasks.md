@@ -1,5 +1,5 @@
 ---
-allowed-tools: Read, Task(planner), Task(state-manager)
+allowed-tools: Read, Task(planner), Task(state-manager), Bash(find:*), Bash(node:*)
 argument-hint: [feature-name]?
 description: Break technical plan into atomic executable tasks
 model: sonnet

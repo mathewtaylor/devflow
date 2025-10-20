@@ -1,5 +1,5 @@
 ---
-allowed-tools: Read, Write, AskUserQuestion, Task(state-manager)
+allowed-tools: Read, Write, AskUserQuestion, Task(state-manager), Bash(test:*), Bash(node:*)
 argument-hint: [feature-name]
 description: Create feature specification through interactive wizard
 model: sonnet

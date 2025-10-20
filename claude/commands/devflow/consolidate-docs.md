@@ -1,5 +1,5 @@
 ---
-allowed-tools: Read, Write, Glob, Grep
+allowed-tools: Read, Write, Glob, Grep, Bash(test:*), Bash(find:*), Bash(wc:*)
 argument-hint:
 description: Consolidate existing documentation into DevFlow domain structure
 model: sonnet

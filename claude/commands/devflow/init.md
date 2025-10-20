@@ -1,5 +1,5 @@
 ---
-allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task(architect)
+allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task(architect), Bash(test:*), Bash(find:*), Bash(ls:*), Bash(date:*)
 argument-hint:
 description: Initialize DevFlow - create constitution and architecture documentation
 model: sonnet

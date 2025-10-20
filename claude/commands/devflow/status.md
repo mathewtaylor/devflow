@@ -1,8 +1,8 @@
 ---
-allowed-tools: Read
+allowed-tools: Read, Bash(node:*), Bash(test:*)
 argument-hint:
 description: Show DevFlow status, active features, and progress
-model: haiku
+model: sonnet
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)

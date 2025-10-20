@@ -1,5 +1,7 @@
 ---
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task(reviewer), Task(tester), Task(state-manager)
+# Note: Bash unrestricted - intentional for feature implementation flexibility
+# This command needs to run tests, migrations, build tools, etc.
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task(reviewer), Task(tester), Task(state-manager), Bash(node:*)
 argument-hint: [feature-name]?
 description: Execute feature tasks with automated code review and testing
 model: sonnet
@@ -17,6 +19,13 @@ Implement tasks for: **$1** (or active feature)
 - Feature exists: !`node -pe "try { const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key || 'none' } catch { 'none' }"`
 
 ## Your Task
+
+**IMPORTANT CONSTRAINTS:**
+- Follow the execution loop exactly as specified below
+- Do NOT skip quality gates (code review, testing) unless explicitly allowed by user
+- Use ONLY the allowed tools listed in frontmatter
+- Pause/resume supported - save progress to state.json at each step
+- Mark tasks complete in tasks.md as you finish them
 
 ### Setup Phase
 

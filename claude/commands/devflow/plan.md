@@ -1,5 +1,5 @@
 ---
-allowed-tools: Read, Task(architect), Task(state-manager)
+allowed-tools: Read, Task(architect), Task(state-manager), Bash(test:*), Bash(find:*), Bash(ls:*), Bash(xargs:*)
 argument-hint: [feature-name]?
 description: Generate technical implementation plan using Architect agent
 model: sonnet
