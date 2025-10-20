@@ -198,7 +198,8 @@ check_existing_installation() {
         return 0
     fi
 
-    return 1
+    # No existing installation - return success
+    return 0
 }
 
 # Backup existing file
@@ -341,7 +342,8 @@ main() {
     echo ""
 
     # Check for existing installation
-    check_existing_installation
+    # Note: || true prevents set -e from killing script on return 1
+    check_existing_installation || true
 
     # Create directory structure
     create_directories
