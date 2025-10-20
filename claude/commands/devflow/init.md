@@ -167,7 +167,7 @@ Run this now or later. DevFlow works great either way!
 
 ## CLAUDE.md Integration
 
-Automatically integrate DevFlow instructions with project's CLAUDE.md file.
+Automatically integrate DevFlow reference with project's CLAUDE.md file.
 
 ### Check for existing CLAUDE.md
 
@@ -178,48 +178,64 @@ Automatically integrate DevFlow instructions with project's CLAUDE.md file.
 **If CLAUDE.md EXISTS:**
 
 1. Read existing CLAUDE.md content
-2. Check if DevFlow section already present (search for any of these markers):
-   - `# DevFlow` (heading)
-   - `## DevFlow Integration` (heading)
-   - `This project uses **DevFlow**` (content text)
+2. Check if DevFlow section already present (search for either):
+   - `## DevFlow` (heading)
+   - `@.devflow/instructions.md` (reference to instructions)
 
 3. **If DevFlow section NOT present:**
    - Append delimiter: `\n---\n\n`
-   - Append full content from `@../../../.devflow/templates/CLAUDE.md.template`
-   - Replace `{{LAST_UPDATED}}` with current date (YYYY-MM-DD format)
+   - Append minimal reference section:
+     ```markdown
+     ## DevFlow
+
+     This project uses **DevFlow** for structured feature development.
+
+     For complete DevFlow instructions, see: @.devflow/instructions.md
+
+     Last updated: YYYY-MM-DD
+     ```
+   - Replace `YYYY-MM-DD` with current date: `$(date +%Y-%m-%d)`
    - Write back to CLAUDE.md
-   - Track result: "✓ DevFlow instructions added to CLAUDE.md"
+   - Track result: "✓ DevFlow reference added to CLAUDE.md"
 
 4. **If DevFlow section ALREADY present:**
    - Find section boundaries:
-     - Start: First line containing "DevFlow" in a heading (# or ##)
-     - End: Next `---` separator OR next top-level `#` heading OR end of file
-   - Replace entire DevFlow section with latest content from template
-   - Replace `{{LAST_UPDATED}}` with current date
+     - Start: Line containing `## DevFlow`
+     - End: Next `---` separator OR next `##` heading OR end of file
+   - Replace entire DevFlow section with updated minimal reference (same as step 3)
+   - Replace `YYYY-MM-DD` with current date
    - Write back to CLAUDE.md
-   - Track result: "✓ DevFlow instructions updated in CLAUDE.md"
+   - Track result: "✓ DevFlow reference updated in CLAUDE.md"
 
 **If CLAUDE.md DOES NOT EXIST:**
 
-1. Read full content from `@../../../.devflow/templates/CLAUDE.md.template`
-2. Replace `{{LAST_UPDATED}}` with current date (YYYY-MM-DD format)
+1. Create new CLAUDE.md with minimal reference section:
+   ```markdown
+   # CLAUDE.md
+
+   This file provides guidance to Claude Code when working with this repository.
+
+   ---
+
+   ## DevFlow
+
+   This project uses **DevFlow** for structured feature development.
+
+   For complete DevFlow instructions, see: @.devflow/instructions.md
+
+   Last updated: YYYY-MM-DD
+   ```
+2. Replace `YYYY-MM-DD` with current date: `$(date +%Y-%m-%d)`
 3. Write to `CLAUDE.md` in project root
-4. Track result: "✓ Created CLAUDE.md with DevFlow instructions"
+4. Track result: "✓ Created CLAUDE.md with DevFlow reference"
 
 ### Implementation Notes
 
 - Use current date: `$(date +%Y-%m-%d)`
-- Detection is case-insensitive for "DevFlow"
-- When appending, use clean delimiter:
-  ```
-  ---
-
-  ## DevFlow Integration
-
-  This project uses **DevFlow**...
-  ```
-- When updating, preserve all content before and after DevFlow section
-- DevFlow section always starts with heading and ends at next major delimiter
+- Detection searches for `## DevFlow` heading or `@.devflow/instructions.md` reference
+- When appending to existing file, use clean delimiter: `\n---\n\n`
+- DevFlow section is minimal (5 lines) - full instructions live in `.devflow/instructions.md`
+- User's CLAUDE.md stays clean; updates never touch user content
 
 ---
 

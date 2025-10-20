@@ -1,4 +1,4 @@
-# Project Context for Claude Code
+# DevFlow Instructions for Claude Code
 
 This project uses **DevFlow** - an agentic workflow system for structured feature development.
 
@@ -279,7 +279,7 @@ DevFlow uses specialized agents in `.claude/agents/`:
 - **planner** - Breaks plans into atomic, executable tasks
 - **reviewer** - Reviews code for quality, standards, security (Opus + extended thinking)
 - **tester** - Generates and runs tests
-- **documenter** - Maintains living documentation
+- **git-operations-manager** - Handles all git operations (commits, pushes, branches, worktrees)
 
 Agents are invoked automatically by slash commands.
 
@@ -307,4 +307,3 @@ Agents are invoked automatically by slash commands.
 ---
 
 **DevFlow Version:** 1.0
-**Last Updated:** {{LAST_UPDATED}}

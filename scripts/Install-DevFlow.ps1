@@ -64,10 +64,10 @@ $FilesToDownload = @(
     # Templates and utilities (8 total)
     ".devflow/lib/state-io.js",
     ".devflow/state.json.schema",
+    ".devflow/instructions.md",
     ".devflow/templates/constitution.md.template",
     ".devflow/templates/architecture.md.template",
     ".devflow/templates/.devflowignore.template",
-    ".devflow/templates/CLAUDE.md.template",
     ".devflow/templates/domains/_index.md.template",
     ".devflow/templates/domains/concern.md.template"
 )
