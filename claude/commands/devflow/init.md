@@ -70,7 +70,7 @@ Run an interactive constitution wizard to gather:
     - API versioning
     - Rate limiting
 
-Generate `@.devflow/constitution.md` from template, filling all {{PLACEHOLDERS}} with gathered info.
+Generate `.devflow/constitution.md` from template, filling all {{PLACEHOLDERS}} with gathered info.
 
 ---
 
@@ -94,7 +94,7 @@ Generate `@.devflow/constitution.md` from template, filling all {{PLACEHOLDERS}}
    Is this accurate? (y/n)
    ```
 
-3. Get feedback, generate `@.devflow/architecture.md`
+3. Get feedback, generate `.devflow/architecture.md`
 
 4. Ask user to review: "Check .devflow/architecture.md and refine. Press Enter when ready."
 
@@ -103,7 +103,7 @@ Generate `@.devflow/constitution.md` from template, filling all {{PLACEHOLDERS}}
 1. Suggest architecture based on selected patterns
 2. Show proposed folder structure and key libraries
 3. Ask user: Use this/Different approach/Describe own
-4. Generate architecture blueprint in `@.devflow/architecture.md`
+4. Generate architecture blueprint in `.devflow/architecture.md`
 
 ---
 
@@ -116,7 +116,7 @@ For each selected cross-cutting concern, create template in `.devflow/domains/`:
 - `infrastructure/caching.md`
 - etc.
 
-Update `@.devflow/domains/_index.md` with one-line summaries.
+Update `.devflow/domains/_index.md` with one-line summaries.
 
 ---
 
@@ -185,7 +185,7 @@ Automatically integrate DevFlow instructions with project's CLAUDE.md file.
 
 3. **If DevFlow section NOT present:**
    - Append delimiter: `\n---\n\n`
-   - Append full content from `@.devflow/CLAUDE.md.template`
+   - Append full content from `.devflow/CLAUDE.md.template`
    - Replace `{{LAST_UPDATED}}` with current date (YYYY-MM-DD format)
    - Write back to CLAUDE.md
    - Track result: "✓ DevFlow instructions added to CLAUDE.md"
@@ -201,7 +201,7 @@ Automatically integrate DevFlow instructions with project's CLAUDE.md file.
 
 **If CLAUDE.md DOES NOT EXIST:**
 
-1. Read full content from `@.devflow/CLAUDE.md.template`
+1. Read full content from `.devflow/CLAUDE.md.template`
 2. Replace `{{LAST_UPDATED}}` with current date (YYYY-MM-DD format)
 3. Write to `CLAUDE.md` in project root
 4. Track result: "✓ Created CLAUDE.md with DevFlow instructions"
