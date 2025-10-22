@@ -306,10 +306,11 @@ Skipped (non-code task)
 Invoke State Manager to update state.json:
 ```json
 {
-  "current_task": "{{subtask_number}}",  // e.g., "1.2", "2.1"
-  "current_parent": {{parent_number}}     // e.g., 1, 2
+  "current_task": "{{subtask_number}}"  // e.g., "1.2", "2.1"
 }
 ```
+
+Parent task number is derived by parsing current_task ("1.2" → parent is 1).
 
 **If last subtask of parent task:**
 - Display: `✓ Parent Task {{parent_number}} complete ({{subtask_count}}/{{subtask_count}} subtasks)`
@@ -349,7 +350,7 @@ When user chooses "pause":
 
    Feature: {{display_name}}
    Progress: {{completed_subtask_count}}/{{total_subtask_count}} subtasks complete
-   Current: Subtask {{current_task}} in Parent Task {{current_parent}}
+   Current: Subtask {{current_task}} (in Parent Task {{parent_derived_from_current_task}})
 
    Resume: /execute (without arguments)
    ```
@@ -478,8 +479,8 @@ Choose:
 When `/execute` runs without arguments and active_feature exists:
 
 **Parse current_task from state.json** (e.g., "1.2"):
-- Extract parent task number (1)
-- Extract subtask number (1.2)
+- Extract parent task number by parsing string (e.g., "1.2" → parent is 1)
+- Extract subtask number (e.g., "1.2" is subtask 2 of parent 1)
 - Determine which subtasks in parent are complete by reading tasks.md checkboxes
 
 **Display resume information:**
@@ -487,7 +488,7 @@ When `/execute` runs without arguments and active_feature exists:
 Resuming feature: {{display_name}}
 Progress: {{completed_subtask_count}}/{{total_subtask_count}} subtasks completed
 
-Parent Task {{current_parent}}: {{parent_title}} ({{status}})
+Parent Task {{parent_number}}: {{parent_title}} ({{status}})
 ├─ Completed: {{list of completed subtasks with [x]}}
 └─ Next: Subtask {{current_task}} - {{subtask_description}}
 

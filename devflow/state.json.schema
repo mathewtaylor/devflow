@@ -48,9 +48,19 @@
             "description": "Current phase of the feature workflow"
           },
           "current_task": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Index of the current task being executed (0-based)"
+            "oneOf": [
+              {
+                "type": "integer",
+                "const": 0,
+                "description": "Not started (initial value)"
+              },
+              {
+                "type": "string",
+                "pattern": "^\\d+\\.\\d+$",
+                "description": "Hierarchical subtask notation (e.g., '1.2', '2.1')"
+              }
+            ],
+            "description": "Current task: 0 when not started, or subtask notation like '1.2' during execution"
           },
           "concerns": {
             "type": "array",

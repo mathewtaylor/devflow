@@ -24,7 +24,7 @@ State schema:
       "display_name": string,
       "status": "pending" | "active" | "paused" | "completed",
       "phase": "SPEC" | "PLAN" | "TASKS" | "EXECUTE" | "DONE",
-      "current_task": number,
+      "current_task": 0 | "X.Y",  // 0 = not started, "1.2" = hierarchical subtask
       "concerns": string[],
       "created_at": ISO timestamp,
       "snapshot": string | null
@@ -32,6 +32,11 @@ State schema:
   }
 }
 ```
+
+**current_task format:**
+- `0` (integer) - Feature not started, initial value
+- `"1.2"` (string) - Hierarchical subtask notation during execution
+- Parent task number derived by parsing string ("1.2" → parent 1, subtask 2)
 
 Validation rules:
 - **Single active feature:** Only one feature can have status="active"

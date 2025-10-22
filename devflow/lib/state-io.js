@@ -105,8 +105,12 @@ function validateSchema(data) {
                 errors.push(`Feature ${featureName}: invalid phase (must be one of: ${validPhases.join(', ')})`);
             }
 
-            if (typeof feature.current_task !== 'number' || feature.current_task < 0) {
-                errors.push(`Feature ${featureName}: invalid current_task (must be non-negative number)`);
+            // Validate current_task: allow integer 0 or string in "X.Y" format
+            const isValidInteger = feature.current_task === 0;
+            const isValidString = typeof feature.current_task === 'string' && /^\d+\.\d+$/.test(feature.current_task);
+
+            if (!isValidInteger && !isValidString) {
+                errors.push(`Feature ${featureName}: invalid current_task (must be 0 or subtask format "X.Y" like "1.2")`);
             }
 
             if (!Array.isArray(feature.concerns)) {
