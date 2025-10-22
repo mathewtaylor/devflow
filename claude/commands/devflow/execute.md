@@ -25,7 +25,43 @@ Implement tasks for: **$1** (or active feature)
 - Do NOT skip quality gates (code review, testing) unless explicitly allowed by user
 - Use ONLY the allowed tools listed in frontmatter
 - Pause/resume supported - save progress to state.json at each step
-- Mark tasks complete in tasks.md as you finish them
+- Use three-state checkbox system in tasks.md
+
+---
+
+## Task Structure and Checkbox System
+
+**Hierarchical Task Format:**
+
+Tasks.md uses a hierarchical structure with parent tasks and subtasks:
+```markdown
+[ ] 1. Parent Task Title (effort: high)
+- [ ] 1.1. First subtask
+- [ ] 1.2. Second subtask
+- [ ] 1.3. Third subtask
+
+[ ] 2. Another Parent Task (effort: medium)
+- [ ] 2.1. Subtask description
+- [ ] 2.2. Another subtask
+```
+
+**Three-State Checkbox System:**
+- `[ ]` = Not started
+- `[-]` = In progress (parent task only)
+- `[x]` = Complete
+
+**Checkbox Rules:**
+- **Parent tasks:** Mark `[-]` when starting first subtask, `[x]` when all subtasks complete
+- **Subtasks:** Mark `[x]` immediately when subtask passes review/tests
+
+**Execution Flow:**
+1. Show confirmation ONCE per parent task
+2. Execute subtasks sequentially (1.1 → 1.2 → 1.3 → 2.1)
+3. Track current subtask in state.json (e.g., "1.2")
+4. Mark checkboxes as work progresses
+5. When resuming, continue from saved subtask
+
+---
 
 ### Setup Phase
 
@@ -56,30 +92,49 @@ Implement tasks for: **$1** (or active feature)
 
 ### Execution Loop
 
-**For each task from current_task to end:**
+Parse tasks.md to identify parent tasks (1, 2, 3) and their subtasks (1.1, 1.2, 1.3).
 
-#### 1. Display Task
+**For each parent task from current position to end:**
+
+#### 1. Display Parent Task (Confirmation Point)
+
+Show this ONCE per parent task:
 
 ```
 ─────────────────────────────────────────
-Task {{current_task + 1}}/{{total_tasks}}: {{task_description}} ({{complexity}})
-{{#if dependencies}}Dependencies: {{dependencies}} ✓ All met{{/if}}
+Parent Task {{parent_number}}: {{parent_title}} ({{effort}})
+Subtasks: {{subtask_list}} ({{subtask_count}} total)
+{{#if parent_in_progress}}Status: IN PROGRESS ({{completed_count}}/{{subtask_count}} complete){{/if}}
 ─────────────────────────────────────────
 
+This will implement all subtasks under this parent task.
 Continue? (y/n/skip/pause)
-  y - Implement this task
+  y - Implement all subtasks in this parent
   n - Stop execution
-  skip - Mark complete without implementing (use cautiously)
+  skip - Mark all subtasks complete without implementing (use cautiously)
   pause - Save progress and exit
 ```
 
-#### 2. Check Dependencies
+**If continuing:**
 
-If task has `[depends: x,y,z]`:
-- Verify those tasks are marked complete in tasks.md
+- Mark parent task in tasks.md: `[ ]` → `[-]` (if not already `[-]`)
+- Begin iterating through subtasks
+
+#### 2. For Each Subtask Under Current Parent
+
+**Display subtask:**
+```
+Starting subtask {{subtask_number}}: {{subtask_description}}
+{{#if dependencies}}Dependencies: {{dependencies}}{{/if}}
+```
+
+**Check Dependencies:**
+
+If subtask has `[depends: x.y]`:
+- Verify those subtasks are marked `[x]` in tasks.md
 - If not: Show which are incomplete, offer to:
   - Jump to incomplete dependency
-  - Skip this task for now
+  - Skip this subtask for now
   - Exit
 
 #### 3. Implement Task
@@ -182,15 +237,42 @@ If `PASS`:
   Coverage: {{coverage}}% (target: {{target}}%)
 ```
 
-#### 6. Mark Complete
+#### 6. Mark Subtask Complete
 
-- Update tasks.md: Change `- [ ]` to `- [x]` for this task
-- Create/append to implementation.md:
+**Update tasks.md with three-state checkbox system:**
+
+1. Mark current subtask complete: `- [ ]` → `- [x]` (e.g., subtask 1.2)
+2. Check if all subtasks under parent are now `[x]`:
+   - If YES: Mark parent task complete: `[ ]` or `[-]` → `[x]`
+   - If NO: Parent stays as `[-]` (in progress)
+
+**Example:**
+```markdown
+Before (completing subtask 1.2):
+[-] 1. Parent Task (effort: high)
+- [x] 1.1. First subtask
+- [ ] 1.2. Second subtask ← completing this one
+- [ ] 1.3. Third subtask
+
+After:
+[-] 1. Parent Task (effort: high)  ← stays [-] (still has 1.3)
+- [x] 1.1. First subtask
+- [x] 1.2. Second subtask
+- [ ] 1.3. Third subtask
+
+After completing 1.3:
+[x] 1. Parent Task (effort: high)  ← now [x] (all subtasks done)
+- [x] 1.1. First subtask
+- [x] 1.2. Second subtask
+- [x] 1.3. Third subtask
+```
+
+**Create/append to implementation.md:**
 
 ```markdown
-## Task {{number}}: {{description}}
+## Subtask {{subtask_number}}: {{subtask_description}}
+**Parent Task:** {{parent_number}}. {{parent_title}}
 **Completed:** {{ISO timestamp}}
-**Complexity:** {{complexity}}
 {{#if dependencies}}**Dependencies:** {{dependencies}}{{/if}}
 
 ### Implementation
@@ -221,39 +303,53 @@ Skipped (non-code task)
 
 #### 7. Update State
 
-Invoke State Manager to:
-- Increment `current_task`
-- If last task: Transition to phase=DONE, status=completed
-
-#### 8. Continue or Finish
-
-If more tasks remaining:
-```
-Task {{n}} complete. Continue to next task? (y/n)
+Invoke State Manager to update state.json:
+```json
+{
+  "current_task": "{{subtask_number}}",  // e.g., "1.2", "2.1"
+  "current_parent": {{parent_number}}     // e.g., 1, 2
+}
 ```
 
-If all tasks complete: Go to **Completion Flow**
+**If last subtask of parent task:**
+- Display: `✓ Parent Task {{parent_number}} complete ({{subtask_count}}/{{subtask_count}} subtasks)`
+- Move to next parent task
+- Show next parent task confirmation
+
+**If last subtask of entire feature:**
+- Transition to phase=DONE, status=completed
+- Go to **Completion Flow**
+
+#### 8. Continue Through Subtasks
+
+Continue automatically to next subtask in same parent (no confirmation between subtasks).
+
+When parent task complete or all feature tasks complete: Show appropriate completion message
 
 ---
 
 ### Pause Handling
 
 When user chooses "pause":
-1. Current task index is already in state.json
-2. Optionally create snapshot:
+1. Current subtask is already saved in state.json (e.g., "1.2")
+2. Tasks.md shows current state with checkboxes:
+   - Parent tasks: `[x]` complete, `[-]` in progress, `[ ]` not started
+   - Subtasks: `[x]` complete, `[ ]` not done
+3. Optionally create snapshot:
    ```
    Create snapshot for easy resume? (y/n)
 
    If yes:
    - Save current context summary to snapshots/snap_{{feature}}_{{timestamp}}.md
-   - Include: completed tasks, current task, key decisions made
+   - Include: completed subtasks, current subtask, key decisions made
    ```
-3. Output:
+4. Output:
    ```
    ⏸️ Execution paused
 
    Feature: {{display_name}}
-   Progress: {{current_task}}/{{total_tasks}} tasks
+   Progress: {{completed_subtask_count}}/{{total_subtask_count}} subtasks complete
+   Current: Subtask {{current_task}} in Parent Task {{current_parent}}
 
    Resume: /execute (without arguments)
    ```
@@ -381,15 +477,28 @@ Choose:
 
 When `/execute` runs without arguments and active_feature exists:
 
+**Parse current_task from state.json** (e.g., "1.2"):
+- Extract parent task number (1)
+- Extract subtask number (1.2)
+- Determine which subtasks in parent are complete by reading tasks.md checkboxes
+
+**Display resume information:**
 ```
 Resuming feature: {{display_name}}
-Progress: {{current_task}}/{{total_tasks}} tasks completed
+Progress: {{completed_subtask_count}}/{{total_subtask_count}} subtasks completed
 
-Last completed: Task {{current_task}}: {{description}}
-Next task: Task {{current_task + 1}}: {{description}}
+Parent Task {{current_parent}}: {{parent_title}} ({{status}})
+├─ Completed: {{list of completed subtasks with [x]}}
+└─ Next: Subtask {{current_task}} - {{subtask_description}}
+
+Remaining in this parent: {{remaining_subtasks}}
 
 Continue from where you left off? (y/n)
 ```
+
+**If continuing:**
+- If resuming mid-parent (parent marked `[-]`): Continue with subtasks, no new confirmation
+- If resuming at new parent (parent marked `[ ]`): Show parent task confirmation prompt
 
 ---
 
