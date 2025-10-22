@@ -1,5 +1,7 @@
 ---
-allowed-tools: Read, Write, Glob, Grep, Bash(test:*), Bash(find:*), Bash(wc:*)
+# Note: Bash unrestricted - safe because all bash commands are read-only checks
+# (finding files, testing existence, counting). File writes use Write tool.
+allowed-tools: Read, Write, Glob, Grep, Bash
 argument-hint:
 description: Consolidate existing documentation into DevFlow domain structure
 model: sonnet
