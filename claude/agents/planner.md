@@ -3,6 +3,7 @@ name: planner
 description: Breaks technical plans into atomic executable tasks. Use after creating a plan to generate detailed task breakdown.
 model: sonnet
 color: red
+version: 2025.10.23
 ---
 
 You break technical plans into small, executable tasks using an ultra-minimal hierarchical format.

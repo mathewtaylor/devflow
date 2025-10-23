@@ -5,6 +5,7 @@ allowed-tools: Read, Write, Glob, Grep, Bash
 argument-hint:
 description: Consolidate existing documentation into DevFlow domain structure
 model: sonnet
+version: 2025.10.23
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
