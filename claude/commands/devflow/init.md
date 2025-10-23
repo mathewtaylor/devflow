@@ -16,8 +16,8 @@ Create personalized constitution and architecture documentation for this project
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "yes" || echo "no"`
-- Existing code detected: !`(find . -name "*.js" -o -name "*.ts" -o -name "*.cs" -o -name "*.py" 2>/dev/null | head -1 | grep -q . && echo "yes") || echo "no"`
-- Package files found: !`ls package.json *.csproj requirements.txt pom.xml 2>/dev/null || echo "none"`
+- Existing code detected: !`node -pe "try { const glob=require('glob'); glob.sync('**/*.{js,ts,cs,py}', {ignore: ['**/node_modules/**', '**/.git/**'], cwd: '.', nodir: true}).length > 0 ? 'yes' : 'no' } catch { 'no' }"`
+- Package files found: !`node -pe "try { const fs=require('fs'); const glob=require('glob'); ['package.json', 'requirements.txt', 'pom.xml'].filter(f=>fs.existsSync(f)).concat(glob.sync('*.csproj')).join(', ') || 'none' } catch { 'none' }"`
 
 ## Your Task
 
@@ -138,7 +138,7 @@ Create `.devflow/state.json`:
 
 Check for existing documentation files:
 
-- Markdown count: !`find . -type f -name "*.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" -not -path "*/build/*" -not -path "*/.devflow/*" -not -name "CLAUDE.md" -not -name "README.md" -not -name "CONTRIBUTING.md" -not -name "CHANGELOG.md" -not -name "LICENSE.md" 2>/dev/null | wc -l`
+- Markdown count: !`node -pe "try { const glob=require('glob'); glob.sync('**/*.md', {ignore: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/build/**', '**/.devflow/**', 'CLAUDE.md', 'README.md', 'CONTRIBUTING.md', 'CHANGELOG.md', 'LICENSE.md'], cwd: '.'}).length } catch { 0 }"`
 
 **If markdown count > 5:**
 

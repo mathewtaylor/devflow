@@ -18,8 +18,8 @@ If not: Use active feature or most recent pending/active from state.json
 
 ## Current State for Feature
 
-- Has plan: !`find .devflow/features -name "plan.md" | grep -i '$1' | head -1 | xargs test -f && echo "yes" || echo "no"`
-- Has tasks: !`find .devflow/features -name "tasks.md" | grep -i '$1' | head -1 | xargs test -f && echo "yes" || echo "no"`
+- Has plan: !`node -pe "try { const fs=require('fs'); const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key && fs.existsSync('.devflow/features/' + key + '/plan.md') ? 'yes' : 'no' } catch { 'no' }"`
+- Has tasks: !`node -pe "try { const fs=require('fs'); const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key && fs.existsSync('.devflow/features/' + key + '/tasks.md') ? 'yes' : 'no' } catch { 'no' }"`
 - Current phase: !`node -pe "try { const s=require('./.devflow/state.json'); const f=Object.keys(s.features).find(k=>k.includes('$1')); s.features[f]?.phase || 'unknown' } catch { 'unknown' }"`
 
 ## Context for Task Planner
