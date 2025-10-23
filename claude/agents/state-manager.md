@@ -14,6 +14,80 @@ When invoked:
 4. Update state atomically with backup
 5. Provide helpful warnings and next action guidance
 
+## Implementation Guide
+
+**CRITICAL: Always use state-io.js utilities - NEVER edit state.json directly with Edit tool.**
+
+### Example: Update current_task
+
+```javascript
+const { readState, writeState, validateSchema } = require('./.devflow/lib/state-io.js');
+
+// 1. Read current state
+const state = readState();
+
+// 2. Update specific feature
+const featureKey = state.active_feature; // or specific feature key
+if (!state.features[featureKey]) {
+  return { success: false, error: `Feature ${featureKey} not found` };
+}
+
+state.features[featureKey].current_task = "1.2"; // Use subtask notation
+
+// 3. Validate before writing
+const validation = validateSchema(state);
+if (!validation.valid) {
+  return {
+    success: false,
+    errors: validation.errors,
+    message: "State validation failed"
+  };
+}
+
+// 4. Write atomically (creates .bak automatically)
+try {
+  writeState(state);
+  return {
+    success: true,
+    message: "Updated current_task to 1.2",
+    next_action: "Continue to subtask 1.3"
+  };
+} catch (error) {
+  return { success: false, error: error.message };
+}
+```
+
+### Example: Transition phase
+
+```javascript
+const { readState, writeState, validateSchema } = require('./.devflow/lib/state-io.js');
+
+const state = readState();
+const featureKey = state.active_feature;
+
+// Update multiple fields atomically
+state.features[featureKey].phase = "EXECUTE";
+state.features[featureKey].status = "active";
+state.features[featureKey].current_task = "1.1"; // Start at first subtask
+state.active_feature = featureKey;
+
+// Always validate before writing
+const validation = validateSchema(state);
+if (!validation.valid) {
+  return { success: false, errors: validation.errors };
+}
+
+try {
+  writeState(state);
+  return {
+    success: true,
+    message: "Transitioned to EXECUTE phase, starting at subtask 1.1"
+  };
+} catch (error) {
+  return { success: false, error: error.message };
+}
+```
+
 State schema:
 ```json
 {

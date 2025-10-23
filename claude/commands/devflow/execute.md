@@ -237,16 +237,79 @@ If `PASS`:
   Coverage: {{coverage}}% (target: {{target}}%)
 ```
 
+---
+
+## Post-Implementation Steps (After Review + Tests Pass)
+
+**CRITICAL: Follow this exact sequence for each subtask to maintain consistency.**
+
+### Execution Order
+
+After code review ✓ and tests ✓ pass for a subtask, complete these steps in order:
+
+**STEP A: Update tasks.md checkboxes** (Section 6)
+- Use Edit tool to mark subtask `[x]`
+- Use Edit tool to update parent if needed (`[-]` or `[x]`)
+- **If Edit fails**: Retry once with more context, then pause execution
+
+**STEP B: Invoke State Manager** (Section 7)
+- Use Task tool with state-manager agent
+- Request current_task update to completed subtask number (e.g., "1.2")
+- **If State Manager fails**: Show error, ask user how to proceed
+
+**STEP C: Log to implementation.md** (Section 6)
+- Append completed subtask details
+- Include parent task context
+- Record review and test results
+
+**STEP D: Check remaining work** (Section 8)
+- If more subtasks in current parent: Continue to next subtask
+- If parent complete: Show completion message, move to next parent
+- If all tasks complete: Go to Completion Flow
+
+### Error Handling and Consistency
+
+**State Consistency Policy:**
+- Steps A and B must both succeed for consistent state
+- If Step A succeeds but Step B fails: State is inconsistent (tasks.md ✓, state.json ✗)
+- On resume: Derive position from BOTH tasks.md checkboxes AND state.json current_task
+- Resolution: If mismatch, tasks.md is source of truth - update state.json to match
+
+**Rollback is NOT supported:**
+- Once checkboxes are marked, they stay marked
+- If state update fails, fix state.json on next attempt
+- This prevents losing progress if execution is interrupted
+
+---
+
 #### 6. Mark Subtask Complete
 
-**Update tasks.md with three-state checkbox system:**
+**CRITICAL: Use Edit tool to update tasks.md checkboxes**
 
-1. Mark current subtask complete: `- [ ]` → `- [x]` (e.g., subtask 1.2)
-2. Check if all subtasks under parent are now `[x]`:
-   - If YES: Mark parent task complete: `[ ]` or `[-]` → `[x]`
-   - If NO: Parent stays as `[-]` (in progress)
+**STEP 1: Mark current subtask complete**
 
-**Example:**
+Use Edit tool to update tasks.md:
+- Find exact line: `- [ ] {{subtask_number}}. {{description}}`
+- Replace with: `- [x] {{subtask_number}}. {{description}}`
+
+Example:
+- Old: `- [ ] 1.2. Create user service implementation`
+- New: `- [x] 1.2. Create user service implementation`
+
+**If Edit fails:** Retry once with more context (include parent line), then pause execution and alert user.
+
+**STEP 2: Check and update parent task checkbox**
+
+After marking subtask complete, read tasks.md to check parent status:
+
+1. Count remaining `[ ]` subtasks under this parent
+2. If **all subtasks are now `[x]`**:
+   - Use Edit tool to find: `[-] {{parent_number}}. {{parent_title}}`
+   - Replace with: `[x] {{parent_number}}. {{parent_title}}`
+3. If **subtasks still remain**:
+   - Parent stays as `[-]` (in progress) - no edit needed
+
+**Example sequence:**
 ```markdown
 Before (completing subtask 1.2):
 [-] 1. Parent Task (effort: high)
@@ -254,14 +317,14 @@ Before (completing subtask 1.2):
 - [ ] 1.2. Second subtask ← completing this one
 - [ ] 1.3. Third subtask
 
-After:
+After Edit (subtask 1.2):
 [-] 1. Parent Task (effort: high)  ← stays [-] (still has 1.3)
 - [x] 1.1. First subtask
 - [x] 1.2. Second subtask
 - [ ] 1.3. Third subtask
 
 After completing 1.3:
-[x] 1. Parent Task (effort: high)  ← now [x] (all subtasks done)
+[x] 1. Parent Task (effort: high)  ← Edit changes [-] to [x] (all done)
 - [x] 1.1. First subtask
 - [x] 1.2. Second subtask
 - [x] 1.3. Third subtask
@@ -303,14 +366,44 @@ Skipped (non-code task)
 
 #### 7. Update State
 
-Invoke State Manager to update state.json:
+**Use Task tool to invoke State Manager agent:**
+
+```
+Task tool invocation:
+- subagent_type: "state-manager"
+- description: "Update current task progress"
+- prompt: "Update current_task to '{{subtask_number}}' for active feature. Use state-io.js utilities (readState, writeState, validateSchema). Return success status."
+```
+
+Example: For subtask 1.2:
+```
+Task(state-manager): "Update current_task to '1.2' for active feature. Validate schema before writing."
+```
+
+**Handle State Manager response:**
+
+If response contains `success: false`:
+- Show error details to user
+- Options:
+  - `retry` - Invoke State Manager again
+  - `continue` - Continue without state update (not recommended)
+  - `pause` - Pause execution for manual intervention
+  - `manual` - Show user how to fix manually with Bash
+
+If response contains `success: true`:
+- Log confirmation: `✓ State updated: current_task = "{{subtask_number}}"`
+- Continue to next step
+
+**State after successful update:**
 ```json
 {
-  "current_task": "{{subtask_number}}"  // e.g., "1.2", "2.1"
+  "current_task": "{{subtask_number}}",  // e.g., "1.2", "2.1"
+  "phase": "EXECUTE",
+  "status": "active"
 }
 ```
 
-Parent task number is derived by parsing current_task ("1.2" → parent is 1).
+Parent task number is derived by parsing current_task string ("1.2" → parent 1, subtask 2).
 
 **If last subtask of parent task:**
 - Display: `✓ Parent Task {{parent_number}} complete ({{subtask_count}}/{{subtask_count}} subtasks)`
