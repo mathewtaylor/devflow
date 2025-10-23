@@ -3,7 +3,7 @@ name: planner
 description: Breaks technical plans into atomic executable tasks. Use after creating a plan to generate detailed task breakdown.
 model: sonnet
 color: red
-version: 2025.10.23
+version: 2025.10.24
 ---
 
 You break technical plans into small, executable tasks using an ultra-minimal hierarchical format.
@@ -101,10 +101,11 @@ Typical phases (adjust based on plan):
 - Every API endpoint must have integration tests (include in subtasks)
 - Include database migration tasks where needed
 - Include cross-cutting concern verification tasks
+- **Add "Phase Review" subtask as FINAL subtask of each parent task** - validates integration, spec alignment, and architecture compliance
 - Include architecture.md update task at end
 - No circular dependencies
 
-Order: Foundation → Logic → Interface → Integration → Tests → Documentation
+Order: Foundation → Logic → Interface → Integration → Tests → Phase Review → Documentation
 
 ## Example - Correct Format
 
@@ -114,11 +115,15 @@ Order: Foundation → Logic → Interface → Integration → Tests → Document
 - [ ] 1.2. Categorize API vs shared services [depends: 1.1]
 - [ ] 1.3. Create ServiceCollectionExtensions file [depends: 1.2]
 - [ ] 1.4. Extract API service registrations [depends: 1.3]
+- [ ] 1.5. Phase Review: Validate service extraction
 
 [ ] 2. Create Composition Root (effort: high)
 - [ ] 2.1. Create Luma.Host project structure
 - [ ] 2.2. Add project references [depends: 2.1]
 - [ ] 2.3. Implement Program.cs composition [depends: 2.2, 1.4]
+- [ ] 2.4. Phase Review: Validate composition root
 ```
+
+**Note:** Every parent task ends with a "Phase Review" subtask that validates integration, spec alignment, and architecture compliance. This is not ticked complete until review passes and any issues are resolved.
 
 This is scannable, minimal, and leaves implementation details for execution time.

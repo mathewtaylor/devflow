@@ -195,6 +195,53 @@
 
 ---
 
+## 13. DevFlow Quality Gates
+
+Configure automated quality checks during feature execution:
+
+### Quality Gate Settings
+
+```yaml
+quality_gates:
+  per_task_review: true      # Code review after each subtask implementation
+  phase_review: true         # Integration review after parent task completion
+  testing: true              # Automated testing after each subtask
+```
+
+### Gate Descriptions
+
+**Per-Task Review:**
+- Runs after implementing each individual subtask
+- Reviews: code quality, security, constitution compliance
+- Model: Opus with extended thinking
+- Blocks: Prevents proceeding until approved or max attempts reached
+
+**Phase Review:**
+- Runs after completing all subtasks in a parent task
+- Reviews: integration, spec alignment, architecture compliance, cross-cutting concerns
+- Model: Opus with extended thinking
+- Creates remediation subtasks if issues found
+- Ensures completed phases meet holistic requirements
+
+**Testing:**
+- Runs after implementing each subtask
+- Generates and validates unit/integration tests
+- Validates coverage requirements
+- Auto-fixes failures with retry logic
+
+### Disabling Quality Gates
+
+Set any gate to `false` to disable (not recommended):
+
+```yaml
+quality_gates:
+  per_task_review: true
+  phase_review: false   # Disables phase review - faster execution but may miss integration issues
+  testing: true
+```
+
+---
+
 ## Notes
 
 - **This document is the single source of truth** for project standards

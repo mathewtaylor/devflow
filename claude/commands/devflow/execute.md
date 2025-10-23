@@ -5,7 +5,7 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task(reviewer), Task(tester)
 argument-hint: [feature-name]?
 description: Execute feature tasks with automated code review and testing
 model: sonnet
-version: 2025.10.23
+version: 2025.10.24
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
@@ -140,6 +140,14 @@ If subtask has `[depends: x.y]`:
 
 #### 3. Implement Task
 
+**Check if this is a Phase Review subtask:**
+
+If subtask description contains "Phase Review" (e.g., "1.5. Phase Review: Validate service extraction"):
+- **Skip normal implementation** - this is a review checkpoint, not a coding task
+- Go directly to **Section 3A: Execute Phase Review** (below)
+
+**For normal implementation subtasks:**
+
 Based on task description:
 - Write code following constitution standards
 - Create new files or modify existing
@@ -147,9 +155,172 @@ Based on task description:
 - Apply relevant domain documentation rules
 - Log what you're doing for implementation.md
 
+---
+
+### 3A. Execute Phase Review (Phase Review Subtasks Only)
+
+**CRITICAL: This section only applies when current subtask is "Phase Review" type.**
+
+**Check configuration:**
+
+Read constitution.md for `quality_gates.phase_review` setting:
+- If `false`: Log "Phase review disabled in constitution", mark subtask complete, skip to section 6
+- If `true` or not specified (default): Continue with phase review
+
+**Collect review context:**
+
+1. **Identify parent task**: Parse subtask number (e.g., "1.5" → parent is 1)
+2. **Find all completed subtasks in this parent** (e.g., 1.1, 1.2, 1.3, 1.4)
+3. **Collect all files changed** across those subtasks:
+   - Read implementation.md to extract "Files Modified" sections for each subtask
+   - Create comprehensive list of created/modified files
+4. **Extract relevant requirements**:
+   - From spec.md: Requirements for this parent task/phase
+   - From plan.md: Technical design for this parent task/phase
+
+**Invoke Phase Reviewer:**
+
+Use Task tool to invoke reviewer agent with phase mode:
+
+```
+Task tool invocation:
+- subagent_type: "reviewer"
+- description: "Phase review for parent task {{parent_number}}"
+- prompt: """
+  Perform phase-level code review (review_mode=phase).
+
+  **Parent Task:** {{parent_number}}. {{parent_title}} ({{effort}})
+  **Completed Subtasks:** {{list, e.g., 1.1, 1.2, 1.3, 1.4}}
+
+  **Files Changed in This Phase:**
+  {{list all files created/modified across all subtasks in this parent}}
+
+  **Spec Requirements for This Phase:**
+  {{extract relevant requirements from spec.md for this parent task}}
+
+  **Technical Plan for This Phase:**
+  {{extract relevant design from plan.md for this parent task}}
+
+  **Context:**
+  @constitution.md
+  @architecture.md
+
+  **Phase Review Focus:**
+  1. Integration: Do all subtasks work together correctly?
+  2. Spec alignment: Does completed phase fulfill requirements?
+  3. Architecture alignment: Matches plan.md patterns?
+  4. Cross-cutting concerns: Security, performance, maintainability
+  5. Test coverage: Are all phase requirements tested?
+  6. Code quality: Issues spanning multiple files
+
+  Use extended thinking to identify issues missed in per-task reviews.
+
+  Return structured feedback with APPROVED or CHANGES_REQUIRED.
+  """
+```
+
+**Handle Phase Review Result:**
+
+**If APPROVED:**
+```
+✓ Phase review passed
+  Parent Task {{parent_number}}: {{parent_title}} validated
+  {{if warnings}}Warnings: {{count}}{{/if}}
+  {{if suggestions}}Suggestions: {{count}}{{/if}}
+```
+- Log approval to implementation.md (see section 6)
+- Mark this Phase Review subtask complete `[x]`
+- Continue to section 6 (mark complete) then section 7 (update state)
+
+**If CHANGES_REQUIRED:**
+```
+⚠️ Phase review found issues in Parent Task {{parent_number}}
+
+Critical Issues:
+{{list with file locations and fix suggestions}}
+
+Warnings:
+{{list with locations}}
+
+Creating remediation subtasks...
+```
+
+**Create Remediation Subtasks:**
+
+1. Parse issues from review feedback (separate critical from warnings)
+2. For each critical issue + high-priority warning, create remediation subtask
+3. Use naming: `{{parent}}.R{{n}}` (e.g., 1.R1, 1.R2, 1.R3)
+4. Insert into tasks.md BEFORE the current Phase Review subtask using Edit tool
+
+Example transformation:
+```markdown
+Before:
+[-] 1. Implement Data Layer (effort: high)
+- [x] 1.1. Create User model
+- [x] 1.2. Create Project model
+- [x] 1.3. Update DbContext
+- [ ] 1.4. Phase Review: Validate data layer
+
+After (with issues found):
+[-] 1. Implement Data Layer (effort: high)
+- [x] 1.1. Create User model
+- [x] 1.2. Create Project model
+- [x] 1.3. Update DbContext
+- [ ] 1.R1. Fix User-Project relationship mapping
+- [ ] 1.R2. Add missing validation in User model
+- [ ] 1.4. Phase Review: Validate data layer
+```
+
+**Execute Remediation Loop:**
+
+For each remediation subtask (1.R1, 1.R2, etc.):
+1. Mark Phase Review subtask as `[ ]` (not complete yet)
+2. Update state current_task to first remediation subtask (e.g., "1.R1")
+3. Execute remediation subtask using normal workflow:
+   - Section 2: Check dependencies (none for remediation)
+   - Section 3: Implement (normal code implementation)
+   - Section 4: Code review (per-task mode)
+   - Section 5: Testing
+   - Section 6: Mark complete
+   - Section 7: Update state
+4. Repeat for next remediation subtask
+5. After all remediation complete, return to this Phase Review subtask
+
+**Re-run Phase Review:**
+
+After all remediation subtasks complete:
+- Update current_task back to Phase Review subtask (e.g., "1.4")
+- Invoke reviewer agent again with same context (but now includes remediation files)
+- Track attempt count (this is attempt 2, 3, etc.)
+- If APPROVED: Mark Phase Review complete, continue
+- If CHANGES_REQUIRED: Create new remediation subtasks, repeat (max 3 total attempts)
+
+**After 3 Failed Phase Review Attempts:**
+```
+❌ Phase review still showing issues after 3 remediation cycles
+
+Remaining issues:
+{{list persistent issues}}
+
+Parent Task {{parent_number}} may have fundamental design problems.
+
+Options:
+a) Continue anyway (mark Phase Review complete, note issues in implementation.md)
+b) Pause execution for manual review and intervention
+c) Skip remaining tasks in this parent (mark incomplete)
+d) Request manual help to resolve issues
+
+Choose:
+```
+
+Handle user choice and proceed accordingly.
+
+---
+
 #### 4. Code Review (with Extended Thinking)
 
 **Skip review if task is:**
+- Phase Review subtask (already handled in section 3A)
 - Documentation only
 - Configuration changes
 - Test file creation
@@ -205,6 +376,7 @@ If `APPROVED`:
 #### 5. Testing
 
 **Skip testing if task is:**
+- Phase Review subtask (already validated in section 3A)
 - Documentation
 - Configuration
 - Test file itself
@@ -408,12 +580,67 @@ Parent task number is derived by parsing current_task string ("1.2" → parent 1
 
 **If last subtask of parent task:**
 - Display: `✓ Parent Task {{parent_number}} complete ({{subtask_count}}/{{subtask_count}} subtasks)`
+- **Check context usage** (see Context Management below)
 - Move to next parent task
 - Show next parent task confirmation
 
 **If last subtask of entire feature:**
 - Transition to phase=DONE, status=completed
 - Go to **Completion Flow**
+
+---
+
+### Context Management (After Parent Task Completion)
+
+**CRITICAL: After completing each parent task, check context usage before continuing.**
+
+**Check current context:**
+- Claude Code tracks token usage throughout the session
+- Current budget: 200,000 tokens
+- Warning threshold: 150,000 tokens (75% usage)
+
+**If context usage > 150K tokens:**
+
+```
+⚠️ Context Warning
+
+Current usage: {{current_tokens}}/200,000 tokens ({{percentage}}%)
+Remaining: {{remaining_tokens}} tokens
+
+Large context may impact performance and increase costs.
+
+Options:
+a) Compact context now (recommended - creates summary and continues fresh)
+b) Continue without compacting (may hit limit during next phase)
+c) Pause execution (save progress and exit)
+
+Choose:
+```
+
+**If user chooses "compact":**
+1. Use `/compact` command to create conversation summary
+2. Context resets with summary preserved
+3. Resume execution from next parent task
+4. All progress saved in state.json and tasks.md
+
+**If user chooses "continue":**
+- Log warning to implementation.md
+- Continue to next parent task
+- May need to compact mid-phase if limit reached
+
+**If user chooses "pause":**
+- Follow Pause Handling procedure (section below)
+
+**If context usage < 150K tokens:**
+- No action needed, continue silently
+
+**Auto-compact option (optional enhancement):**
+- If implementing auto-compact: Set threshold to 170K tokens
+- Automatically run `/compact` without asking
+- Log compaction to implementation.md
+- Note: User preference - some may prefer manual control
+
+---
 
 #### 8. Continue Through Subtasks
 
