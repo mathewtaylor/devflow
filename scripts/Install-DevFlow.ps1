@@ -41,7 +41,7 @@ $MaxRetries = 3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 6 agents, 7 commands, 8 templates/utilities
+# Current counts: 6 agents, 8 commands, 8 templates/utilities
 $FilesToDownload = @(
     # Agents (6 total)
     ".claude/agents/architect.md",
@@ -51,7 +51,7 @@ $FilesToDownload = @(
     ".claude/agents/tester.md",
     ".claude/agents/git-operations-manager.md",
 
-    # Commands (7 total)
+    # Commands (8 total)
     ".claude/commands/devflow/init.md",
     ".claude/commands/devflow/spec.md",
     ".claude/commands/devflow/plan.md",
@@ -60,6 +60,7 @@ $FilesToDownload = @(
     ".claude/commands/devflow/status.md",
     ".claude/commands/devflow/think.md",
     ".claude/commands/devflow/consolidate-docs.md",
+    ".claude/commands/devflow/readme-manager.md",
 
     # Templates and utilities (8 total)
     ".devflow/lib/state-io.js",
@@ -89,7 +90,7 @@ function Show-Help {
     Write-Host ""
     Write-Host "What gets installed:"
     Write-Host "  • 6 agents in .claude/agents/"
-    Write-Host "  • 7 commands in .claude/commands/devflow/"
+    Write-Host "  • 8 commands in .claude/commands/devflow/"
     Write-Host "  • 8 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "After installation, run: /init"
