@@ -107,6 +107,23 @@ If parent task title contains "Review Checkpoint" (e.g., "3. Review Checkpoint: 
 
 **For normal parent tasks:**
 
+**Proactive Snapshot Suggestion (if applicable):**
+
+If parent task has >5 subtasks AND snapshot doesn't already exist:
+```
+💡 Large parent task ahead ({{subtask_count}} subtasks).
+
+Update snapshot before starting? (y/n)
+
+This helps resume if the session is interrupted during this
+lengthy parent task.
+```
+
+If yes: Follow Pause Handling snapshot creation steps (gather data, create snapshot.md, update state)
+If no: Continue to parent task confirmation
+
+**Parent Task Confirmation:**
+
 Show this ONCE per parent task:
 
 ```
@@ -801,10 +818,20 @@ Choose:
 ```
 
 **If user chooses "compact":**
-1. Use `/compact` command to create conversation summary
-2. Context resets with summary preserved
-3. Resume execution from next parent task
-4. All progress saved in state.json and tasks.md
+1. **Suggest snapshot creation first:**
+   ```
+   💡 Create/update snapshot before compacting? (y/n)
+
+   Recommended: Snapshot helps resume after /compact resets context.
+   ```
+
+   If yes: Follow Pause Handling snapshot creation steps
+   If no: Continue to compact
+
+2. Use `/compact` command to create conversation summary
+3. Context resets with summary preserved
+4. Resume execution from next parent task
+5. All progress saved in state.json, tasks.md, and snapshot.md (if created)
 
 **If user chooses "continue":**
 - Log warning to implementation.md
@@ -836,28 +863,105 @@ When parent task complete or all feature tasks complete: Show appropriate comple
 ### Pause Handling
 
 When user chooses "pause":
-1. Current subtask is already saved in state.json (e.g., "1.2")
-2. Tasks.md shows current state with checkboxes:
-   - Parent tasks: `[x]` complete, `[-]` in progress, `[ ]` not started
-   - Subtasks: `[x]` complete, `[ ]` not done
-3. Optionally create snapshot:
-   ```
-   Create snapshot for easy resume? (y/n)
 
-   If yes:
-   - Save current context summary to snapshots/snap_{{feature}}_{{timestamp}}.md
-   - Include: completed subtasks, current subtask, key decisions made
-   ```
-4. Output:
-   ```
-   ⏸️ Execution paused
+**Step 1: Verify state saved**
+- Current subtask is already saved in state.json (e.g., "1.2")
+- Tasks.md shows current state with checkboxes:
+  - Parent tasks: `[x]` complete, `[-]` in progress, `[ ]` not started
+  - Subtasks: `[x]` complete, `[ ]` not done
 
-   Feature: {{display_name}}
-   Progress: {{completed_subtask_count}}/{{total_subtask_count}} subtasks complete
-   Current: Subtask {{current_task}} (in Parent Task {{parent_derived_from_current_task}})
+**Step 2: Offer snapshot creation**
+```
+Create/update snapshot for easy resume? (y/n)
 
-   Resume: /execute (without arguments)
-   ```
+This creates a summary in snapshot.md to help resume after
+Claude Code's /compact or session interruptions.
+```
+
+**Step 3: If yes, create snapshot:**
+
+1. **Read template:** `.devflow/templates/snapshot.md.template`
+
+2. **Gather snapshot data:**
+   - **Feature metadata:**
+     - FEATURE_NAME: display_name from state.json
+     - FEATURE_KEY: featureKey
+     - PHASE: phase from state.json
+     - STATUS: status from state.json (should be "paused")
+     - SNAPSHOT_TIMESTAMP: Current timestamp (ISO 8601)
+
+   - **Progress metrics:**
+     - Count tasks.md checkboxes: `[x]` vs total subtasks
+     - COMPLETED_TASKS: count of `[x]` subtasks
+     - TOTAL_TASKS: count of all subtasks (under all `- [ ]` or `- [-]` or `- [x]` parent tasks)
+     - PROGRESS_PERCENT: (COMPLETED_TASKS / TOTAL_TASKS * 100).toFixed(0)
+
+   - **Current position:**
+     - CURRENT_TASK: current_task from state.json (e.g., "1.2")
+     - CURRENT_PARENT: extract parent number (e.g., "1.2" → "1")
+     - PARENT_TITLE: extract from tasks.md (parent task 1's title)
+     - CURRENT_SUBTASK_DESCRIPTION: extract from tasks.md
+
+   - **Phase progress:**
+     - List all phase sections in tasks.md with completion status
+     - Format: "Phase 1: Complete (5/5), Phase 2: In Progress (2/8), Phase 3: Not Started (0/12)"
+
+   - **Recent work:**
+     - Read implementation.md, extract last 3-5 completed subtask entries
+     - Include: subtask number, title, completion timestamp
+     - Format as bulleted list
+
+   - **Files modified:**
+     - Scan implementation.md for all "Files Modified:" sections
+     - Deduplicate file paths
+     - Format as bulleted list with file paths
+
+   - **Review status:**
+     - Find last checkpoint review in implementation.md
+     - Extract: checkpoint name, status (APPROVED/ISSUES), issue count if any
+
+   - **Issues:**
+     - Scan recent checkpoint reviews for warnings/issues
+     - Summarize: "No issues" or "3 MEDIUM issues accepted, see implementation.md"
+
+   - **Next steps:**
+     - NEXT_SUBTASK_DETAILS: Description of current_task subtask
+     - REMAINING_SUBTASKS: List remaining `[ ]` subtasks in current parent
+     - UPCOMING_PARENT_TASKS: List next 1-2 `[ ]` parent tasks
+
+   - **Context notes:**
+     - "Paused during Parent Task {{CURRENT_PARENT}} execution"
+     - Add any warnings about approaching token limits if relevant
+
+3. **Fill template and write file:**
+   - Use Write tool to create `.devflow/features/{{featureKey}}/snapshot.md`
+   - Replace all `{{PLACEHOLDER}}` values with gathered data
+   - **Note:** This overwrites existing snapshot.md if present
+
+4. **Update state.json:**
+   - Invoke State Manager agent with:
+     ```
+     Update feature {{featureKey}}:
+     - Set snapshot: "snapshot.md"
+     ```
+
+**Step 4: Confirm pause:**
+```
+⏸️ Execution paused
+
+Feature: {{display_name}}
+Progress: {{completed_tasks}}/{{total_tasks}} subtasks complete
+Current: Subtask {{current_task}} (in Parent Task {{current_parent}})
+{{#if snapshot_created}}
+✓ Snapshot saved: .devflow/features/{{featureKey}}/snapshot.md
+{{/if}}
+
+Resume: /execute (without arguments)
+```
+
+**If no (skip snapshot):**
+- Invoke State Manager to set `snapshot: null` if it was previously set
+- Display pause confirmation without snapshot message
 
 ---
 
@@ -923,15 +1027,25 @@ None identified
 - {{recommendation 2}}
 ```
 
-**3. Mark Feature Complete**
+**3. Clean Up Snapshot**
+
+If snapshot exists:
+1. **Check state.json** for snapshot value
+2. **If not null:**
+   - Construct path: `.devflow/features/{{featureKey}}/snapshot.md`
+   - If file exists, delete it using Bash: `rm .devflow/features/{{featureKey}}/snapshot.md`
+   - Confirm: `✓ Snapshot cleared (feature complete)`
+
+**4. Mark Feature Complete**
 
 Invoke State Manager to:
 - Set phase=DONE
 - Set status=completed
 - Set completed_at timestamp
+- Set snapshot=null (cleanup)
 - Clear active_feature
 
-**4. Celebration!**
+**5. Celebration!**
 
 ```
 ✅ Feature complete: {{display_name}}!
@@ -982,12 +1096,43 @@ Choose:
 
 When `/execute` runs without arguments and active_feature exists:
 
-**Parse current_task from state.json** (e.g., "1.2"):
+**Step 1: Check for snapshot**
+
+Read state.json to get snapshot value:
+- If `snapshot` is not null (e.g., "snapshot.md")
+- Construct full path: `.devflow/features/{{featureKey}}/snapshot.md`
+- Check if file exists and is readable
+
+**Step 2: Load and display snapshot (if exists)**
+
+If snapshot file exists:
+1. **Read snapshot.md**
+2. **Extract key information:**
+   - Progress percentage
+   - Last completed subtask
+   - Files modified (count)
+   - Issues summary
+3. **Display snapshot summary:**
+   ```
+   📸 Loading snapshot...
+
+   Last session summary:
+   ─────────────────────────────────────────
+   Progress: {{completed}}/{{total}} subtasks ({{percent}}%)
+   Last completed: Subtask {{last_number}} - {{last_title}}
+   Files modified: {{file_count}} files
+   {{#if issues}}Issues noted: {{issue_summary}}{{/if}}
+   ─────────────────────────────────────────
+   ```
+
+**Step 3: Parse current position**
+
+Parse current_task from state.json (e.g., "1.2"):
 - Extract parent task number by parsing string (e.g., "1.2" → parent is 1)
 - Extract subtask number (e.g., "1.2" is subtask 2 of parent 1)
 - Determine which subtasks in parent are complete by reading tasks.md checkboxes
 
-**Display resume information:**
+**Step 4: Display resume information**
 ```
 Resuming feature: {{display_name}}
 Progress: {{completed_subtask_count}}/{{total_subtask_count}} subtasks completed
@@ -1001,9 +1146,11 @@ Remaining in this parent: {{remaining_subtasks}}
 Continue from where you left off? (y/n)
 ```
 
-**If continuing:**
+**Step 5: If continuing**
 - If resuming mid-parent (parent marked `[-]`): Continue with subtasks, no new confirmation
 - If resuming at new parent (parent marked `[ ]`): Show parent task confirmation prompt
+- Snapshot remains in place (not deleted on resume)
+- Will be updated on next pause or deleted on feature completion
 
 ---
 

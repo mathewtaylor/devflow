@@ -89,6 +89,38 @@ try {
 }
 ```
 
+### Example: Manage snapshot
+
+```javascript
+const { readState, writeState, validateSchema } = require('./.devflow/lib/state-io.js');
+
+// Set snapshot when pausing
+const state = readState();
+const featureKey = state.active_feature;
+
+state.features[featureKey].snapshot = "snapshot.md"; // Relative to feature folder
+state.features[featureKey].status = "paused";
+
+const validation = validateSchema(state);
+if (!validation.valid) {
+  return { success: false, errors: validation.errors };
+}
+
+try {
+  writeState(state);
+  return {
+    success: true,
+    message: "Snapshot saved and feature paused",
+    next_action: "Resume with /execute"
+  };
+} catch (error) {
+  return { success: false, error: error.message };
+}
+
+// Clear snapshot when completing or resuming
+state.features[featureKey].snapshot = null;
+```
+
 State schema:
 ```json
 {
@@ -102,7 +134,7 @@ State schema:
       "current_task": 0 | "X.Y",  // 0 = not started, "1.2" = hierarchical subtask
       "concerns": string[],
       "created_at": ISO timestamp,
-      "snapshot": string | null
+      "snapshot": string | null  // "snapshot.md" or null
     }
   }
 }

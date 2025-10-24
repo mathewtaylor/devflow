@@ -61,7 +61,8 @@ The system consists of:
         ├── plan.md            # Technical design
         ├── tasks.md           # Executable checklist
         ├── implementation.md  # Execution log
-        └── retrospective.md   # Lessons learned
+        ├── retrospective.md   # Lessons learned
+        └── snapshot.md        # Resume context (created on pause)
 ```
 
 ## Core Workflow Commands
@@ -110,10 +111,14 @@ The system consists of:
   5. Mark complete in tasks.md
   6. Log to implementation.md
   7. Update state: increment `current_task`
-- **Pause/resume supported**: User can pause anytime, resume later without context loss
+- **Pause/resume supported**: User can pause anytime
+  - Optional snapshot creation preserves context summary
+  - Snapshot helpful after Claude Code's `/compact` command
+  - Resume automatically loads snapshot for context
 - **On completion:**
   - Updates architecture.md with changes
   - Generates retrospective.md
+  - Cleans up snapshot.md
   - Marks feature complete: `phase=DONE`, `status=completed`
 
 ### `/status` - View Progress Dashboard

@@ -614,15 +614,13 @@ On completion:
 │       ├── plan.md             # Technical design
 │       ├── tasks.md            # Task checklist
 │       ├── implementation.md   # Execution log
-│       └── retrospective.md    # Lessons learned
+│       ├── retrospective.md    # Lessons learned
+│       └── snapshot.md         # Resume context (created on pause)
 │
-├── decisions/                  # Architecture Decision Records
-│   ├── 0001-use-clean-architecture.md
-│   ├── 0002-jwt-for-authentication.md
-│   └── 0003-redis-for-caching.md
-│
-└── snapshots/                  # Context snapshots for resume
-    └── snap_feature_timestamp.md
+└── decisions/                  # Architecture Decision Records
+    ├── 0001-use-clean-architecture.md
+    ├── 0002-jwt-for-authentication.md
+    └── 0003-redis-for-caching.md
 ```
 
 ---
@@ -728,16 +726,42 @@ Enterprise patterns documented once, applied consistently:
 # [Interruption occurs]
 Task 12/28: Continue? (y/n/skip/pause): pause
 
+Create/update snapshot for easy resume? (y/n): y
+✓ Snapshot saved: .devflow/features/20251024-user-auth/snapshot.md
+
 ⏸️ Execution paused at Task 12/28
 Resume: /execute (no arguments needed)
 
 # Later...
 /execute
+📸 Loading snapshot...
+
+Last session summary:
+─────────────────────────────────────────
+Progress: 11/28 subtasks (39%)
+Last completed: Subtask 1.11 - Validate user input
+Files modified: 8 files
+─────────────────────────────────────────
+
 Resuming: User Authentication
 Progress: 11/28 complete
 Next: Task 12: Write integration tests...
 Continue? (y): y
 ```
+
+**Snapshots** preserve execution context when pausing, especially useful when:
+- Using Claude Code's `/compact` to reset conversation context
+- Resuming after long interruptions
+- Working on complex features with many subtasks
+
+Snapshot contains:
+- Progress metrics (completed vs. total)
+- Recent completed work
+- Files modified
+- Issues encountered
+- Next steps
+
+Snapshot is automatically created when you pause and deleted when the feature completes.
 
 ### Dependency Management
 

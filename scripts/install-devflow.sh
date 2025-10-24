@@ -20,7 +20,7 @@ MAX_RETRIES=3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 8 agents, 9 commands, 9 templates/utilities
+# Current counts: 8 agents, 9 commands, 10 templates/utilities
 declare -a FILES=(
     # Agents (8 total)
     ".claude/agents/architect.md"
@@ -43,13 +43,14 @@ declare -a FILES=(
     ".claude/commands/devflow/consolidate-docs.md"
     ".claude/commands/devflow/readme-manager.md"
 
-    # Templates and utilities (9 total)
+    # Templates and utilities (10 total)
     ".devflow/lib/state-io.js"
     ".devflow/lib/cli.js"
     ".devflow/state.json.schema"
     ".devflow/instructions.md"
     ".devflow/templates/constitution.md.template"
     ".devflow/templates/architecture.md.template"
+    ".devflow/templates/snapshot.md.template"
     ".devflow/templates/.devflowignore.template"
     ".devflow/templates/domains/_index.md.template"
     ".devflow/templates/domains/concern.md.template"
@@ -75,7 +76,7 @@ Example:
 What gets installed:
   • 8 agents in .claude/agents/
   • 9 commands in .claude/commands/devflow/
-  • 9 templates and utilities in .devflow/
+  • 10 templates and utilities in .devflow/
 
 After installation, run: /init
 EOF
@@ -307,7 +308,7 @@ show_success() {
     echo "Files installed:"
     echo "  • 8 agents in .claude/agents/"
     echo "  • 9 commands in .claude/commands/devflow/"
-    echo "  • 9 templates and utilities in .devflow/"
+    echo "  • 10 templates and utilities in .devflow/"
     echo ""
     echo "Next steps:"
     echo "  1. Run: /init"

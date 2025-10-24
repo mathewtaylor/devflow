@@ -41,7 +41,7 @@ $MaxRetries = 3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 8 agents, 9 commands, 9 templates/utilities
+# Current counts: 8 agents, 9 commands, 10 templates/utilities
 $FilesToDownload = @(
     # Agents (8 total)
     ".claude/agents/architect.md",
@@ -64,13 +64,14 @@ $FilesToDownload = @(
     ".claude/commands/devflow/consolidate-docs.md",
     ".claude/commands/devflow/readme-manager.md",
 
-    # Templates and utilities (9 total)
+    # Templates and utilities (10 total)
     ".devflow/lib/state-io.js",
     ".devflow/lib/cli.js",
     ".devflow/state.json.schema",
     ".devflow/instructions.md",
     ".devflow/templates/constitution.md.template",
     ".devflow/templates/architecture.md.template",
+    ".devflow/templates/snapshot.md.template",
     ".devflow/templates/.devflowignore.template",
     ".devflow/templates/domains/_index.md.template",
     ".devflow/templates/domains/concern.md.template"
@@ -94,7 +95,7 @@ function Show-Help {
     Write-Host "What gets installed:"
     Write-Host "  • 8 agents in .claude/agents/"
     Write-Host "  • 9 commands in .claude/commands/devflow/"
-    Write-Host "  • 9 templates and utilities in .devflow/"
+    Write-Host "  • 10 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "After installation, run: /init"
     Write-Host ""
@@ -354,7 +355,7 @@ function Show-SuccessMessage {
     Write-Host "Files installed:"
     Write-Host "  • 8 agents in .claude/agents/"
     Write-Host "  • 9 commands in .claude/commands/devflow/"
-    Write-Host "  • 9 templates and utilities in .devflow/"
+    Write-Host "  • 10 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "Next steps:"
     Write-Host "  1. Run: /init"
