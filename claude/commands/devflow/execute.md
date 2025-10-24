@@ -1,11 +1,11 @@
 ---
 # Note: Bash unrestricted - intentional for feature implementation flexibility
 # This command needs to run tests, migrations, build tools, etc.
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task(reviewer), Task(tester), Task(state-manager), Bash(node:*)
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task(checkpoint-reviewer), Task(tester), Task(state-manager), Bash(node:*)
 argument-hint: [feature-name]?
 description: Execute feature tasks with automated code review and testing
 model: sonnet
-version: 2025.10.24
+version: 2025.10.25
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
@@ -99,6 +99,14 @@ Parse tasks.md to identify parent tasks (1, 2, 3) and their subtasks (1.1, 1.2, 
 
 #### 1. Display Parent Task (Confirmation Point)
 
+**Check if this is a Review Checkpoint parent task:**
+
+If parent task title contains "Review Checkpoint" (e.g., "3. Review Checkpoint: Data Layer Complete"):
+- **Skip normal subtask iteration** - this is a checkpoint, not implementation
+- Go directly to **Section 3B: Execute Review Checkpoint** (below)
+
+**For normal parent tasks:**
+
 Show this ONCE per parent task:
 
 ```
@@ -140,14 +148,6 @@ If subtask has `[depends: x.y]`:
 
 #### 3. Implement Task
 
-**Check if this is a Phase Review subtask:**
-
-If subtask description contains "Phase Review" (e.g., "1.5. Phase Review: Validate service extraction"):
-- **Skip normal implementation** - this is a review checkpoint, not a coding task
-- Go directly to **Section 3A: Execute Phase Review** (below)
-
-**For normal implementation subtasks:**
-
 Based on task description:
 - Write code following constitution standards
 - Create new files or modify existing
@@ -157,170 +157,354 @@ Based on task description:
 
 ---
 
-### 3A. Execute Phase Review (Phase Review Subtasks Only)
+### 3B. Execute Review Checkpoint (Review Checkpoint Parent Tasks Only)
 
-**CRITICAL: This section only applies when current subtask is "Phase Review" type.**
+**CRITICAL: This section only applies when parent task title contains "Review Checkpoint".**
 
 **Check configuration:**
 
-Read constitution.md for `quality_gates.phase_review` setting:
-- If `false`: Log "Phase review disabled in constitution", mark subtask complete, skip to section 6
-- If `true` or not specified (default): Continue with phase review
+Read constitution.md for `quality_gates.checkpoint_review` setting:
+- If `false`: Log "Checkpoint review disabled", mark parent task complete, skip to next parent
+- If `true` or not specified (default): Continue with checkpoint review
 
-**Collect review context:**
+**Collect checkpoint scope:**
 
-1. **Identify parent task**: Parse subtask number (e.g., "1.5" → parent is 1)
-2. **Find all completed subtasks in this parent** (e.g., 1.1, 1.2, 1.3, 1.4)
-3. **Collect all files changed** across those subtasks:
-   - Read implementation.md to extract "Files Modified" sections for each subtask
-   - Create comprehensive list of created/modified files
-4. **Extract relevant requirements**:
-   - From spec.md: Requirements for this parent task/phase
-   - From plan.md: Technical design for this parent task/phase
+1. **Find last checkpoint**: Search tasks.md backwards for previous "Review Checkpoint" parent task
+   - If none found: Checkpoint scope starts from feature beginning
+   - If found: Checkpoint scope starts from task after that checkpoint
+2. **Identify reviewed parent tasks**: All parent tasks between last checkpoint and current checkpoint
+   - Example: If last checkpoint was task 3, and current is task 7, review parent tasks 4, 5, 6
+3. **Collect all files changed**:
+   - Read implementation.md for "Files Modified" sections for each parent task in scope
+   - Create comprehensive list of all created/modified files
+4. **Extract requirements**:
+   - From spec.md: Requirements for all reviewed parent tasks
+   - Parse phase section name from checkpoint title (e.g., "Data Layer Complete" → Phase 1: Data Layer)
+5. **Extract design**:
+   - From plan.md: Technical design for all reviewed parent tasks
 
-**Invoke Phase Reviewer:**
+**Check context before review:**
 
-Use Task tool to invoke reviewer agent with phase mode:
+```
+Current context usage: {{current_tokens}}/200,000 tokens
+```
+
+- If > 150K tokens (75% of budget):
+  ```
+  ⚠️ Context Warning: {{current_tokens}}/200,000 tokens ({{percentage}}%)
+
+  Running checkpoint review with high context may fail mid-review.
+
+  Options:
+  a) Compact now before review (recommended)
+  b) Continue anyway (may need to compact during fixes)
+
+  Choose:
+  ```
+- If user chooses compact: Run `/compact`, then resume checkpoint review
+- If user chooses continue: Proceed to review
+
+**Invoke Checkpoint Reviewer (Attempt 1):**
+
+Use Task tool to invoke checkpoint-reviewer agent:
 
 ```
 Task tool invocation:
-- subagent_type: "reviewer"
-- description: "Phase review for parent task {{parent_number}}"
+- subagent_type: "checkpoint-reviewer"
+- description: "Checkpoint review: {{phase_name}}"
 - prompt: """
-  Perform phase-level code review (review_mode=phase).
+  Perform comprehensive checkpoint review with extended thinking.
 
-  **Parent Task:** {{parent_number}}. {{parent_title}} ({{effort}})
-  **Completed Subtasks:** {{list, e.g., 1.1, 1.2, 1.3, 1.4}}
+  **Checkpoint:** {{checkpoint_parent_number}}. Review Checkpoint: {{phase_name}} Complete
+  **Scope:** Parent tasks {{list, e.g., 1, 2}} ({{count}} tasks)
+  **Since:** {{last_checkpoint_number or "feature start"}}
 
-  **Files Changed in This Phase:**
-  {{list all files created/modified across all subtasks in this parent}}
+  **Files Changed in Checkpoint Scope:**
+  {{comprehensive list of all files created/modified}}
 
   **Spec Requirements for This Phase:**
-  {{extract relevant requirements from spec.md for this parent task}}
+  {{extract requirements from spec.md for all reviewed parent tasks}}
 
   **Technical Plan for This Phase:**
-  {{extract relevant design from plan.md for this parent task}}
+  {{extract design from plan.md for all reviewed parent tasks}}
 
   **Context:**
   @constitution.md
   @architecture.md
 
-  **Phase Review Focus:**
-  1. Integration: Do all subtasks work together correctly?
-  2. Spec alignment: Does completed phase fulfill requirements?
-  3. Architecture alignment: Matches plan.md patterns?
-  4. Cross-cutting concerns: Security, performance, maintainability
-  5. Test coverage: Are all phase requirements tested?
-  6. Code quality: Issues spanning multiple files
+  **Checkpoint Review Focus:**
+  1. Integration: Do all parent tasks in this phase work together?
+  2. Spec alignment: Are ALL phase requirements met?
+  3. Architecture compliance: Matches plan.md and architecture patterns?
+  4. Security: Any vulnerabilities introduced across phase?
+  5. Code quality: Bad practices, code smells, duplication across files?
+  6. Cross-cutting concerns: Performance, maintainability, testability?
 
-  Use extended thinking to identify issues missed in per-task reviews.
+  **Severity Classification Required:**
+  Categorize ALL issues by severity:
+  - CRITICAL: Security vulnerabilities, data loss, breaking bugs
+  - HIGH: Spec violations, architecture breaks, missing requirements
+  - MEDIUM: Code quality, potential bugs, missing tests
+  - LOW: Style, minor optimizations, suggestions
 
-  Return structured feedback with APPROVED or CHANGES_REQUIRED.
+  Use extended thinking for deep cross-component analysis.
+
+  Return structured feedback with status and severity-categorized issues.
   """
 ```
 
-**Handle Phase Review Result:**
+**Display checkpoint review header:**
 
-**If APPROVED:**
 ```
-✓ Phase review passed
-  Parent Task {{parent_number}}: {{parent_title}} validated
-  {{if warnings}}Warnings: {{count}}{{/if}}
-  {{if suggestions}}Suggestions: {{count}}{{/if}}
-```
-- Log approval to implementation.md (see section 6)
-- Mark this Phase Review subtask complete `[x]`
-- Continue to section 6 (mark complete) then section 7 (update state)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 Checkpoint Review: {{phase_name}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**If CHANGES_REQUIRED:**
-```
-⚠️ Phase review found issues in Parent Task {{parent_number}}
+Scope: Parent tasks {{list}} ({{count}} tasks)
+Files reviewed: {{file_count}} files
+Since: {{last_checkpoint or "feature start"}}
 
-Critical Issues:
-{{list with file locations and fix suggestions}}
-
-Warnings:
-{{list with locations}}
-
-Creating remediation subtasks...
+Analyzing with extended thinking...
 ```
 
-**Create Remediation Subtasks:**
+**Handle Checkpoint Review Result:**
 
-1. Parse issues from review feedback (separate critical from warnings)
-2. For each critical issue + high-priority warning, create remediation subtask
-3. Use naming: `{{parent}}.R{{n}}` (e.g., 1.R1, 1.R2, 1.R3)
-4. Insert into tasks.md BEFORE the current Phase Review subtask using Edit tool
+**If status = CLEAN:**
+```
+✓ Checkpoint review passed
 
-Example transformation:
-```markdown
-Before:
-[-] 1. Implement Data Layer (effort: high)
-- [x] 1.1. Create User model
-- [x] 1.2. Create Project model
-- [x] 1.3. Update DbContext
-- [ ] 1.4. Phase Review: Validate data layer
+Phase: {{phase_name}}
+Reviewed: {{parent_task_count}} parent tasks
+Files: {{file_count}} files checked
 
-After (with issues found):
-[-] 1. Implement Data Layer (effort: high)
-- [x] 1.1. Create User model
-- [x] 1.2. Create Project model
-- [x] 1.3. Update DbContext
-- [ ] 1.R1. Fix User-Project relationship mapping
-- [ ] 1.R2. Add missing validation in User model
-- [ ] 1.4. Phase Review: Validate data layer
+✅ No issues found. Excellent work!
 ```
 
-**Execute Remediation Loop:**
+- Log success to implementation.md (see section 6)
+- Mark Review Checkpoint parent task complete `[x]`
+- Check context usage (see Context Management section)
+- Continue to next parent task
 
-For each remediation subtask (1.R1, 1.R2, etc.):
-1. Mark Phase Review subtask as `[ ]` (not complete yet)
-2. Update state current_task to first remediation subtask (e.g., "1.R1")
-3. Execute remediation subtask using normal workflow:
-   - Section 2: Check dependencies (none for remediation)
-   - Section 3: Implement (normal code implementation)
-   - Section 4: Code review (per-task mode)
-   - Section 5: Testing
-   - Section 6: Mark complete
-   - Section 7: Update state
-4. Repeat for next remediation subtask
-5. After all remediation complete, return to this Phase Review subtask
+**If status = ISSUES_FOUND:**
 
-**Re-run Phase Review:**
+Analyze severity distribution and handle based on what's present:
 
-After all remediation subtasks complete:
-- Update current_task back to Phase Review subtask (e.g., "1.4")
-- Invoke reviewer agent again with same context (but now includes remediation files)
-- Track attempt count (this is attempt 2, 3, etc.)
-- If APPROVED: Mark Phase Review complete, continue
-- If CHANGES_REQUIRED: Create new remediation subtasks, repeat (max 3 total attempts)
+**CRITICAL or HIGH issues found (auto-fix these):**
 
-**After 3 Failed Phase Review Attempts:**
 ```
-❌ Phase review still showing issues after 3 remediation cycles
+⚠️ Checkpoint Review: Issues Require Fixes
 
-Remaining issues:
-{{list persistent issues}}
+Phase: {{phase_name}}
 
-Parent Task {{parent_number}} may have fundamental design problems.
+CRITICAL Issues ({{count}}):
+{{for each: file:line | description | suggested fix}}
+
+HIGH Issues ({{count}}):
+{{for each: file:line | description | suggested fix}}
+
+{{if medium}}MEDIUM Issues ({{count}}):
+{{summary - will be addressed after critical/high}}{{/if}}
+
+{{if low}}LOW Issues ({{count}}):
+{{summary - will be reviewed after all fixes}}{{/if}}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Auto-fixing CRITICAL and HIGH severity issues...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Fix critical and high issues sequentially:**
+
+For each CRITICAL issue:
+1. Display: `Fixing CRITICAL: {{issue_description}}`
+2. Analyze issue and suggested fix from review
+3. Implement fix (modify code, add validation, fix security issue, etc.)
+4. Log fix to implementation.md
+
+For each HIGH issue:
+1. Display: `Fixing HIGH: {{issue_description}}`
+2. Analyze issue and suggested fix from review
+3. Implement fix (add missing feature, fix spec violation, align architecture, etc.)
+4. Log fix to implementation.md
+
+**Check context after fixes:**
+
+- If context > 170K tokens:
+  ```
+  ⚠️ Context usage high after fixes: {{tokens}}/200,000
+
+  Compacting before re-review to ensure clean execution...
+  ```
+  - Run `/compact`
+  - Resume with re-review
+
+**Re-run checkpoint review (attempt 2-5):**
+
+- Update attempt counter
+- Invoke checkpoint-reviewer again with same scope (now includes fixes)
+- If CLEAN: Proceed to check MEDIUM/LOW issues (if any remain)
+- If CRITICAL/HIGH still present: Repeat auto-fix (max 5 total attempts)
+
+**After 5 attempts with CRITICAL/HIGH still present:**
+
+```
+❌ Checkpoint review failed after 5 attempts
+
+Phase: {{phase_name}} has persistent critical/high issues
+
+Remaining CRITICAL issues ({{count}}):
+{{list}}
+
+Remaining HIGH issues ({{count}}):
+{{list}}
+
+This phase may have fundamental design problems that require manual intervention.
 
 Options:
-a) Continue anyway (mark Phase Review complete, note issues in implementation.md)
-b) Pause execution for manual review and intervention
-c) Skip remaining tasks in this parent (mark incomplete)
-d) Request manual help to resolve issues
+a) Continue anyway (NOT RECOMMENDED - known critical issues persist)
+b) Pause execution for manual review (recommended)
+c) Show me extended reasoning to understand the issues
+d) Revert all changes in this phase (destructive)
 
 Choose:
 ```
 
-Handle user choice and proceed accordingly.
+Handle user choice:
+- **a) Continue**: Log all issues to implementation.md, mark checkpoint complete `[x]`, continue
+- **b) Pause**: Save state, exit execution for manual intervention
+- **c) Show reasoning**: Display extended reasoning from review, then ask again
+- **d) Revert**: Use git to revert phase changes, mark checkpoint skipped
+
+**Only MEDIUM or LOW issues remaining (all critical/high fixed):**
+
+```
+✓ Checkpoint Review: Critical Issues Resolved
+
+Phase: {{phase_name}}
+Attempt: {{attempt_count}} review cycle(s)
+
+All CRITICAL and HIGH issues have been fixed.
+
+Remaining issues:
+{{if medium}}MEDIUM ({{count}}):
+  {{for each: file:line | description | suggested fix}}
+{{/if}}
+
+{{if low}}LOW ({{count}}):
+  {{for each: file:line | description | suggestion}}
+{{/if}}
+
+Options:
+a) Auto-fix MEDIUM issues (recommended if medium issues present)
+b) Show me issue details, I'll decide what to fix
+c) Accept and continue (log issues but don't block)
+d) Pause for manual review
+
+Choose:
+```
+
+Handle user choice:
+
+**a) Auto-fix MEDIUM:**
+- Fix each MEDIUM issue sequentially
+- Log fixes to implementation.md
+- Re-run checkpoint review (attempt N+1)
+- If LOW still remain after MEDIUM fixed: Ask about LOW issues
+- If CLEAN: Mark checkpoint complete
+
+**b) Show details:**
+- Display full details for each MEDIUM and LOW issue
+- For each issue, ask: `Fix this issue? (y/n/skip)`
+  - y: Fix it now
+  - n: Skip, mark as accepted
+  - skip: Skip for now, will ask again
+- After all decisions, re-run checkpoint review if any were fixed
+
+**c) Accept and continue:**
+- Log all MEDIUM/LOW issues to implementation.md as "Accepted Issues"
+- Mark Review Checkpoint parent task complete `[x]`
+- Continue to next parent task
+
+**d) Pause:**
+- Save current state
+- Exit execution for manual review
+
+**Update implementation.md after checkpoint:**
+
+Append checkpoint review section:
+
+```markdown
+## Review Checkpoint: {{phase_name}} Complete
+
+**Completed:** {{ISO timestamp}}
+**Checkpoint:** Parent Task {{checkpoint_number}}
+**Scope:** Parent tasks {{list, e.g., 1, 2}} ({{count}} tasks)
+**Since:** {{last_checkpoint or "feature start"}}
+**Files Reviewed:** {{file_count}} files
+**Review Cycles:** {{attempt_count}}
+
+### Initial Review Results
+
+- **CRITICAL:** {{count}} issues
+- **HIGH:** {{count}} issues
+- **MEDIUM:** {{count}} issues
+- **LOW:** {{count}} issues
+
+### Fixes Applied
+
+**CRITICAL Fixes ({{count}}):**
+{{for each: issue description | files modified | resolution}}
+
+**HIGH Fixes ({{count}}):**
+{{for each: issue description | files modified | resolution}}
+
+{{if medium_fixed}}**MEDIUM Fixes ({{count}}):**
+{{for each: issue description | files modified | resolution}}
+{{/if}}
+
+### Final Status
+
+{{if clean}}✅ All issues resolved - checkpoint CLEAN{{/if}}
+
+{{if accepted_issues}}⚠️ Accepted Issues (not blocking):
+
+**MEDIUM ({{count}}):**
+{{list with rationale for accepting}}
+
+**LOW ({{count}}):**
+{{list with rationale for accepting}}
+{{/if}}
+
+{{if failed}}❌ Checkpoint FAILED after 5 attempts:
+{{list persistent critical/high issues}}
+User action: {{what user chose}}
+{{/if}}
+
+### Context Management
+
+- Before review: {{tokens}} tokens
+- After review: {{tokens}} tokens
+{{if compacted}}✓ Context compacted during review{{/if}}
+
+---
+```
+
+**Mark checkpoint complete:**
+
+- Use Edit tool to mark Review Checkpoint parent task: `[ ]` → `[x]`
+- Invoke State Manager to update current_task to next parent task number
+- Log checkpoint completion
+
+**Continue to next parent task:**
+
+- If more parent tasks exist: Show next parent task confirmation
+- If this was the last parent task: Go to Completion Flow
 
 ---
 
 #### 4. Code Review (with Extended Thinking)
 
 **Skip review if task is:**
-- Phase Review subtask (already handled in section 3A)
 - Documentation only
 - Configuration changes
 - Test file creation
@@ -376,7 +560,6 @@ If `APPROVED`:
 #### 5. Testing
 
 **Skip testing if task is:**
-- Phase Review subtask (already validated in section 3A)
 - Documentation
 - Configuration
 - Test file itself

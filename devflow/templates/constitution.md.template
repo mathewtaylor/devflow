@@ -203,9 +203,9 @@ Configure automated quality checks during feature execution:
 
 ```yaml
 quality_gates:
-  per_task_review: true      # Code review after each subtask implementation
-  phase_review: true         # Integration review after parent task completion
-  testing: true              # Automated testing after each subtask
+  per_task_review: true       # Code review after each subtask implementation
+  checkpoint_review: true     # Comprehensive review after phase completion
+  testing: true               # Automated testing after each subtask
 ```
 
 ### Gate Descriptions
@@ -214,14 +214,22 @@ quality_gates:
 - Runs after implementing each individual subtask
 - Reviews: code quality, security, constitution compliance
 - Model: Opus with extended thinking
+- Scope: Narrow (single subtask changes)
 - Blocks: Prevents proceeding until approved or max attempts reached
 
-**Phase Review:**
-- Runs after completing all subtasks in a parent task
-- Reviews: integration, spec alignment, architecture compliance, cross-cutting concerns
+**Checkpoint Review:**
+- Runs after completing all parent tasks in a phase section
+- Reviews: integration, spec fulfillment, architecture, security, code quality
 - Model: Opus with extended thinking
-- Creates remediation subtasks if issues found
-- Ensures completed phases meet holistic requirements
+- Scope: Broad (entire phase with multiple parent tasks)
+- **Iterative fixing:** Auto-fixes CRITICAL/HIGH issues, stops at MEDIUM/LOW
+- **Severity-based:**
+  - CRITICAL: Security vulnerabilities, data loss, breaking bugs (auto-fix)
+  - HIGH: Spec violations, architecture breaks (auto-fix)
+  - MEDIUM: Code quality, potential bugs (ask user)
+  - LOW: Style, minor optimizations (ask user)
+- **Max 5 review cycles** before user intervention
+- **Context-aware:** Monitors tokens, compacts if needed
 
 **Testing:**
 - Runs after implementing each subtask
@@ -236,7 +244,7 @@ Set any gate to `false` to disable (not recommended):
 ```yaml
 quality_gates:
   per_task_review: true
-  phase_review: false   # Disables phase review - faster execution but may miss integration issues
+  checkpoint_review: false   # Disables checkpoint review - faster but may miss phase-level issues
   testing: true
 ```
 
