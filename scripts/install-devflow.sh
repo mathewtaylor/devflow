@@ -21,39 +21,40 @@ MAX_RETRIES=3
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
 # Current counts: 8 agents, 9 commands, 10 templates/utilities
+# Format: "source_path:destination_path" (source from repo, destination in user project)
 declare -a FILES=(
-    # Agents (8 total)
-    ".claude/agents/architect.md"
-    ".claude/agents/checkpoint-reviewer.md"
-    ".claude/agents/git-operations-manager.md"
-    ".claude/agents/planner.md"
-    ".claude/agents/readme-maintainer.md"
-    ".claude/agents/reviewer.md"
-    ".claude/agents/state-manager.md"
-    ".claude/agents/tester.md"
+    # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
+    ".devflow/integrations/claude/agents/architect.md:.claude/agents/architect.md"
+    ".devflow/integrations/claude/agents/checkpoint-reviewer.md:.claude/agents/checkpoint-reviewer.md"
+    ".devflow/integrations/claude/agents/git-operations-manager.md:.claude/agents/git-operations-manager.md"
+    ".devflow/integrations/claude/agents/planner.md:.claude/agents/planner.md"
+    ".devflow/integrations/claude/agents/readme-maintainer.md:.claude/agents/readme-maintainer.md"
+    ".devflow/integrations/claude/agents/reviewer.md:.claude/agents/reviewer.md"
+    ".devflow/integrations/claude/agents/state-manager.md:.claude/agents/state-manager.md"
+    ".devflow/integrations/claude/agents/tester.md:.claude/agents/tester.md"
 
-    # Commands (9 total)
-    ".claude/commands/devflow/init.md"
-    ".claude/commands/devflow/spec.md"
-    ".claude/commands/devflow/plan.md"
-    ".claude/commands/devflow/tasks.md"
-    ".claude/commands/devflow/execute.md"
-    ".claude/commands/devflow/status.md"
-    ".claude/commands/devflow/think.md"
-    ".claude/commands/devflow/consolidate-docs.md"
-    ".claude/commands/devflow/readme-manager.md"
+    # Commands (9 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
+    ".devflow/integrations/claude/commands/devflow/init.md:.claude/commands/devflow/init.md"
+    ".devflow/integrations/claude/commands/devflow/spec.md:.claude/commands/devflow/spec.md"
+    ".devflow/integrations/claude/commands/devflow/plan.md:.claude/commands/devflow/plan.md"
+    ".devflow/integrations/claude/commands/devflow/tasks.md:.claude/commands/devflow/tasks.md"
+    ".devflow/integrations/claude/commands/devflow/execute.md:.claude/commands/devflow/execute.md"
+    ".devflow/integrations/claude/commands/devflow/status.md:.claude/commands/devflow/status.md"
+    ".devflow/integrations/claude/commands/devflow/think.md:.claude/commands/devflow/think.md"
+    ".devflow/integrations/claude/commands/devflow/consolidate-docs.md:.claude/commands/devflow/consolidate-docs.md"
+    ".devflow/integrations/claude/commands/devflow/readme-manager.md:.claude/commands/devflow/readme-manager.md"
 
-    # Templates and utilities (10 total)
-    ".devflow/lib/state-io.js"
-    ".devflow/lib/cli.js"
-    ".devflow/state.json.schema"
-    ".devflow/instructions.md"
-    ".devflow/templates/constitution.md.template"
-    ".devflow/templates/architecture.md.template"
-    ".devflow/templates/snapshot.md.template"
-    ".devflow/templates/.devflowignore.template"
-    ".devflow/templates/domains/_index.md.template"
-    ".devflow/templates/domains/concern.md.template"
+    # Templates and utilities (10 total) - Source and destination are the same
+    ".devflow/lib/state-io.js:.devflow/lib/state-io.js"
+    ".devflow/lib/cli.js:.devflow/lib/cli.js"
+    ".devflow/state.json.schema:.devflow/state.json.schema"
+    ".devflow/instructions.md:.devflow/instructions.md"
+    ".devflow/templates/constitution.md.template:.devflow/templates/constitution.md.template"
+    ".devflow/templates/architecture.md.template:.devflow/templates/architecture.md.template"
+    ".devflow/templates/snapshot.md.template:.devflow/templates/snapshot.md.template"
+    ".devflow/templates/.devflowignore.template:.devflow/templates/.devflowignore.template"
+    ".devflow/templates/domains/_index.md.template:.devflow/templates/domains/_index.md.template"
+    ".devflow/templates/domains/concern.md.template:.devflow/templates/domains/concern.md.template"
 )
 
 # Help message
@@ -227,15 +228,20 @@ download_files() {
     print_info "Downloading DevFlow files from GitHub..."
     echo ""
 
-    for file in "${FILES[@]}"; do
+    for file_mapping in "${FILES[@]}"; do
         current=$((current + 1))
-        # Strip leading dot for GitHub URL (repo uses claude/ not .claude/)
-        local source_path="${file#.}"
+
+        # Split source:destination
+        local source_file="${file_mapping%%:*}"
+        local dest_file="${file_mapping##*:}"
+
+        # Strip leading dot for GitHub URL (repo uses devflow/ not .devflow/)
+        local source_path="${source_file#.}"
         local url="${GITHUB_REPO}/${source_path}"
-        local output="${TARGET_DIR}/${file}"
+        local output="${TARGET_DIR}/${dest_file}"
 
         # Show progress
-        printf "[%2d/%2d] Downloading %s... " "$current" "$total" "$(basename "$file")"
+        printf "[%2d/%2d] Downloading %s... " "$current" "$total" "$(basename "$dest_file")"
 
         # Ensure parent directory exists
         local output_dir=$(dirname "$output")
@@ -248,11 +254,11 @@ download_files() {
                 echo -e "${GREEN}✓${NC}"
             else
                 echo -e "${RED}✗ (empty file)${NC}"
-                failed+=("$file")
+                failed+=("$dest_file")
             fi
         else
             echo -e "${RED}✗ (download failed)${NC}"
-            failed+=("$file")
+            failed+=("$dest_file")
         fi
     done
 

@@ -42,39 +42,40 @@ $MaxRetries = 3
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
 # Current counts: 8 agents, 9 commands, 10 templates/utilities
+# Format: @{Source='repo_path'; Dest='install_path'}
 $FilesToDownload = @(
-    # Agents (8 total)
-    ".claude/agents/architect.md",
-    ".claude/agents/checkpoint-reviewer.md",
-    ".claude/agents/git-operations-manager.md",
-    ".claude/agents/planner.md",
-    ".claude/agents/readme-maintainer.md",
-    ".claude/agents/reviewer.md",
-    ".claude/agents/state-manager.md",
-    ".claude/agents/tester.md",
+    # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
+    @{Source=".devflow/integrations/claude/agents/architect.md"; Dest=".claude/agents/architect.md"},
+    @{Source=".devflow/integrations/claude/agents/checkpoint-reviewer.md"; Dest=".claude/agents/checkpoint-reviewer.md"},
+    @{Source=".devflow/integrations/claude/agents/git-operations-manager.md"; Dest=".claude/agents/git-operations-manager.md"},
+    @{Source=".devflow/integrations/claude/agents/planner.md"; Dest=".claude/agents/planner.md"},
+    @{Source=".devflow/integrations/claude/agents/readme-maintainer.md"; Dest=".claude/agents/readme-maintainer.md"},
+    @{Source=".devflow/integrations/claude/agents/reviewer.md"; Dest=".claude/agents/reviewer.md"},
+    @{Source=".devflow/integrations/claude/agents/state-manager.md"; Dest=".claude/agents/state-manager.md"},
+    @{Source=".devflow/integrations/claude/agents/tester.md"; Dest=".claude/agents/tester.md"},
 
-    # Commands (9 total)
-    ".claude/commands/devflow/init.md",
-    ".claude/commands/devflow/spec.md",
-    ".claude/commands/devflow/plan.md",
-    ".claude/commands/devflow/tasks.md",
-    ".claude/commands/devflow/execute.md",
-    ".claude/commands/devflow/status.md",
-    ".claude/commands/devflow/think.md",
-    ".claude/commands/devflow/consolidate-docs.md",
-    ".claude/commands/devflow/readme-manager.md",
+    # Commands (9 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
+    @{Source=".devflow/integrations/claude/commands/devflow/init.md"; Dest=".claude/commands/devflow/init.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/spec.md"; Dest=".claude/commands/devflow/spec.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/plan.md"; Dest=".claude/commands/devflow/plan.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/tasks.md"; Dest=".claude/commands/devflow/tasks.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/execute.md"; Dest=".claude/commands/devflow/execute.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/status.md"; Dest=".claude/commands/devflow/status.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/think.md"; Dest=".claude/commands/devflow/think.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/consolidate-docs.md"; Dest=".claude/commands/devflow/consolidate-docs.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/readme-manager.md"; Dest=".claude/commands/devflow/readme-manager.md"},
 
-    # Templates and utilities (10 total)
-    ".devflow/lib/state-io.js",
-    ".devflow/lib/cli.js",
-    ".devflow/state.json.schema",
-    ".devflow/instructions.md",
-    ".devflow/templates/constitution.md.template",
-    ".devflow/templates/architecture.md.template",
-    ".devflow/templates/snapshot.md.template",
-    ".devflow/templates/.devflowignore.template",
-    ".devflow/templates/domains/_index.md.template",
-    ".devflow/templates/domains/concern.md.template"
+    # Templates and utilities (10 total) - Source and destination are the same
+    @{Source=".devflow/lib/state-io.js"; Dest=".devflow/lib/state-io.js"},
+    @{Source=".devflow/lib/cli.js"; Dest=".devflow/lib/cli.js"},
+    @{Source=".devflow/state.json.schema"; Dest=".devflow/state.json.schema"},
+    @{Source=".devflow/instructions.md"; Dest=".devflow/instructions.md"},
+    @{Source=".devflow/templates/constitution.md.template"; Dest=".devflow/templates/constitution.md.template"},
+    @{Source=".devflow/templates/architecture.md.template"; Dest=".devflow/templates/architecture.md.template"},
+    @{Source=".devflow/templates/snapshot.md.template"; Dest=".devflow/templates/snapshot.md.template"},
+    @{Source=".devflow/templates/.devflowignore.template"; Dest=".devflow/templates/.devflowignore.template"},
+    @{Source=".devflow/templates/domains/_index.md.template"; Dest=".devflow/templates/domains/_index.md.template"},
+    @{Source=".devflow/templates/domains/concern.md.template"; Dest=".devflow/templates/domains/concern.md.template"}
 )
 
 # Show help
@@ -267,15 +268,20 @@ function Get-DevFlowFiles {
     Write-Info "Downloading DevFlow files from GitHub..."
     Write-Host ""
 
-    foreach ($file in $FilesToDownload) {
+    foreach ($fileMapping in $FilesToDownload) {
         $current++
-        # Strip leading dot for GitHub URL (repo uses claude/ not .claude/)
-        $sourcePath = $file.TrimStart('.')
+
+        # Get source and destination from hashtable
+        $sourceFile = $fileMapping.Source
+        $destFile = $fileMapping.Dest
+
+        # Strip leading dot for GitHub URL (repo uses devflow/ not .devflow/)
+        $sourcePath = $sourceFile.TrimStart('.')
         $url = "$GitHubRepo/$($sourcePath.Replace('\', '/'))"
-        $outputPath = Join-Path $BasePath $file
+        $outputPath = Join-Path $BasePath $destFile
 
         # Show progress
-        $fileName = Split-Path $file -Leaf
+        $fileName = Split-Path $destFile -Leaf
         Write-Host "[$current/$total] Downloading $fileName... " -NoNewline
 
         # Ensure parent directory exists
@@ -292,12 +298,12 @@ function Get-DevFlowFiles {
             }
             else {
                 Write-Host "✗ (empty file)" -ForegroundColor Red
-                $failed += $file
+                $failed += $destFile
             }
         }
         else {
             Write-Host "✗ (download failed)" -ForegroundColor Red
-            $failed += $file
+            $failed += $destFile
         }
     }
 
