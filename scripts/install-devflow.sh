@@ -188,8 +188,10 @@ create_directories() {
     print_info "Creating directory structure..."
 
     # Create all necessary parent directories from FILES array
-    for file in "${FILES[@]}"; do
-        local dir=$(dirname "$TARGET_DIR/$file")
+    for file_mapping in "${FILES[@]}"; do
+        # Extract destination path from source:destination format
+        local dest_file="${file_mapping##*:}"
+        local dir=$(dirname "$TARGET_DIR/$dest_file")
         mkdir -p "$dir"
     done
 
