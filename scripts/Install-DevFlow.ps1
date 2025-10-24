@@ -41,17 +41,18 @@ $MaxRetries = 3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 6 agents, 8 commands, 8 templates/utilities
+# Current counts: 7 agents, 9 commands, 8 templates/utilities
 $FilesToDownload = @(
-    # Agents (6 total)
+    # Agents (7 total)
     ".claude/agents/architect.md",
     ".claude/agents/planner.md",
     ".claude/agents/reviewer.md",
     ".claude/agents/state-manager.md",
     ".claude/agents/tester.md",
     ".claude/agents/git-operations-manager.md",
+    ".claude/agents/readme-maintainer.md",
 
-    # Commands (8 total)
+    # Commands (9 total)
     ".claude/commands/devflow/init.md",
     ".claude/commands/devflow/spec.md",
     ".claude/commands/devflow/plan.md",
@@ -89,8 +90,8 @@ function Show-Help {
     Write-Host "  .\Install-DevFlow.ps1 -TargetPath C:\MyProject"
     Write-Host ""
     Write-Host "What gets installed:"
-    Write-Host "  • 6 agents in .claude/agents/"
-    Write-Host "  • 8 commands in .claude/commands/devflow/"
+    Write-Host "  • 7 agents in .claude/agents/"
+    Write-Host "  • 9 commands in .claude/commands/devflow/"
     Write-Host "  • 8 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "After installation, run: /init"
@@ -349,8 +350,8 @@ function Show-SuccessMessage {
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
     Write-Host ""
     Write-Host "Files installed:"
-    Write-Host "  • 6 agents in .claude/agents/"
-    Write-Host "  • 7 commands in .claude/commands/devflow/"
+    Write-Host "  • 7 agents in .claude/agents/"
+    Write-Host "  • 9 commands in .claude/commands/devflow/"
     Write-Host "  • 8 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "Next steps:"
