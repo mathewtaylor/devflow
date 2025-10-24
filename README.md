@@ -4,6 +4,14 @@
 
 > Structured workflow system that transforms how you build features—from specification to production-ready code with automated quality gates.
 
+**Version:** 2025.10.24
+
+**Latest Updates:**
+- **Phase Review Gate**: Automatic integration validation after parent task completion with remediation workflow
+- **Context Management**: Automatic monitoring with warnings at 150K tokens and compaction support
+- **README Maintainer Agent**: Automated README creation and maintenance
+- **Enhanced Quality Gates**: Multi-level review (per-task + phase + testing)
+
 ---
 
 ## The Problem
@@ -60,14 +68,23 @@ DevFlow brings structure, automation, and intelligence to feature development:
 
 **`/execute`** - Implement with automated quality gates
 - Sequential task execution with user confirmation
-- **Code Review** (Opus + extended thinking)
+- **Per-Task Code Review** (Opus + extended thinking)
   - Security, quality, standards validation
   - Constitution compliance checks
   - Auto-fix issues (max 3 attempts)
+- **Phase Review Gate** (NEW in v2025.10.24)
+  - Automatic integration review after parent task completion
+  - Validates all subtasks work together correctly
+  - Creates remediation subtasks if issues found
+  - Configurable via quality_gates.phase_review setting
 - **Automated Testing**
   - Generates unit and integration tests
   - Validates coverage requirements
   - Ensures tests pass before proceeding
+- **Context Management**
+  - Monitors token usage during execution
+  - Warns at 150K tokens (75% of 200K budget)
+  - Offers context compaction to maintain performance
 - Progress logging to implementation.md
 - Architecture updates on completion
 - Generates retrospectives
@@ -86,6 +103,18 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Multiple options with tradeoffs
 - Actionable recommendations
 - Optional ADR creation
+
+**`/consolidate-docs`** - Organize existing documentation
+- Scans all markdown files in project
+- Consolidates scattered technical docs into DevFlow domains
+- Provides archival recommendations
+- Safe migration preserves original files
+
+**`/readme-manager`** - Update project README
+- Invokes readme-maintainer agent
+- Analyzes current project state
+- Updates or creates comprehensive README.md
+- Ensures documentation accuracy
 
 ### Intelligent Agents
 
@@ -124,6 +153,12 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Branch and worktree management
 - Conventional commit standards enforcement
 - Conflict detection and resolution guidance
+
+**README Maintainer** (Sonnet)
+- Comprehensive README.md creation and updates
+- Project structure analysis and documentation
+- Accuracy verification against actual codebase
+- Multi-audience documentation (users, contributors, operators)
 
 ---
 
@@ -232,9 +267,11 @@ cd /path/to/your-project
 ### What Gets Installed
 
 The installer creates:
-- `.claude/agents/` - 6 specialized AI agents
-- `.claude/commands/devflow/` - 7 slash commands
+- `.claude/agents/` - 7 specialized AI agents
+- `.claude/commands/devflow/` - 9 slash commands
 - `.devflow/` - Templates and utilities
+
+**Version:** 2025.10.24 (latest)
 
 **Note:** Installation does NOT modify existing files. The `/init` command will automatically integrate DevFlow instructions with your existing CLAUDE.md if present.
 
@@ -509,25 +546,33 @@ Archive commands provided to safely move old files.
 
 **Execution loop:**
 ```
-For each task:
-  1. Display task with dependencies
-  2. Ask user confirmation (y/n/skip/pause)
-  3. Implement code
-  4. Code Review (Opus + extended thinking)
-     - If rejected: Fix issues (max 3 attempts)
-     - If approved: Continue
-  5. Generate Tests (unit + integration)
-     - If failing: Fix code/tests (max 3 attempts)
-     - If passing: Continue
-  6. Mark complete in tasks.md
-  7. Log to implementation.md
-  8. Update state
-  9. Next task or complete
+For each parent task:
+  1. Display parent task with all subtasks
+  2. Ask user confirmation once per parent (y/n/skip/pause)
+  3. For each subtask in parent:
+     a. Implement code following constitution
+     b. Per-Task Code Review (Opus + extended thinking)
+        - If rejected: Fix issues (max 3 attempts)
+        - If approved: Continue
+     c. Generate Tests (unit + integration)
+        - If failing: Fix code/tests (max 3 attempts)
+        - If passing: Continue
+     d. Mark subtask complete in tasks.md
+     e. Log to implementation.md
+     f. Update state
+  4. Phase Review Gate (after all subtasks in parent):
+     a. Validate integration across all subtasks
+     b. Check spec alignment and architecture compliance
+     c. If issues found: Create remediation subtasks
+     d. Re-run phase review after remediation
+     e. Max 3 review cycles, then ask user
+  5. Check context usage (warn at 150K tokens)
+  6. Move to next parent task
 
 On completion:
-  - Update architecture.md
-  - Generate retrospective.md
-  - Mark feature complete
+  - Update architecture.md with feature changes
+  - Generate retrospective.md with lessons learned
+  - Mark feature complete in state.json
 ```
 
 ---
@@ -716,7 +761,7 @@ All dependencies met. Proceeding...
 
 ### Quality Gates
 
-**Code Review Gate:**
+**Per-Task Code Review Gate:**
 ```
 Code Review (Opus + extended thinking)...
 🧠 Thinking about security implications...
@@ -734,6 +779,32 @@ Fixing... (attempt 1/3)
 
 Re-reviewing...
 ✓ APPROVED
+```
+
+**Phase Review Gate (NEW in v2025.10.24):**
+```
+Phase Review: Validating Parent Task 1 (Data Layer)
+🧠 Checking integration across 4 completed subtasks...
+🧠 Validating against spec requirements...
+🧠 Analyzing architecture alignment...
+
+⚠️ Phase review found issues
+
+Critical Issues:
+- User-Project relationship mapping incorrect
+- Missing validation in User model
+
+Creating remediation subtasks...
+✓ Added: 1.R1. Fix User-Project relationship mapping
+✓ Added: 1.R2. Add missing validation in User model
+
+Executing remediation...
+[Implements fixes with normal review + test gates]
+
+Re-running phase review...
+✓ Phase review APPROVED
+  Parent Task 1: Data Layer validated
+  All subtasks integrated correctly
 ```
 
 **Testing Gate:**
@@ -754,6 +825,28 @@ Fixing... (attempt 1/3)
 Re-running tests...
 ✓ 11/11 tests passed
 Coverage: 92% (target: 80%)
+```
+
+**Context Management:**
+```
+⚠️ Context Warning
+
+Current usage: 152,000/200,000 tokens (76%)
+Remaining: 48,000 tokens
+
+Large context may impact performance and increase costs.
+
+Options:
+a) Compact context now (recommended - creates summary and continues fresh)
+b) Continue without compacting (may hit limit during next phase)
+c) Pause execution (save progress and exit)
+
+Choose: a
+
+✓ Context compacted
+  Summary preserved in .devflow/snapshots/
+  Execution continues with fresh context
+  All progress saved in state.json and tasks.md
 ```
 
 ### Decision Documentation
@@ -976,13 +1069,30 @@ cp .devflow/state.json.bak .devflow/state.json
 
 ### Context too large warning
 
-```bash
-# Create snapshot and continue with fresh context
-/execute
-# When prompted: pause → create snapshot
+**NEW in v2025.10.24:** `/execute` automatically monitors context usage and warns at 150K tokens.
 
-# Or manually create snapshot
-# Document current progress in .devflow/snapshots/
+```bash
+# Automatic warning during execution
+⚠️ Context Warning
+Current usage: 152,000/200,000 tokens (76%)
+
+Options:
+a) Compact context now (recommended)
+b) Continue without compacting
+c) Pause execution
+
+# Choose option 'a' to compact and continue
+# All progress is preserved in state.json and tasks.md
+```
+
+**Manual approach:**
+```bash
+# Create snapshot and pause
+/execute
+# When prompted at any time: pause → snapshot created
+
+# Resume later with fresh context
+/execute  # State preserved, continues from where you left off
 ```
 
 ### Stuck in review/test cycle
@@ -1045,7 +1155,13 @@ node -e "const s=require('./.devflow/state.json'); delete s.features['20251020-d
 
 ## Roadmap
 
-### v1.1 (Next Release)
+### v2025.10.24 (Current - Released)
+- [x] Phase Review Gate with remediation workflow
+- [x] Context management with automatic monitoring
+- [x] README Maintainer agent
+- [x] Enhanced multi-level quality gates
+
+### Next Release
 - [ ] Visual progress dashboard
 - [ ] GitHub integration (issues → specs, PRs → features)
 - [ ] More domain templates (API versioning, rate limiting)

@@ -101,29 +101,39 @@ Typical phases (adjust based on plan):
 - Every API endpoint must have integration tests (include in subtasks)
 - Include database migration tasks where needed
 - Include cross-cutting concern verification tasks
-- **Add "Phase Review" subtask as FINAL subtask of each parent task** - validates integration, spec alignment, and architecture compliance
+- **Add "Review Checkpoint" as FINAL parent task of each phase section** - validates integration, spec alignment, and architecture for entire phase
 - Include architecture.md update task at end
 - No circular dependencies
 
-Order: Foundation → Logic → Interface → Integration → Tests → Phase Review → Documentation
+Order: Foundation → Logic → Interface → Integration → Tests → Review Checkpoint (per phase) → Documentation
 
 ## Example - Correct Format
 
 ```markdown
+## Phase 1: Service Architecture (3 tasks, 6-10 hours)
+
 [ ] 1. Extract Service Registration Logic (effort: medium)
 - [ ] 1.1. Audit current Program.cs services
 - [ ] 1.2. Categorize API vs shared services [depends: 1.1]
 - [ ] 1.3. Create ServiceCollectionExtensions file [depends: 1.2]
 - [ ] 1.4. Extract API service registrations [depends: 1.3]
-- [ ] 1.5. Phase Review: Validate service extraction
 
 [ ] 2. Create Composition Root (effort: high)
 - [ ] 2.1. Create Luma.Host project structure
 - [ ] 2.2. Add project references [depends: 2.1]
 - [ ] 2.3. Implement Program.cs composition [depends: 2.2, 1.4]
-- [ ] 2.4. Phase Review: Validate composition root
+
+[ ] 3. Review Checkpoint: Service Architecture Complete
+
+## Phase 2: API Layer (2 tasks, 8-12 hours)
+
+[ ] 4. Implement User API (effort: high)
+- [ ] 4.1. Create UserController
+- [ ] 4.2. Add CRUD endpoints
+
+[ ] 5. Review Checkpoint: API Layer Complete
 ```
 
-**Note:** Every parent task ends with a "Phase Review" subtask that validates integration, spec alignment, and architecture compliance. This is not ticked complete until review passes and any issues are resolved.
+**Note:** Every phase section ends with a "Review Checkpoint" parent task (no subtasks) that validates integration, spec alignment, and architecture compliance for ALL parent tasks in that phase. This is not ticked complete until comprehensive review passes and any critical/high issues are resolved.
 
 This is scannable, minimal, and leaves implementation details for execution time.
