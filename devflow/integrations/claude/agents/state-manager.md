@@ -121,6 +121,54 @@ try {
 state.features[featureKey].snapshot = null;
 ```
 
+### Example: Create build-feature
+
+```javascript
+const { readState, writeState, validateSchema } = require('./.devflow/lib/state-io.js');
+
+// Create build-feature with streamlined workflow
+const state = readState();
+const featureKey = "20251024-email-validation";
+const timestamp = new Date().toISOString();
+
+// Add new feature
+state.features[featureKey] = {
+  display_name: "Email Validation",
+  status: "active",  // or "pending" if another feature is active
+  phase: "SPEC",
+  workflow_type: "build",  // Streamlined workflow
+  current_task: 0,
+  concerns: [],  // Build features typically have minimal concerns
+  created_at: timestamp,
+  completed_at: null,
+  snapshot: null
+};
+
+// Set as active if no other active feature
+if (!state.active_feature) {
+  state.active_feature = featureKey;
+} else {
+  state.features[featureKey].status = "pending";
+}
+
+const validation = validateSchema(state);
+if (!validation.valid) {
+  return { success: false, errors: validation.errors };
+}
+
+try {
+  writeState(state);
+  return {
+    success: true,
+    message: `Created build-feature: ${featureKey}`,
+    workflow_type: "build",
+    next_action: "Auto-generate tasks and start execution"
+  };
+} catch (error) {
+  return { success: false, error: error.message };
+}
+```
+
 State schema:
 ```json
 {
@@ -131,9 +179,11 @@ State schema:
       "display_name": string,
       "status": "pending" | "active" | "paused" | "completed",
       "phase": "SPEC" | "PLAN" | "TASKS" | "EXECUTE" | "DONE",
+      "workflow_type": "full" | "build",  // "full" = standard, "build" = streamlined
       "current_task": 0 | "X.Y",  // 0 = not started, "1.2" = hierarchical subtask
       "concerns": string[],
       "created_at": ISO timestamp,
+      "completed_at": ISO timestamp | null,
       "snapshot": string | null  // "snapshot.md" or null
     }
   }
@@ -147,9 +197,17 @@ State schema:
 
 Validation rules:
 - **Single active feature:** Only one feature can have status="active"
-- **Phase progression:** SPEC → PLAN → TASKS → EXECUTE → DONE (warn if skipped, but allow)
+- **Phase progression (full workflow):** SPEC → PLAN → TASKS → EXECUTE → DONE (warn if skipped, but allow)
+- **Phase progression (build workflow):** SPEC → EXECUTE → DONE (PLAN and TASKS are skipped)
 - **File checks:** Verify spec.md/plan.md/tasks.md exist before transitions (warn or error)
 - **Task completion:** When all tasks done, auto-transition to phase=DONE, status=completed
+
+**Workflow Types:**
+- **full:** Traditional workflow with separate spec, plan, tasks phases
+- **build:** Streamlined workflow that combines tasks + execute, skips plan.md
+  - Valid phases: SPEC → EXECUTE → DONE
+  - No plan.md created (planning inline during execute)
+  - Simplified documentation (lightweight spec, brief retro)
 
 Feature name format: `yyyymmdd-feature-slug` (e.g., "20251020-user-authentication")
 

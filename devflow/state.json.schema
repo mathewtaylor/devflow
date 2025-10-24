@@ -28,6 +28,7 @@
           "display_name",
           "status",
           "phase",
+          "workflow_type",
           "current_task",
           "concerns",
           "created_at"
@@ -46,6 +47,12 @@
             "type": "string",
             "enum": ["SPEC", "PLAN", "TASKS", "EXECUTE", "DONE"],
             "description": "Current phase of the feature workflow"
+          },
+          "workflow_type": {
+            "type": "string",
+            "enum": ["full", "build"],
+            "default": "full",
+            "description": "Workflow type: 'full' for standard SPEC→PLAN→TASKS→EXECUTE, 'build' for streamlined SPEC→EXECUTE"
           },
           "current_task": {
             "oneOf": [

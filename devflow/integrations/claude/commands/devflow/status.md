@@ -73,6 +73,7 @@ Active Feature
 ─────────────────────────────────────────
 Name: {{display_name}}
 ID: {{feature_key}}
+Workflow: {{workflow_type_display}}  # "Build (streamlined)" or "Full"
 Phase: {{phase}}
 Progress: {{current_task}}/{{total_tasks}} tasks ({{percentage}}%)
 Created: {{date}}
@@ -100,13 +101,15 @@ Display all features in a table format:
 ─────────────────────────────────────────
 All Features
 ─────────────────────────────────────────
-Status    | Phase   | Progress | Feature
-──────────|─────────|──────────|─────────────────────
-Active    | EXECUTE | 12/28    | user-authentication
-Paused    | TASKS   | 0/15     | email-notifications
-Pending   | SPEC    | -        | payment-integration
-Done ✓    | DONE    | 15/15 ✓  | database-setup
+Status    | Workflow | Phase   | Progress | Feature
+──────────|──────────|─────────|──────────|─────────────────────
+Active    | Full     | EXECUTE | 12/28    | user-authentication
+Paused    | Build    | TASKS   | 0/15     | email-notifications
+Pending   | Full     | SPEC    | -        | payment-integration
+Done ✓    | Build    | DONE    | 15/15 ✓  | database-setup
 ```
+
+Workflow column shows: "Full" or "Build" based on workflow_type field.
 
 Sort by: Active first, then Paused, then Pending, then Completed (reverse chronological)
 
@@ -138,7 +141,8 @@ Quick Actions
 • Continue: /execute
 • Pause: /execute → choose 'pause'
 {{/if}}
-• New feature: /spec [name]
+• New feature (full): /spec [name]
+• Quick feature (<2hrs): /build-feature [description]
 • Technical planning: /plan
 • Deep analysis: /think [question]
 {{#if paused_features}}

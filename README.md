@@ -7,10 +7,10 @@
 **Version:** 2025.10.24
 
 **Latest Updates:**
+- **Repository Restructure**: Multi-agent support preparation (claude/, codex/, gemini/ future structure)
+- **Snapshot Functionality**: Pause/resume with context preservation for execution workflow
 - **Phase Review Gate**: Automatic integration validation after parent task completion with remediation workflow
 - **Context Management**: Automatic monitoring with warnings at 150K tokens and compaction support
-- **README Maintainer Agent**: Automated README creation and maintenance
-- **Enhanced Quality Gates**: Multi-level review (per-task + phase + testing)
 
 ---
 
@@ -42,17 +42,23 @@ DevFlow brings structure, automation, and intelligence to feature development:
 
 ## Key Features
 
-### Core Workflow Commands
+### Workflow Commands (10 total)
 
 **`/init`** - Initialize DevFlow in your project
 - Interactive wizard for project constitution
 - Automatic architecture documentation for existing projects
 - Sets up cross-cutting concerns documentation
 
-**`/spec [feature-name]`** - Create feature specifications
+**`/spec [feature-name]`** - Create feature specifications (full workflow)
 - Interactive wizard guides requirements gathering
 - User stories and acceptance criteria
 - Cross-cutting concerns tagging for smart context loading
+
+**`/build-feature [description]`** - Streamlined workflow for small features (< 2 hours)
+- Interactive wizard with 2-4 targeted clarification questions
+- Creates simplified spec and auto-generates tasks
+- Immediately starts execution with same quality gates
+- Ideal for bug fixes, UI tweaks, simple enhancements
 
 **`/plan`** - Generate technical implementation plans
 - AI Architect agent (Opus with extended thinking)
@@ -116,7 +122,7 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Updates or creates comprehensive README.md
 - Ensures documentation accuracy
 
-### Intelligent Agents
+### Intelligent Agents (8 total)
 
 **Architect Agent** (Opus)
 - Technical planning and design
@@ -159,6 +165,12 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Project structure analysis and documentation
 - Accuracy verification against actual codebase
 - Multi-audience documentation (users, contributors, operators)
+
+**Checkpoint Reviewer** (Opus)
+- Phase-level integration validation
+- Post-parent-task review gate
+- Remediation subtask creation
+- Multi-level quality assurance
 
 ---
 
@@ -256,8 +268,15 @@ git clone https://github.com/mathewtaylor/devflow.git
 cd devflow
 
 # 2. Copy files to your project
-cp -r claude/ /path/to/your-project/.claude/
-cp -r devflow/ /path/to/your-project/.devflow/
+# Copy Claude Code integration (agents and commands)
+cp -r devflow/integrations/claude/agents /path/to/your-project/.claude/
+cp -r devflow/integrations/claude/commands /path/to/your-project/.claude/
+
+# Copy shared templates and utilities
+cp -r devflow/templates /path/to/your-project/.devflow/
+cp -r devflow/lib /path/to/your-project/.devflow/
+cp devflow/state.json.schema /path/to/your-project/.devflow/
+cp devflow/instructions.md /path/to/your-project/.devflow/
 
 # 3. Initialize DevFlow
 cd /path/to/your-project
@@ -267,11 +286,19 @@ cd /path/to/your-project
 ### What Gets Installed
 
 The installer creates:
-- `.claude/agents/` - 7 specialized AI agents
-- `.claude/commands/devflow/` - 9 slash commands
-- `.devflow/` - Templates and utilities
+- `.claude/agents/` - 8 specialized AI agents
+- `.claude/commands/devflow/` - 10 slash commands
+- `.devflow/templates/` - 9 infrastructure templates
+- `.devflow/lib/` - 2 utility libraries (state-io.js, cli.js)
+- `.devflow/` - Schema and instructions files
 
 **Version:** 2025.10.24 (latest)
+
+**Note on Repository Structure:**
+DevFlow's repository is organized for multi-agent support:
+- `devflow/integrations/claude/` - Claude Code-specific files
+- Future: `devflow/integrations/codex/`, `devflow/integrations/gemini/`
+- Installation maps to `.claude/` and `.devflow/` in your project
 
 **Note:** Installation does NOT modify existing files. The `/init` command will automatically integrate DevFlow instructions with your existing CLAUDE.md if present.
 
@@ -328,6 +355,50 @@ The installer creates:
 /status
 # See active feature, progress, all features
 ```
+
+---
+
+## Quick Feature Workflow (< 2 Hours)
+
+For small features, bug fixes, or simple enhancements, use the streamlined `/build-feature` command:
+
+```bash
+/build-feature "Add email validation to signup form"
+
+# DevFlow analyzes and confirms understanding:
+# "I understand you want to:
+#  → Add email validation to the user signup form
+#  → Validate email format on client side
+#  → Show error message for invalid emails
+# Is this correct? (y/n)"
+
+# Then asks 2-4 targeted clarification questions:
+# 1. Which file contains the signup form?
+# 2. Should validation happen on blur, on submit, or both?
+# 3. What error message should display?
+# 4. Any existing validation library to use?
+
+# Creates:
+# ✓ Simplified spec.md
+# ✓ Auto-generated tasks.md (5-10 tasks)
+
+# Immediately starts execution with same quality gates:
+# - Code review (Opus + extended thinking)
+# - Test generation and validation
+# - Streamlined documentation
+```
+
+**When to use `/build-feature`:**
+- ✅ Feature takes < 2 hours
+- ✅ Well-understood requirements
+- ✅ Simple changes (bug fix, UI tweak, validation, etc.)
+- ✅ Want quality gates without heavy process
+
+**When to use full workflow (`/spec` → `/plan` → `/tasks` → `/execute`):**
+- ✅ Feature takes > 2-4 hours
+- ✅ Significant architectural decisions needed
+- ✅ Multiple components/modules affected
+- ✅ Cross-cutting concerns to consider
 
 ---
 
@@ -587,7 +658,8 @@ On completion:
 ├── .devflowignore              # Context exclusions
 │
 ├── lib/
-│   └── state-io.js             # State management utilities
+│   ├── state-io.js             # State management utilities
+│   └── cli.js                  # CLI helper utilities
 │
 ├── domains/                    # Cross-cutting concerns
 │   ├── _index.md               # Quick reference (always loaded)
@@ -1149,6 +1221,25 @@ node -e "const s=require('./.devflow/state.json'); delete s.features['20251020-d
 
 ## Architecture
 
+### Repository Structure (Multi-Agent Ready)
+
+DevFlow is organized to support multiple AI coding assistants:
+
+```
+devflow/
+├── integrations/
+│   └── claude/                    # Claude Code-specific implementation
+│       ├── agents/                # 8 specialized agents
+│       └── commands/devflow/      # 9 workflow commands
+├── templates/                     # 6 shared infrastructure templates
+├── lib/                          # 2 utility libraries
+└── [schema and instructions]     # Shared validation and docs
+```
+
+**User Installation:** Files install to `.claude/` and `.devflow/` in target projects
+
+**Future:** Support for OpenAI Codex, GeminiCLI, and other agents via `integrations/` structure
+
 ### Command Layer
 - Slash commands in `.claude/commands/devflow/`
 - YAML frontmatter (tools, model, argument hints)
@@ -1157,9 +1248,9 @@ node -e "const s=require('./.devflow/state.json'); delete s.features['20251020-d
 - Model optimization (haiku for simple, sonnet for medium, opus for complex)
 
 ### Agent Layer
-- Specialized agents in `.claude/agents/`
-- Opus for thinking (Architect, Code Reviewer)
-- Sonnet for execution (Task Planner, Test Engineer, State Manager)
+- Specialized agents in `.claude/agents/` (8 total)
+- Opus for deep thinking (Architect, Code Reviewer, Checkpoint Reviewer)
+- Sonnet for execution (Task Planner, Test Engineer, State Manager, Git Operations, README Maintainer)
 - Structured outputs (JSON/markdown)
 - Reusable across commands
 
@@ -1180,6 +1271,8 @@ node -e "const s=require('./.devflow/state.json'); delete s.features['20251020-d
 ## Roadmap
 
 ### v2025.10.24 (Current - Released)
+- [x] Repository restructure for multi-agent support
+- [x] Snapshot functionality for pause/resume workflow
 - [x] Phase Review Gate with remediation workflow
 - [x] Context management with automatic monitoring
 - [x] README Maintainer agent

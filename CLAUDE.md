@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **DevFlow** is an agentic feature management system for Claude Code that provides a structured workflow for building features with automated quality gates. It transforms chaotic feature development into a systematic process: Spec → Plan → Tasks → Execute.
 
 The system consists of:
-- **7 slash commands** (namespaced as `devflow:*`) for workflow phases
-- **5 specialized AI agents** for architecture, planning, code review, testing, and state management
+- **10 slash commands** (namespaced as `devflow:*`) for workflow phases
+- **8 specialized AI agents** for architecture, planning, code review, testing, and state management
 - **Smart context management** using three-tier documentation loading
 - **Living documentation** that stays synchronized with code changes
 
@@ -73,12 +73,23 @@ The system consists of:
 - For new projects: suggests tech stack patterns → user chooses → generates blueprint
 - Sets up cross-cutting concerns documentation structure
 
-### `/spec [feature-name]` - Create Feature Specification
+### `/spec [feature-name]` - Create Feature Specification (Full Workflow)
 - Interactive wizard captures requirements
 - Feature naming: `yyyymmdd-feature-slug` format (e.g., `20251020-user-auth`)
 - Tags cross-cutting concerns for smart context loading
 - Creates `.devflow/features/yyyymmdd-feature-name/spec.md`
 - Invokes State Manager to update `state.json`
+- Use for features > 2-4 hours requiring comprehensive planning
+
+### `/build-feature [description]?` - Streamlined Workflow for Small Features
+- Fast-track for features < 2 hours (bug fixes, UI tweaks, simple enhancements)
+- Interactive wizard with 2-4 targeted clarification questions
+- Creates simplified `spec.md` (description, rationale, acceptance criteria, files)
+- Auto-generates flat task list (5-10 tasks, no parent hierarchy)
+- Immediately starts execution with same quality gates (Opus review + testing)
+- Streamlined documentation (lighter logging, brief retrospective)
+- State: `workflow_type="build"`, phases: SPEC → EXECUTE → DONE (skips PLAN/TASKS)
+- No `plan.md` created (planning happens inline during execution)
 
 ### `/plan [feature-name]?` - Generate Technical Plan
 - Invokes **Architect agent** (Opus with extended thinking)
@@ -347,7 +358,8 @@ node -pe "const s=require('./.devflow/state.json'); Object.values(s.features).fi
 
 **Workflow commands:**
 - `.claude/commands/devflow/init.md` - Initialization wizard
-- `.claude/commands/devflow/spec.md` - Requirements capture
+- `.claude/commands/devflow/spec.md` - Requirements capture (full workflow)
+- `.claude/commands/devflow/build-feature.md` - Streamlined workflow for small features
 - `.claude/commands/devflow/plan.md` - Technical planning
 - `.claude/commands/devflow/tasks.md` - Task breakdown
 - `.claude/commands/devflow/execute.md` - Implementation with quality gates

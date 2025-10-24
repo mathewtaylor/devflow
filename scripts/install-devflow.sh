@@ -20,7 +20,7 @@ MAX_RETRIES=3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 8 agents, 9 commands, 10 templates/utilities
+# Current counts: 8 agents, 10 commands, 13 templates/utilities
 # Format: "source_path:destination_path" (source from repo, destination in user project)
 declare -a FILES=(
     # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
@@ -33,7 +33,7 @@ declare -a FILES=(
     ".devflow/integrations/claude/agents/state-manager.md:.claude/agents/state-manager.md"
     ".devflow/integrations/claude/agents/tester.md:.claude/agents/tester.md"
 
-    # Commands (9 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
+    # Commands (10 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
     ".devflow/integrations/claude/commands/devflow/init.md:.claude/commands/devflow/init.md"
     ".devflow/integrations/claude/commands/devflow/spec.md:.claude/commands/devflow/spec.md"
     ".devflow/integrations/claude/commands/devflow/plan.md:.claude/commands/devflow/plan.md"
@@ -41,10 +41,11 @@ declare -a FILES=(
     ".devflow/integrations/claude/commands/devflow/execute.md:.claude/commands/devflow/execute.md"
     ".devflow/integrations/claude/commands/devflow/status.md:.claude/commands/devflow/status.md"
     ".devflow/integrations/claude/commands/devflow/think.md:.claude/commands/devflow/think.md"
+    ".devflow/integrations/claude/commands/devflow/build-feature.md:.claude/commands/devflow/build-feature.md"
     ".devflow/integrations/claude/commands/devflow/consolidate-docs.md:.claude/commands/devflow/consolidate-docs.md"
     ".devflow/integrations/claude/commands/devflow/readme-manager.md:.claude/commands/devflow/readme-manager.md"
 
-    # Templates and utilities (10 total) - Source and destination are the same
+    # Templates and utilities (13 total) - Source and destination are the same
     ".devflow/lib/state-io.js:.devflow/lib/state-io.js"
     ".devflow/lib/cli.js:.devflow/lib/cli.js"
     ".devflow/state.json.schema:.devflow/state.json.schema"
@@ -52,6 +53,9 @@ declare -a FILES=(
     ".devflow/templates/constitution.md.template:.devflow/templates/constitution.md.template"
     ".devflow/templates/architecture.md.template:.devflow/templates/architecture.md.template"
     ".devflow/templates/snapshot.md.template:.devflow/templates/snapshot.md.template"
+    ".devflow/templates/build-feature-spec.md.template:.devflow/templates/build-feature-spec.md.template"
+    ".devflow/templates/build-feature-implementation.md.template:.devflow/templates/build-feature-implementation.md.template"
+    ".devflow/templates/build-feature-retrospective.md.template:.devflow/templates/build-feature-retrospective.md.template"
     ".devflow/templates/.devflowignore.template:.devflow/templates/.devflowignore.template"
     ".devflow/templates/domains/_index.md.template:.devflow/templates/domains/_index.md.template"
     ".devflow/templates/domains/concern.md.template:.devflow/templates/domains/concern.md.template"
@@ -76,8 +80,8 @@ Example:
 
 What gets installed:
   • 8 agents in .claude/agents/
-  • 9 commands in .claude/commands/devflow/
-  • 10 templates and utilities in .devflow/
+  • 10 commands in .claude/commands/devflow/
+  • 13 templates and utilities in .devflow/
 
 After installation, run: /init
 EOF

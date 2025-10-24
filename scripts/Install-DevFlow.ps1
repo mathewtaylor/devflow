@@ -41,7 +41,7 @@ $MaxRetries = 3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 8 agents, 9 commands, 10 templates/utilities
+# Current counts: 8 agents, 10 commands, 13 templates/utilities
 # Format: @{Source='repo_path'; Dest='install_path'}
 $FilesToDownload = @(
     # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
@@ -54,7 +54,7 @@ $FilesToDownload = @(
     @{Source=".devflow/integrations/claude/agents/state-manager.md"; Dest=".claude/agents/state-manager.md"},
     @{Source=".devflow/integrations/claude/agents/tester.md"; Dest=".claude/agents/tester.md"},
 
-    # Commands (9 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
+    # Commands (10 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
     @{Source=".devflow/integrations/claude/commands/devflow/init.md"; Dest=".claude/commands/devflow/init.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/spec.md"; Dest=".claude/commands/devflow/spec.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/plan.md"; Dest=".claude/commands/devflow/plan.md"},
@@ -62,10 +62,11 @@ $FilesToDownload = @(
     @{Source=".devflow/integrations/claude/commands/devflow/execute.md"; Dest=".claude/commands/devflow/execute.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/status.md"; Dest=".claude/commands/devflow/status.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/think.md"; Dest=".claude/commands/devflow/think.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/build-feature.md"; Dest=".claude/commands/devflow/build-feature.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/consolidate-docs.md"; Dest=".claude/commands/devflow/consolidate-docs.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/readme-manager.md"; Dest=".claude/commands/devflow/readme-manager.md"},
 
-    # Templates and utilities (10 total) - Source and destination are the same
+    # Templates and utilities (13 total) - Source and destination are the same
     @{Source=".devflow/lib/state-io.js"; Dest=".devflow/lib/state-io.js"},
     @{Source=".devflow/lib/cli.js"; Dest=".devflow/lib/cli.js"},
     @{Source=".devflow/state.json.schema"; Dest=".devflow/state.json.schema"},
@@ -73,6 +74,9 @@ $FilesToDownload = @(
     @{Source=".devflow/templates/constitution.md.template"; Dest=".devflow/templates/constitution.md.template"},
     @{Source=".devflow/templates/architecture.md.template"; Dest=".devflow/templates/architecture.md.template"},
     @{Source=".devflow/templates/snapshot.md.template"; Dest=".devflow/templates/snapshot.md.template"},
+    @{Source=".devflow/templates/build-feature-spec.md.template"; Dest=".devflow/templates/build-feature-spec.md.template"},
+    @{Source=".devflow/templates/build-feature-implementation.md.template"; Dest=".devflow/templates/build-feature-implementation.md.template"},
+    @{Source=".devflow/templates/build-feature-retrospective.md.template"; Dest=".devflow/templates/build-feature-retrospective.md.template"},
     @{Source=".devflow/templates/.devflowignore.template"; Dest=".devflow/templates/.devflowignore.template"},
     @{Source=".devflow/templates/domains/_index.md.template"; Dest=".devflow/templates/domains/_index.md.template"},
     @{Source=".devflow/templates/domains/concern.md.template"; Dest=".devflow/templates/domains/concern.md.template"}
@@ -95,8 +99,8 @@ function Show-Help {
     Write-Host ""
     Write-Host "What gets installed:"
     Write-Host "  • 8 agents in .claude/agents/"
-    Write-Host "  • 9 commands in .claude/commands/devflow/"
-    Write-Host "  • 10 templates and utilities in .devflow/"
+    Write-Host "  • 10 commands in .claude/commands/devflow/"
+    Write-Host "  • 13 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "After installation, run: /init"
     Write-Host ""
