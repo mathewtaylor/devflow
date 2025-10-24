@@ -16,8 +16,8 @@ Implement tasks for: **$1** (or active feature)
 
 ## Current State
 
-- Active feature: !`node -pe "try { const s=require('./.devflow/state.json'); s.active_feature || 'none' } catch { 'none' }"`
-- Feature exists: !`node -pe "try { const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key || 'none' } catch { 'none' }"`
+- Active feature: !`node .devflow/lib/cli.js query active_feature`
+- Feature exists: !`node .devflow/lib/cli.js query feature_exists "$1"`
 
 ## Your Task
 

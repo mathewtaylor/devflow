@@ -23,23 +23,23 @@ Display comprehensive overview of DevFlow state and progress.
 
 ## Active Feature Info
 
-- Active feature: !`node -pe "try { const s=require('./.devflow/state.json'); s.active_feature || 'None' } catch { 'Error' }"`
-- Active feature name: !`node -pe "try { const s=require('./.devflow/state.json'); if(!s.active_feature) { 'N/A' } else { s.features[s.active_feature]?.display_name || 'Unknown' } } catch { 'Error' }"`
-- Active phase: !`node -pe "try { const s=require('./.devflow/state.json'); if(!s.active_feature) { 'N/A' } else { s.features[s.active_feature]?.phase || 'Unknown' } } catch { 'Error' }"`
-- Active progress: !`node -pe "try { const s=require('./.devflow/state.json'); if(!s.active_feature) { 'N/A' } else { const f=s.features[s.active_feature]; f?.current_task + '/' + 'tasks' } } catch { 'Error' }"`
+- Active feature: !`node .devflow/lib/cli.js query active_feature`
+- Active feature name: !`node .devflow/lib/cli.js query active_feature_name`
+- Active phase: !`node .devflow/lib/cli.js query active_phase`
+- Active progress: !`node .devflow/lib/cli.js query active_progress`
 
 ## Features Summary
 
-- Total features: !`node -pe "try { const s=require('./.devflow/state.json'); Object.keys(s.features).length } catch { 0 }"`
-- Pending: !`node -pe "try { const s=require('./.devflow/state.json'); Object.values(s.features).filter(f=>f.status==='pending').length } catch { 0 }"`
-- Active: !`node -pe "try { const s=require('./.devflow/state.json'); Object.values(s.features).filter(f=>f.status==='active').length } catch { 0 }"`
-- Paused: !`node -pe "try { const s=require('./.devflow/state.json'); Object.values(s.features).filter(f=>f.status==='paused').length } catch { 0 }"`
-- Completed: !`node -pe "try { const s=require('./.devflow/state.json'); Object.values(s.features).filter(f=>f.status==='completed').length } catch { 0 }"`
+- Total features: !`node .devflow/lib/cli.js query feature_count`
+- Pending: !`node .devflow/lib/cli.js query pending_count`
+- Active: !`node .devflow/lib/cli.js query active_count`
+- Paused: !`node .devflow/lib/cli.js query paused_count`
+- Completed: !`node .devflow/lib/cli.js query completed_count`
 
 ## Recent Activity
 
-- Latest feature: !`node -pe "try { const s=require('./.devflow/state.json'); const keys=Object.keys(s.features).sort().reverse(); keys[0] || 'None' } catch { 'None' }"`
-- Last initialized: !`node -pe "try { const s=require('./.devflow/state.json'); if(!s.initialized_at) { 'Never' } else { new Date(s.initialized_at).toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'}) } } catch { 'Unknown' }"`
+- Latest feature: !`node .devflow/lib/cli.js query latest_feature`
+- Last initialized: !`node .devflow/lib/cli.js query last_initialized`
 
 ---
 

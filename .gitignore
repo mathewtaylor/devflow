@@ -1,3 +1,7 @@
 # Local DevFlow installation (for testing)
 .claude/
 .devflow/
+
+# DevFlow runtime files (if .devflow/ is tracked in other projects)
+.devflow/state.json.bak
+.devflow/state.json.tmp

@@ -17,8 +17,8 @@ Create a comprehensive specification for: **$ARGUMENTS**
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "✓" || (echo "✗ Run /init first" && exit 1)`
-- Active feature: !`node -pe "try { const s=require('./.devflow/state.json'); s.active_feature || 'none' } catch { 'none' }"`
-- Total features: !`node -pe "try { const s=require('./.devflow/state.json'); Object.keys(s.features).length } catch { 0 }"`
+- Active feature: !`node .devflow/lib/cli.js query active_feature`
+- Total features: !`node .devflow/lib/cli.js query feature_count`
 
 ## Project Context
 

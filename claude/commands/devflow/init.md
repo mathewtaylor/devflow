@@ -17,8 +17,8 @@ Create personalized constitution and architecture documentation for this project
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "yes" || echo "no"`
-- Existing code detected: !`node -pe "try { const glob=require('glob'); glob.sync('**/*.{js,ts,cs,py}', {ignore: ['**/node_modules/**', '**/.git/**'], cwd: '.', nodir: true}).length > 0 ? 'yes' : 'no' } catch { 'no' }"`
-- Package files found: !`node -pe "try { const fs=require('fs'); const glob=require('glob'); ['package.json', 'requirements.txt', 'pom.xml'].filter(f=>fs.existsSync(f)).concat(glob.sync('*.csproj')).join(', ') || 'none' } catch { 'none' }"`
+- Existing code detected: !`node .devflow/lib/cli.js query code_detected`
+- Package files found: !`node .devflow/lib/cli.js query package_files`
 
 ## Your Task
 
@@ -139,7 +139,7 @@ Create `.devflow/state.json`:
 
 Check for existing documentation files:
 
-- Markdown count: !`node -pe "try { const glob=require('glob'); glob.sync('**/*.md', {ignore: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/build/**', '**/.devflow/**', 'CLAUDE.md', 'README.md', 'CONTRIBUTING.md', 'CHANGELOG.md', 'LICENSE.md'], cwd: '.'}).length } catch { 0 }"`
+- Markdown count: !`node .devflow/lib/cli.js query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md"`
 
 **If markdown count > 5:**
 

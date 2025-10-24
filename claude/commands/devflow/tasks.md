@@ -19,9 +19,9 @@ If not: Use active feature or most recent pending/active from state.json
 
 ## Current State for Feature
 
-- Has plan: !`node -pe "try { const fs=require('fs'); const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key && fs.existsSync('.devflow/features/' + key + '/plan.md') ? 'yes' : 'no' } catch { 'no' }"`
-- Has tasks: !`node -pe "try { const fs=require('fs'); const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key && fs.existsSync('.devflow/features/' + key + '/tasks.md') ? 'yes' : 'no' } catch { 'no' }"`
-- Current phase: !`node -pe "try { const s=require('./.devflow/state.json'); const f=Object.keys(s.features).find(k=>k.includes('$1')); s.features[f]?.phase || 'unknown' } catch { 'unknown' }"`
+- Has plan: !`node .devflow/lib/cli.js query has_plan "$1"`
+- Has tasks: !`node .devflow/lib/cli.js query has_tasks "$1"`
+- Current phase: !`node .devflow/lib/cli.js query current_phase "$1"`
 
 ## Context for Task Planner
 

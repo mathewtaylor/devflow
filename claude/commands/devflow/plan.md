@@ -19,9 +19,9 @@ If not: Use active feature from state.json, or most recent pending/active featur
 
 ## Current State for Feature
 
-- Feature exists: !`node -pe "try { const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key ? 'yes' : 'no' } catch { 'no' }"`
-- Has spec: !`node -pe "try { const fs=require('fs'); const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key && fs.existsSync('.devflow/features/' + key + '/spec.md') ? 'yes' : 'no' } catch { 'no' }"`
-- Has plan: !`node -pe "try { const fs=require('fs'); const s=require('./.devflow/state.json'); const key = '$1' ? Object.keys(s.features).find(k=>k.includes('$1')) : s.active_feature; key && fs.existsSync('.devflow/features/' + key + '/plan.md') ? 'yes' : 'no' } catch { 'no' }"`
+- Feature exists: !`node .devflow/lib/cli.js query feature_exists "$1"`
+- Has spec: !`node .devflow/lib/cli.js query has_spec "$1"`
+- Has plan: !`node .devflow/lib/cli.js query has_plan "$1"`
 
 ## Context for Architect
 

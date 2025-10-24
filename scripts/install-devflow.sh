@@ -20,16 +20,17 @@ MAX_RETRIES=3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 7 agents, 9 commands, 8 templates/utilities
+# Current counts: 8 agents, 9 commands, 9 templates/utilities
 declare -a FILES=(
-    # Agents (7 total)
+    # Agents (8 total)
     ".claude/agents/architect.md"
+    ".claude/agents/checkpoint-reviewer.md"
+    ".claude/agents/git-operations-manager.md"
     ".claude/agents/planner.md"
+    ".claude/agents/readme-maintainer.md"
     ".claude/agents/reviewer.md"
     ".claude/agents/state-manager.md"
     ".claude/agents/tester.md"
-    ".claude/agents/git-operations-manager.md"
-    ".claude/agents/readme-maintainer.md"
 
     # Commands (9 total)
     ".claude/commands/devflow/init.md"
@@ -42,8 +43,9 @@ declare -a FILES=(
     ".claude/commands/devflow/consolidate-docs.md"
     ".claude/commands/devflow/readme-manager.md"
 
-    # Templates and utilities (8 total)
+    # Templates and utilities (9 total)
     ".devflow/lib/state-io.js"
+    ".devflow/lib/cli.js"
     ".devflow/state.json.schema"
     ".devflow/instructions.md"
     ".devflow/templates/constitution.md.template"
@@ -71,9 +73,9 @@ Example:
   $0 /path/to/project  # Install in specific directory
 
 What gets installed:
-  • 7 agents in .claude/agents/
+  • 8 agents in .claude/agents/
   • 9 commands in .claude/commands/devflow/
-  • 8 templates and utilities in .devflow/
+  • 9 templates and utilities in .devflow/
 
 After installation, run: /init
 EOF
@@ -303,9 +305,9 @@ show_success() {
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     echo "Files installed:"
-    echo "  • 7 agents in .claude/agents/"
+    echo "  • 8 agents in .claude/agents/"
     echo "  • 9 commands in .claude/commands/devflow/"
-    echo "  • 8 templates and utilities in .devflow/"
+    echo "  • 9 templates and utilities in .devflow/"
     echo ""
     echo "Next steps:"
     echo "  1. Run: /init"

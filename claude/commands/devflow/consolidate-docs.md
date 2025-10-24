@@ -17,7 +17,7 @@ Scan existing project documentation and consolidate into DevFlow's structured do
 ## Prerequisites Check
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "yes" || echo "no"`
-- Documentation files: !`node -pe "try { const glob=require('glob'); glob.sync('**/*.md', {ignore: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/build/**', '**/.devflow/**', 'CLAUDE.md'], cwd: '.'}).length } catch { 0 }"`
+- Documentation files: !`node .devflow/lib/cli.js query doc_count`
 
 ## Your Task
 

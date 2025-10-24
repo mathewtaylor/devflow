@@ -41,16 +41,17 @@ $MaxRetries = 3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 7 agents, 9 commands, 8 templates/utilities
+# Current counts: 8 agents, 9 commands, 9 templates/utilities
 $FilesToDownload = @(
-    # Agents (7 total)
+    # Agents (8 total)
     ".claude/agents/architect.md",
+    ".claude/agents/checkpoint-reviewer.md",
+    ".claude/agents/git-operations-manager.md",
     ".claude/agents/planner.md",
+    ".claude/agents/readme-maintainer.md",
     ".claude/agents/reviewer.md",
     ".claude/agents/state-manager.md",
     ".claude/agents/tester.md",
-    ".claude/agents/git-operations-manager.md",
-    ".claude/agents/readme-maintainer.md",
 
     # Commands (9 total)
     ".claude/commands/devflow/init.md",
@@ -63,8 +64,9 @@ $FilesToDownload = @(
     ".claude/commands/devflow/consolidate-docs.md",
     ".claude/commands/devflow/readme-manager.md",
 
-    # Templates and utilities (8 total)
+    # Templates and utilities (9 total)
     ".devflow/lib/state-io.js",
+    ".devflow/lib/cli.js",
     ".devflow/state.json.schema",
     ".devflow/instructions.md",
     ".devflow/templates/constitution.md.template",
@@ -90,9 +92,9 @@ function Show-Help {
     Write-Host "  .\Install-DevFlow.ps1 -TargetPath C:\MyProject"
     Write-Host ""
     Write-Host "What gets installed:"
-    Write-Host "  • 7 agents in .claude/agents/"
+    Write-Host "  • 8 agents in .claude/agents/"
     Write-Host "  • 9 commands in .claude/commands/devflow/"
-    Write-Host "  • 8 templates and utilities in .devflow/"
+    Write-Host "  • 9 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "After installation, run: /init"
     Write-Host ""
@@ -350,9 +352,9 @@ function Show-SuccessMessage {
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
     Write-Host ""
     Write-Host "Files installed:"
-    Write-Host "  • 7 agents in .claude/agents/"
+    Write-Host "  • 8 agents in .claude/agents/"
     Write-Host "  • 9 commands in .claude/commands/devflow/"
-    Write-Host "  • 8 templates and utilities in .devflow/"
+    Write-Host "  • 9 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "Next steps:"
     Write-Host "  1. Run: /init"
