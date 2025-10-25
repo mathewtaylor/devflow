@@ -27,10 +27,10 @@ Create personalized constitution and architecture documentation for this project
 
 2. **If plugin installation detected** (`${CLAUDE_PLUGIN_ROOT}` is set):
    - Create .devflow directory: !`mkdir -p .devflow`
-   - Copy templates: !`cp -r "${CLAUDE_PLUGIN_ROOT}/templates" .devflow/`
-   - Copy libraries: !`mkdir -p .devflow/lib && cp "${CLAUDE_PLUGIN_ROOT}/lib"/*.js .devflow/lib/`
-   - Copy schema: !`cp "${CLAUDE_PLUGIN_ROOT}/state.json.schema" .devflow/`
-   - Copy instructions: !`cp "${CLAUDE_PLUGIN_ROOT}/instructions.md" .devflow/`
+   - Copy templates: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp -r "${CLAUDE_PLUGIN_ROOT}/templates" .devflow/ || true`
+   - Copy libraries: !`test -n "${CLAUDE_PLUGIN_ROOT}" && mkdir -p .devflow/lib && cp "${CLAUDE_PLUGIN_ROOT}/lib"/*.js .devflow/lib/ || true`
+   - Copy schema: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp "${CLAUDE_PLUGIN_ROOT}/state.json.schema" .devflow/ || true`
+   - Copy instructions: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp "${CLAUDE_PLUGIN_ROOT}/instructions.md" .devflow/ || true`
 
 3. **If manual installation** (`${CLAUDE_PLUGIN_ROOT}` is NOT set):
    - Files should already exist from install script
