@@ -40,7 +40,7 @@ Autonomous capabilities in `.claude/skills/`:
 - **devflow-tasks**: Track task completion and logging
 
 ### 4. State Layer
-State management in `.devflow/lib/`:
+State management in `.devflow/scripts/`:
 - `state-io.js`: Atomic state operations with automatic backups
 - `cli.js`: Command-line query interface
 - `state.json.schema`: Validation schema
