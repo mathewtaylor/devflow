@@ -218,7 +218,7 @@ Skills are **model-invoked** - Claude autonomously decides when to use them base
 cd /path/to/your/project
 
 # 2. Install DevFlow plugin
-/plugin marketplace add https://github.com/mathewtaylor/devflow
+/plugin marketplace add mathewtaylor/devflow
 /plugin install devflow
 
 # 3. Initialize DevFlow (creates .devflow/, integrates with CLAUDE.md)
