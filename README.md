@@ -4,9 +4,13 @@
 
 > Structured workflow system that transforms how you build features—from specification to production-ready code with automated quality gates.
 
-**Version:** 2025.10.24
+**Version:** 1.9.0 (Stable Manual Install)
+**Branch:** `stable-manual-install`
+
+> ⚠️ This is the **stable manual installation version** of DevFlow. For the plugin version (experimental), see the `main` branch.
 
 **Latest Updates:**
+- **Stable Branch Created**: Clean manual installation without plugin dependencies
 - **Repository Restructure**: Multi-agent support preparation (claude/, codex/, gemini/ future structure)
 - **Snapshot Functionality**: Pause/resume with context preservation for execution workflow
 - **Phase Review Gate**: Automatic integration validation after parent task completion with remediation workflow
