@@ -34,16 +34,16 @@ declare -a FILES=(
     ".plugins/devflow/agents/tester.md:.claude/agents/tester.md"
 
     # Commands (10 total) - Source: plugins/devflow/commands, Dest: .claude/commands
-    ".plugins/devflow/commands/devflow/init.md:.claude/commands/devflow/init.md"
-    ".plugins/devflow/commands/devflow/spec.md:.claude/commands/devflow/spec.md"
-    ".plugins/devflow/commands/devflow/plan.md:.claude/commands/devflow/plan.md"
-    ".plugins/devflow/commands/devflow/tasks.md:.claude/commands/devflow/tasks.md"
-    ".plugins/devflow/commands/devflow/execute.md:.claude/commands/devflow/execute.md"
-    ".plugins/devflow/commands/devflow/status.md:.claude/commands/devflow/status.md"
-    ".plugins/devflow/commands/devflow/think.md:.claude/commands/devflow/think.md"
-    ".plugins/devflow/commands/devflow/build-feature.md:.claude/commands/devflow/build-feature.md"
-    ".plugins/devflow/commands/devflow/consolidate-docs.md:.claude/commands/devflow/consolidate-docs.md"
-    ".plugins/devflow/commands/devflow/readme-manager.md:.claude/commands/devflow/readme-manager.md"
+    ".plugins/devflow/commands/init.md:.claude/commands/devflow/init.md"
+    ".plugins/devflow/commands/spec.md:.claude/commands/devflow/spec.md"
+    ".plugins/devflow/commands/plan.md:.claude/commands/devflow/plan.md"
+    ".plugins/devflow/commands/tasks.md:.claude/commands/devflow/tasks.md"
+    ".plugins/devflow/commands/execute.md:.claude/commands/devflow/execute.md"
+    ".plugins/devflow/commands/status.md:.claude/commands/devflow/status.md"
+    ".plugins/devflow/commands/think.md:.claude/commands/devflow/think.md"
+    ".plugins/devflow/commands/build-feature.md:.claude/commands/devflow/build-feature.md"
+    ".plugins/devflow/commands/consolidate-docs.md:.claude/commands/devflow/consolidate-docs.md"
+    ".plugins/devflow/commands/readme-manager.md:.claude/commands/devflow/readme-manager.md"
 
     # Skills (5 skills, 17 files total) - Source: plugins/devflow/skills, Dest: .claude/skills
     # devflow-state skill (3 files)

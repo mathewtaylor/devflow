@@ -55,16 +55,16 @@ $FilesToDownload = @(
     @{Source=".plugins/devflow/agents/tester.md"; Dest=".claude/agents/tester.md"},
 
     # Commands (10 total) - Source: plugins/devflow/commands, Dest: .claude/commands
-    @{Source=".plugins/devflow/commands/devflow/init.md"; Dest=".claude/commands/devflow/init.md"},
-    @{Source=".plugins/devflow/commands/devflow/spec.md"; Dest=".claude/commands/devflow/spec.md"},
-    @{Source=".plugins/devflow/commands/devflow/plan.md"; Dest=".claude/commands/devflow/plan.md"},
-    @{Source=".plugins/devflow/commands/devflow/tasks.md"; Dest=".claude/commands/devflow/tasks.md"},
-    @{Source=".plugins/devflow/commands/devflow/execute.md"; Dest=".claude/commands/devflow/execute.md"},
-    @{Source=".plugins/devflow/commands/devflow/status.md"; Dest=".claude/commands/devflow/status.md"},
-    @{Source=".plugins/devflow/commands/devflow/think.md"; Dest=".claude/commands/devflow/think.md"},
-    @{Source=".plugins/devflow/commands/devflow/build-feature.md"; Dest=".claude/commands/devflow/build-feature.md"},
-    @{Source=".plugins/devflow/commands/devflow/consolidate-docs.md"; Dest=".claude/commands/devflow/consolidate-docs.md"},
-    @{Source=".plugins/devflow/commands/devflow/readme-manager.md"; Dest=".claude/commands/devflow/readme-manager.md"},
+    @{Source=".plugins/devflow/commands/init.md"; Dest=".claude/commands/devflow/init.md"},
+    @{Source=".plugins/devflow/commands/spec.md"; Dest=".claude/commands/devflow/spec.md"},
+    @{Source=".plugins/devflow/commands/plan.md"; Dest=".claude/commands/devflow/plan.md"},
+    @{Source=".plugins/devflow/commands/tasks.md"; Dest=".claude/commands/devflow/tasks.md"},
+    @{Source=".plugins/devflow/commands/execute.md"; Dest=".claude/commands/devflow/execute.md"},
+    @{Source=".plugins/devflow/commands/status.md"; Dest=".claude/commands/devflow/status.md"},
+    @{Source=".plugins/devflow/commands/think.md"; Dest=".claude/commands/devflow/think.md"},
+    @{Source=".plugins/devflow/commands/build-feature.md"; Dest=".claude/commands/devflow/build-feature.md"},
+    @{Source=".plugins/devflow/commands/consolidate-docs.md"; Dest=".claude/commands/devflow/consolidate-docs.md"},
+    @{Source=".plugins/devflow/commands/readme-manager.md"; Dest=".claude/commands/devflow/readme-manager.md"},
 
     # Skills (5 skills, 17 files total) - Source: plugins/devflow/skills, Dest: .claude/skills
     # devflow-state skill (3 files)
