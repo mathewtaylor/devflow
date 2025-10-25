@@ -95,8 +95,8 @@ $FilesToDownload = @(
     @{Source=".plugins/devflow/skills/devflow-tasks/scripts/log_implementation.js"; Dest=".claude/skills/devflow-tasks/scripts/log_implementation.js"},
 
     # Templates and utilities (13 total) - Source: plugins/devflow, Dest: .devflow
-    @{Source=".plugins/devflow/lib/state-io.js"; Dest=".devflow/lib/state-io.js"},
-    @{Source=".plugins/devflow/lib/cli.js"; Dest=".devflow/lib/cli.js"},
+    @{Source=".plugins/devflow/scripts/state-io.js"; Dest=".devflow/scripts/state-io.js"},
+    @{Source=".plugins/devflow/scripts/cli.js"; Dest=".devflow/scripts/cli.js"},
     @{Source=".plugins/devflow/state.json.schema"; Dest=".devflow/state.json.schema"},
     @{Source=".plugins/devflow/instructions.md"; Dest=".devflow/instructions.md"},
     @{Source=".plugins/devflow/templates/constitution.md.template"; Dest=".devflow/templates/constitution.md.template"},

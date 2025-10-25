@@ -17,8 +17,8 @@ Create a comprehensive specification for: **$ARGUMENTS**
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "✓" || (echo "✗ Run /init first" && exit 1)`
-- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query active_feature 2>/dev/null || node .devflow/lib/cli.js query active_feature 2>/dev/null || echo "none"`
-- Total features: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query feature_count 2>/dev/null || node .devflow/lib/cli.js query feature_count 2>/dev/null || echo "0"`
+- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature 2>/dev/null || node .devflow/scripts/cli.js query active_feature 2>/dev/null || echo "none"`
+- Total features: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_count 2>/dev/null || node .devflow/scripts/cli.js query feature_count 2>/dev/null || echo "0"`
 
 ## Project Context
 

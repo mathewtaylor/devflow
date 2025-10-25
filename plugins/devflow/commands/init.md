@@ -28,7 +28,7 @@ Create personalized constitution and architecture documentation for this project
 2. **If plugin installation detected** (`${CLAUDE_PLUGIN_ROOT}` is set):
    - Create .devflow directory: !`mkdir -p .devflow`
    - Copy templates: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp -r "${CLAUDE_PLUGIN_ROOT}/templates" .devflow/ || true`
-   - Copy libraries: !`test -n "${CLAUDE_PLUGIN_ROOT}" && mkdir -p .devflow/lib && cp "${CLAUDE_PLUGIN_ROOT}/lib"/*.js .devflow/lib/ || true`
+   - Copy libraries: !`test -n "${CLAUDE_PLUGIN_ROOT}" && mkdir -p .devflow/lib && cp "${CLAUDE_PLUGIN_ROOT}/lib"/*.js .devflow/scripts/ || true`
    - Copy schema: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp "${CLAUDE_PLUGIN_ROOT}/state.json.schema" .devflow/ || true`
    - Copy instructions: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp "${CLAUDE_PLUGIN_ROOT}/instructions.md" .devflow/ || true`
 
@@ -42,8 +42,8 @@ Create personalized constitution and architecture documentation for this project
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "yes" || echo "no"`
-- Existing code detected: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query code_detected 2>/dev/null || node .devflow/lib/cli.js query code_detected 2>/dev/null || echo "unknown"`
-- Package files found: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query package_files 2>/dev/null || node .devflow/lib/cli.js query package_files 2>/dev/null || echo "unknown"`
+- Existing code detected: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query code_detected 2>/dev/null || node .devflow/scripts/cli.js query code_detected 2>/dev/null || echo "unknown"`
+- Package files found: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query package_files 2>/dev/null || node .devflow/scripts/cli.js query package_files 2>/dev/null || echo "unknown"`
 
 ## Your Task
 
@@ -164,7 +164,7 @@ Create `.devflow/state.json`:
 
 Check for existing documentation files:
 
-- Markdown count: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md" 2>/dev/null || node .devflow/lib/cli.js query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md" 2>/dev/null || echo "0"`
+- Markdown count: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md" 2>/dev/null || node .devflow/scripts/cli.js query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md" 2>/dev/null || echo "0"`
 
 **If markdown count > 5:**
 

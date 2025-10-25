@@ -74,8 +74,8 @@ declare -a FILES=(
     ".plugins/devflow/skills/devflow-tasks/scripts/log_implementation.js:.claude/skills/devflow-tasks/scripts/log_implementation.js"
 
     # Templates and utilities (13 total) - Source: plugins/devflow, Dest: .devflow
-    ".plugins/devflow/lib/state-io.js:.devflow/lib/state-io.js"
-    ".plugins/devflow/lib/cli.js:.devflow/lib/cli.js"
+    ".plugins/devflow/scripts/state-io.js:.devflow/scripts/state-io.js"
+    ".plugins/devflow/scripts/cli.js:.devflow/scripts/cli.js"
     ".plugins/devflow/state.json.schema:.devflow/state.json.schema"
     ".plugins/devflow/instructions.md:.devflow/instructions.md"
     ".plugins/devflow/templates/constitution.md.template:.devflow/templates/constitution.md.template"
@@ -318,7 +318,7 @@ validate_installation() {
 
     # Check critical files
     local critical_files=(
-        ".devflow/lib/state-io.js"
+        ".devflow/scripts/state-io.js"
         ".devflow/state.json.schema"
         ".devflow/templates/constitution.md.template"
         ".claude/commands/devflow/init.md"
