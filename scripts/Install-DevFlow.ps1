@@ -44,70 +44,70 @@ $MaxRetries = 3
 # Current counts: 8 agents, 10 commands, 5 skills (17 files), 13 templates/utilities
 # Format: @{Source='repo_path'; Dest='install_path'}
 $FilesToDownload = @(
-    # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
-    @{Source=".devflow/integrations/claude/agents/architect.md"; Dest=".claude/agents/architect.md"},
-    @{Source=".devflow/integrations/claude/agents/checkpoint-reviewer.md"; Dest=".claude/agents/checkpoint-reviewer.md"},
-    @{Source=".devflow/integrations/claude/agents/git-operations-manager.md"; Dest=".claude/agents/git-operations-manager.md"},
-    @{Source=".devflow/integrations/claude/agents/planner.md"; Dest=".claude/agents/planner.md"},
-    @{Source=".devflow/integrations/claude/agents/readme-maintainer.md"; Dest=".claude/agents/readme-maintainer.md"},
-    @{Source=".devflow/integrations/claude/agents/reviewer.md"; Dest=".claude/agents/reviewer.md"},
-    @{Source=".devflow/integrations/claude/agents/state-manager.md"; Dest=".claude/agents/state-manager.md"},
-    @{Source=".devflow/integrations/claude/agents/tester.md"; Dest=".claude/agents/tester.md"},
+    # Agents (8 total) - Source: plugins/devflow/agents, Dest: .claude/agents
+    @{Source=".plugins/devflow/agents/architect.md"; Dest=".claude/agents/architect.md"},
+    @{Source=".plugins/devflow/agents/checkpoint-reviewer.md"; Dest=".claude/agents/checkpoint-reviewer.md"},
+    @{Source=".plugins/devflow/agents/git-operations-manager.md"; Dest=".claude/agents/git-operations-manager.md"},
+    @{Source=".plugins/devflow/agents/planner.md"; Dest=".claude/agents/planner.md"},
+    @{Source=".plugins/devflow/agents/readme-maintainer.md"; Dest=".claude/agents/readme-maintainer.md"},
+    @{Source=".plugins/devflow/agents/reviewer.md"; Dest=".claude/agents/reviewer.md"},
+    @{Source=".plugins/devflow/agents/state-manager.md"; Dest=".claude/agents/state-manager.md"},
+    @{Source=".plugins/devflow/agents/tester.md"; Dest=".claude/agents/tester.md"},
 
-    # Commands (10 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
-    @{Source=".devflow/integrations/claude/commands/devflow/init.md"; Dest=".claude/commands/devflow/init.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/spec.md"; Dest=".claude/commands/devflow/spec.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/plan.md"; Dest=".claude/commands/devflow/plan.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/tasks.md"; Dest=".claude/commands/devflow/tasks.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/execute.md"; Dest=".claude/commands/devflow/execute.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/status.md"; Dest=".claude/commands/devflow/status.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/think.md"; Dest=".claude/commands/devflow/think.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/build-feature.md"; Dest=".claude/commands/devflow/build-feature.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/consolidate-docs.md"; Dest=".claude/commands/devflow/consolidate-docs.md"},
-    @{Source=".devflow/integrations/claude/commands/devflow/readme-manager.md"; Dest=".claude/commands/devflow/readme-manager.md"},
+    # Commands (10 total) - Source: plugins/devflow/commands, Dest: .claude/commands
+    @{Source=".plugins/devflow/commands/devflow/init.md"; Dest=".claude/commands/devflow/init.md"},
+    @{Source=".plugins/devflow/commands/devflow/spec.md"; Dest=".claude/commands/devflow/spec.md"},
+    @{Source=".plugins/devflow/commands/devflow/plan.md"; Dest=".claude/commands/devflow/plan.md"},
+    @{Source=".plugins/devflow/commands/devflow/tasks.md"; Dest=".claude/commands/devflow/tasks.md"},
+    @{Source=".plugins/devflow/commands/devflow/execute.md"; Dest=".claude/commands/devflow/execute.md"},
+    @{Source=".plugins/devflow/commands/devflow/status.md"; Dest=".claude/commands/devflow/status.md"},
+    @{Source=".plugins/devflow/commands/devflow/think.md"; Dest=".claude/commands/devflow/think.md"},
+    @{Source=".plugins/devflow/commands/devflow/build-feature.md"; Dest=".claude/commands/devflow/build-feature.md"},
+    @{Source=".plugins/devflow/commands/devflow/consolidate-docs.md"; Dest=".claude/commands/devflow/consolidate-docs.md"},
+    @{Source=".plugins/devflow/commands/devflow/readme-manager.md"; Dest=".claude/commands/devflow/readme-manager.md"},
 
-    # Skills (5 skills, 17 files total) - Source: devflow/integrations/claude/skills, Dest: .claude/skills
+    # Skills (5 skills, 17 files total) - Source: plugins/devflow/skills, Dest: .claude/skills
     # devflow-state skill (3 files)
-    @{Source=".devflow/integrations/claude/skills/devflow-state/SKILL.md"; Dest=".claude/skills/devflow-state/SKILL.md"},
-    @{Source=".devflow/integrations/claude/skills/devflow-state/scripts/query_state.js"; Dest=".claude/skills/devflow-state/scripts/query_state.js"},
-    @{Source=".devflow/integrations/claude/skills/devflow-state/scripts/get_feature.js"; Dest=".claude/skills/devflow-state/scripts/get_feature.js"},
+    @{Source=".plugins/devflow/skills/devflow-state/SKILL.md"; Dest=".claude/skills/devflow-state/SKILL.md"},
+    @{Source=".plugins/devflow/skills/devflow-state/scripts/query_state.js"; Dest=".claude/skills/devflow-state/scripts/query_state.js"},
+    @{Source=".plugins/devflow/skills/devflow-state/scripts/get_feature.js"; Dest=".claude/skills/devflow-state/scripts/get_feature.js"},
 
     # devflow-context skill (3 files)
-    @{Source=".devflow/integrations/claude/skills/devflow-context/SKILL.md"; Dest=".claude/skills/devflow-context/SKILL.md"},
-    @{Source=".devflow/integrations/claude/skills/devflow-context/scripts/load_docs.js"; Dest=".claude/skills/devflow-context/scripts/load_docs.js"},
-    @{Source=".devflow/integrations/claude/skills/devflow-context/references/pattern_mapping.md"; Dest=".claude/skills/devflow-context/references/pattern_mapping.md"},
+    @{Source=".plugins/devflow/skills/devflow-context/SKILL.md"; Dest=".claude/skills/devflow-context/SKILL.md"},
+    @{Source=".plugins/devflow/skills/devflow-context/scripts/load_docs.js"; Dest=".claude/skills/devflow-context/scripts/load_docs.js"},
+    @{Source=".plugins/devflow/skills/devflow-context/references/pattern_mapping.md"; Dest=".claude/skills/devflow-context/references/pattern_mapping.md"},
 
     # devflow-validator skill (3 files)
-    @{Source=".devflow/integrations/claude/skills/devflow-validator/SKILL.md"; Dest=".claude/skills/devflow-validator/SKILL.md"},
-    @{Source=".devflow/integrations/claude/skills/devflow-validator/scripts/check_setup.js"; Dest=".claude/skills/devflow-validator/scripts/check_setup.js"},
-    @{Source=".devflow/integrations/claude/skills/devflow-validator/scripts/check_transition.js"; Dest=".claude/skills/devflow-validator/scripts/check_transition.js"},
+    @{Source=".plugins/devflow/skills/devflow-validator/SKILL.md"; Dest=".claude/skills/devflow-validator/SKILL.md"},
+    @{Source=".plugins/devflow/skills/devflow-validator/scripts/check_setup.js"; Dest=".claude/skills/devflow-validator/scripts/check_setup.js"},
+    @{Source=".plugins/devflow/skills/devflow-validator/scripts/check_transition.js"; Dest=".claude/skills/devflow-validator/scripts/check_transition.js"},
 
     # devflow-docs skill (4 files)
-    @{Source=".devflow/integrations/claude/skills/devflow-docs/SKILL.md"; Dest=".claude/skills/devflow-docs/SKILL.md"},
-    @{Source=".devflow/integrations/claude/skills/devflow-docs/scripts/update_architecture.js"; Dest=".claude/skills/devflow-docs/scripts/update_architecture.js"},
-    @{Source=".devflow/integrations/claude/skills/devflow-docs/scripts/generate_retro.js"; Dest=".claude/skills/devflow-docs/scripts/generate_retro.js"},
-    @{Source=".devflow/integrations/claude/skills/devflow-docs/references/documentation_standards.md"; Dest=".claude/skills/devflow-docs/references/documentation_standards.md"},
+    @{Source=".plugins/devflow/skills/devflow-docs/SKILL.md"; Dest=".claude/skills/devflow-docs/SKILL.md"},
+    @{Source=".plugins/devflow/skills/devflow-docs/scripts/update_architecture.js"; Dest=".claude/skills/devflow-docs/scripts/update_architecture.js"},
+    @{Source=".plugins/devflow/skills/devflow-docs/scripts/generate_retro.js"; Dest=".claude/skills/devflow-docs/scripts/generate_retro.js"},
+    @{Source=".plugins/devflow/skills/devflow-docs/references/documentation_standards.md"; Dest=".claude/skills/devflow-docs/references/documentation_standards.md"},
 
     # devflow-tasks skill (4 files)
-    @{Source=".devflow/integrations/claude/skills/devflow-tasks/SKILL.md"; Dest=".claude/skills/devflow-tasks/SKILL.md"},
-    @{Source=".devflow/integrations/claude/skills/devflow-tasks/scripts/mark_complete.js"; Dest=".claude/skills/devflow-tasks/scripts/mark_complete.js"},
-    @{Source=".devflow/integrations/claude/skills/devflow-tasks/scripts/get_next_task.js"; Dest=".claude/skills/devflow-tasks/scripts/get_next_task.js"},
-    @{Source=".devflow/integrations/claude/skills/devflow-tasks/scripts/log_implementation.js"; Dest=".claude/skills/devflow-tasks/scripts/log_implementation.js"},
+    @{Source=".plugins/devflow/skills/devflow-tasks/SKILL.md"; Dest=".claude/skills/devflow-tasks/SKILL.md"},
+    @{Source=".plugins/devflow/skills/devflow-tasks/scripts/mark_complete.js"; Dest=".claude/skills/devflow-tasks/scripts/mark_complete.js"},
+    @{Source=".plugins/devflow/skills/devflow-tasks/scripts/get_next_task.js"; Dest=".claude/skills/devflow-tasks/scripts/get_next_task.js"},
+    @{Source=".plugins/devflow/skills/devflow-tasks/scripts/log_implementation.js"; Dest=".claude/skills/devflow-tasks/scripts/log_implementation.js"},
 
-    # Templates and utilities (13 total) - Source and destination are the same
-    @{Source=".devflow/lib/state-io.js"; Dest=".devflow/lib/state-io.js"},
-    @{Source=".devflow/lib/cli.js"; Dest=".devflow/lib/cli.js"},
-    @{Source=".devflow/state.json.schema"; Dest=".devflow/state.json.schema"},
-    @{Source=".devflow/instructions.md"; Dest=".devflow/instructions.md"},
-    @{Source=".devflow/templates/constitution.md.template"; Dest=".devflow/templates/constitution.md.template"},
-    @{Source=".devflow/templates/architecture.md.template"; Dest=".devflow/templates/architecture.md.template"},
-    @{Source=".devflow/templates/snapshot.md.template"; Dest=".devflow/templates/snapshot.md.template"},
-    @{Source=".devflow/templates/build-feature-spec.md.template"; Dest=".devflow/templates/build-feature-spec.md.template"},
-    @{Source=".devflow/templates/build-feature-implementation.md.template"; Dest=".devflow/templates/build-feature-implementation.md.template"},
-    @{Source=".devflow/templates/build-feature-retrospective.md.template"; Dest=".devflow/templates/build-feature-retrospective.md.template"},
-    @{Source=".devflow/templates/.devflowignore.template"; Dest=".devflow/templates/.devflowignore.template"},
-    @{Source=".devflow/templates/domains/_index.md.template"; Dest=".devflow/templates/domains/_index.md.template"},
-    @{Source=".devflow/templates/domains/concern.md.template"; Dest=".devflow/templates/domains/concern.md.template"}
+    # Templates and utilities (13 total) - Source: plugins/devflow, Dest: .devflow
+    @{Source=".plugins/devflow/lib/state-io.js"; Dest=".devflow/lib/state-io.js"},
+    @{Source=".plugins/devflow/lib/cli.js"; Dest=".devflow/lib/cli.js"},
+    @{Source=".plugins/devflow/state.json.schema"; Dest=".devflow/state.json.schema"},
+    @{Source=".plugins/devflow/instructions.md"; Dest=".devflow/instructions.md"},
+    @{Source=".plugins/devflow/templates/constitution.md.template"; Dest=".devflow/templates/constitution.md.template"},
+    @{Source=".plugins/devflow/templates/architecture.md.template"; Dest=".devflow/templates/architecture.md.template"},
+    @{Source=".plugins/devflow/templates/snapshot.md.template"; Dest=".devflow/templates/snapshot.md.template"},
+    @{Source=".plugins/devflow/templates/build-feature-spec.md.template"; Dest=".devflow/templates/build-feature-spec.md.template"},
+    @{Source=".plugins/devflow/templates/build-feature-implementation.md.template"; Dest=".devflow/templates/build-feature-implementation.md.template"},
+    @{Source=".plugins/devflow/templates/build-feature-retrospective.md.template"; Dest=".devflow/templates/build-feature-retrospective.md.template"},
+    @{Source=".plugins/devflow/templates/.devflowignore.template"; Dest=".devflow/templates/.devflowignore.template"},
+    @{Source=".plugins/devflow/templates/domains/_index.md.template"; Dest=".devflow/templates/domains/_index.md.template"},
+    @{Source=".plugins/devflow/templates/domains/concern.md.template"; Dest=".devflow/templates/domains/concern.md.template"}
 )
 
 # Show help

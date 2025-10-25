@@ -23,70 +23,70 @@ MAX_RETRIES=3
 # Current counts: 8 agents, 10 commands, 5 skills (17 files), 13 templates/utilities
 # Format: "source_path:destination_path" (source from repo, destination in user project)
 declare -a FILES=(
-    # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
-    ".devflow/integrations/claude/agents/architect.md:.claude/agents/architect.md"
-    ".devflow/integrations/claude/agents/checkpoint-reviewer.md:.claude/agents/checkpoint-reviewer.md"
-    ".devflow/integrations/claude/agents/git-operations-manager.md:.claude/agents/git-operations-manager.md"
-    ".devflow/integrations/claude/agents/planner.md:.claude/agents/planner.md"
-    ".devflow/integrations/claude/agents/readme-maintainer.md:.claude/agents/readme-maintainer.md"
-    ".devflow/integrations/claude/agents/reviewer.md:.claude/agents/reviewer.md"
-    ".devflow/integrations/claude/agents/state-manager.md:.claude/agents/state-manager.md"
-    ".devflow/integrations/claude/agents/tester.md:.claude/agents/tester.md"
+    # Agents (8 total) - Source: plugins/devflow/agents, Dest: .claude/agents
+    ".plugins/devflow/agents/architect.md:.claude/agents/architect.md"
+    ".plugins/devflow/agents/checkpoint-reviewer.md:.claude/agents/checkpoint-reviewer.md"
+    ".plugins/devflow/agents/git-operations-manager.md:.claude/agents/git-operations-manager.md"
+    ".plugins/devflow/agents/planner.md:.claude/agents/planner.md"
+    ".plugins/devflow/agents/readme-maintainer.md:.claude/agents/readme-maintainer.md"
+    ".plugins/devflow/agents/reviewer.md:.claude/agents/reviewer.md"
+    ".plugins/devflow/agents/state-manager.md:.claude/agents/state-manager.md"
+    ".plugins/devflow/agents/tester.md:.claude/agents/tester.md"
 
-    # Commands (10 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
-    ".devflow/integrations/claude/commands/devflow/init.md:.claude/commands/devflow/init.md"
-    ".devflow/integrations/claude/commands/devflow/spec.md:.claude/commands/devflow/spec.md"
-    ".devflow/integrations/claude/commands/devflow/plan.md:.claude/commands/devflow/plan.md"
-    ".devflow/integrations/claude/commands/devflow/tasks.md:.claude/commands/devflow/tasks.md"
-    ".devflow/integrations/claude/commands/devflow/execute.md:.claude/commands/devflow/execute.md"
-    ".devflow/integrations/claude/commands/devflow/status.md:.claude/commands/devflow/status.md"
-    ".devflow/integrations/claude/commands/devflow/think.md:.claude/commands/devflow/think.md"
-    ".devflow/integrations/claude/commands/devflow/build-feature.md:.claude/commands/devflow/build-feature.md"
-    ".devflow/integrations/claude/commands/devflow/consolidate-docs.md:.claude/commands/devflow/consolidate-docs.md"
-    ".devflow/integrations/claude/commands/devflow/readme-manager.md:.claude/commands/devflow/readme-manager.md"
+    # Commands (10 total) - Source: plugins/devflow/commands, Dest: .claude/commands
+    ".plugins/devflow/commands/devflow/init.md:.claude/commands/devflow/init.md"
+    ".plugins/devflow/commands/devflow/spec.md:.claude/commands/devflow/spec.md"
+    ".plugins/devflow/commands/devflow/plan.md:.claude/commands/devflow/plan.md"
+    ".plugins/devflow/commands/devflow/tasks.md:.claude/commands/devflow/tasks.md"
+    ".plugins/devflow/commands/devflow/execute.md:.claude/commands/devflow/execute.md"
+    ".plugins/devflow/commands/devflow/status.md:.claude/commands/devflow/status.md"
+    ".plugins/devflow/commands/devflow/think.md:.claude/commands/devflow/think.md"
+    ".plugins/devflow/commands/devflow/build-feature.md:.claude/commands/devflow/build-feature.md"
+    ".plugins/devflow/commands/devflow/consolidate-docs.md:.claude/commands/devflow/consolidate-docs.md"
+    ".plugins/devflow/commands/devflow/readme-manager.md:.claude/commands/devflow/readme-manager.md"
 
-    # Skills (5 skills, 17 files total) - Source: devflow/integrations/claude/skills, Dest: .claude/skills
+    # Skills (5 skills, 17 files total) - Source: plugins/devflow/skills, Dest: .claude/skills
     # devflow-state skill (3 files)
-    ".devflow/integrations/claude/skills/devflow-state/SKILL.md:.claude/skills/devflow-state/SKILL.md"
-    ".devflow/integrations/claude/skills/devflow-state/scripts/query_state.js:.claude/skills/devflow-state/scripts/query_state.js"
-    ".devflow/integrations/claude/skills/devflow-state/scripts/get_feature.js:.claude/skills/devflow-state/scripts/get_feature.js"
+    ".plugins/devflow/skills/devflow-state/SKILL.md:.claude/skills/devflow-state/SKILL.md"
+    ".plugins/devflow/skills/devflow-state/scripts/query_state.js:.claude/skills/devflow-state/scripts/query_state.js"
+    ".plugins/devflow/skills/devflow-state/scripts/get_feature.js:.claude/skills/devflow-state/scripts/get_feature.js"
 
     # devflow-context skill (3 files)
-    ".devflow/integrations/claude/skills/devflow-context/SKILL.md:.claude/skills/devflow-context/SKILL.md"
-    ".devflow/integrations/claude/skills/devflow-context/scripts/load_docs.js:.claude/skills/devflow-context/scripts/load_docs.js"
-    ".devflow/integrations/claude/skills/devflow-context/references/pattern_mapping.md:.claude/skills/devflow-context/references/pattern_mapping.md"
+    ".plugins/devflow/skills/devflow-context/SKILL.md:.claude/skills/devflow-context/SKILL.md"
+    ".plugins/devflow/skills/devflow-context/scripts/load_docs.js:.claude/skills/devflow-context/scripts/load_docs.js"
+    ".plugins/devflow/skills/devflow-context/references/pattern_mapping.md:.claude/skills/devflow-context/references/pattern_mapping.md"
 
     # devflow-validator skill (3 files)
-    ".devflow/integrations/claude/skills/devflow-validator/SKILL.md:.claude/skills/devflow-validator/SKILL.md"
-    ".devflow/integrations/claude/skills/devflow-validator/scripts/check_setup.js:.claude/skills/devflow-validator/scripts/check_setup.js"
-    ".devflow/integrations/claude/skills/devflow-validator/scripts/check_transition.js:.claude/skills/devflow-validator/scripts/check_transition.js"
+    ".plugins/devflow/skills/devflow-validator/SKILL.md:.claude/skills/devflow-validator/SKILL.md"
+    ".plugins/devflow/skills/devflow-validator/scripts/check_setup.js:.claude/skills/devflow-validator/scripts/check_setup.js"
+    ".plugins/devflow/skills/devflow-validator/scripts/check_transition.js:.claude/skills/devflow-validator/scripts/check_transition.js"
 
     # devflow-docs skill (4 files)
-    ".devflow/integrations/claude/skills/devflow-docs/SKILL.md:.claude/skills/devflow-docs/SKILL.md"
-    ".devflow/integrations/claude/skills/devflow-docs/scripts/update_architecture.js:.claude/skills/devflow-docs/scripts/update_architecture.js"
-    ".devflow/integrations/claude/skills/devflow-docs/scripts/generate_retro.js:.claude/skills/devflow-docs/scripts/generate_retro.js"
-    ".devflow/integrations/claude/skills/devflow-docs/references/documentation_standards.md:.claude/skills/devflow-docs/references/documentation_standards.md"
+    ".plugins/devflow/skills/devflow-docs/SKILL.md:.claude/skills/devflow-docs/SKILL.md"
+    ".plugins/devflow/skills/devflow-docs/scripts/update_architecture.js:.claude/skills/devflow-docs/scripts/update_architecture.js"
+    ".plugins/devflow/skills/devflow-docs/scripts/generate_retro.js:.claude/skills/devflow-docs/scripts/generate_retro.js"
+    ".plugins/devflow/skills/devflow-docs/references/documentation_standards.md:.claude/skills/devflow-docs/references/documentation_standards.md"
 
     # devflow-tasks skill (4 files)
-    ".devflow/integrations/claude/skills/devflow-tasks/SKILL.md:.claude/skills/devflow-tasks/SKILL.md"
-    ".devflow/integrations/claude/skills/devflow-tasks/scripts/mark_complete.js:.claude/skills/devflow-tasks/scripts/mark_complete.js"
-    ".devflow/integrations/claude/skills/devflow-tasks/scripts/get_next_task.js:.claude/skills/devflow-tasks/scripts/get_next_task.js"
-    ".devflow/integrations/claude/skills/devflow-tasks/scripts/log_implementation.js:.claude/skills/devflow-tasks/scripts/log_implementation.js"
+    ".plugins/devflow/skills/devflow-tasks/SKILL.md:.claude/skills/devflow-tasks/SKILL.md"
+    ".plugins/devflow/skills/devflow-tasks/scripts/mark_complete.js:.claude/skills/devflow-tasks/scripts/mark_complete.js"
+    ".plugins/devflow/skills/devflow-tasks/scripts/get_next_task.js:.claude/skills/devflow-tasks/scripts/get_next_task.js"
+    ".plugins/devflow/skills/devflow-tasks/scripts/log_implementation.js:.claude/skills/devflow-tasks/scripts/log_implementation.js"
 
-    # Templates and utilities (13 total) - Source and destination are the same
-    ".devflow/lib/state-io.js:.devflow/lib/state-io.js"
-    ".devflow/lib/cli.js:.devflow/lib/cli.js"
-    ".devflow/state.json.schema:.devflow/state.json.schema"
-    ".devflow/instructions.md:.devflow/instructions.md"
-    ".devflow/templates/constitution.md.template:.devflow/templates/constitution.md.template"
-    ".devflow/templates/architecture.md.template:.devflow/templates/architecture.md.template"
-    ".devflow/templates/snapshot.md.template:.devflow/templates/snapshot.md.template"
-    ".devflow/templates/build-feature-spec.md.template:.devflow/templates/build-feature-spec.md.template"
-    ".devflow/templates/build-feature-implementation.md.template:.devflow/templates/build-feature-implementation.md.template"
-    ".devflow/templates/build-feature-retrospective.md.template:.devflow/templates/build-feature-retrospective.md.template"
-    ".devflow/templates/.devflowignore.template:.devflow/templates/.devflowignore.template"
-    ".devflow/templates/domains/_index.md.template:.devflow/templates/domains/_index.md.template"
-    ".devflow/templates/domains/concern.md.template:.devflow/templates/domains/concern.md.template"
+    # Templates and utilities (13 total) - Source: plugins/devflow, Dest: .devflow
+    ".plugins/devflow/lib/state-io.js:.devflow/lib/state-io.js"
+    ".plugins/devflow/lib/cli.js:.devflow/lib/cli.js"
+    ".plugins/devflow/state.json.schema:.devflow/state.json.schema"
+    ".plugins/devflow/instructions.md:.devflow/instructions.md"
+    ".plugins/devflow/templates/constitution.md.template:.devflow/templates/constitution.md.template"
+    ".plugins/devflow/templates/architecture.md.template:.devflow/templates/architecture.md.template"
+    ".plugins/devflow/templates/snapshot.md.template:.devflow/templates/snapshot.md.template"
+    ".plugins/devflow/templates/build-feature-spec.md.template:.devflow/templates/build-feature-spec.md.template"
+    ".plugins/devflow/templates/build-feature-implementation.md.template:.devflow/templates/build-feature-implementation.md.template"
+    ".plugins/devflow/templates/build-feature-retrospective.md.template:.devflow/templates/build-feature-retrospective.md.template"
+    ".plugins/devflow/templates/.devflowignore.template:.devflow/templates/.devflowignore.template"
+    ".plugins/devflow/templates/domains/_index.md.template:.devflow/templates/domains/_index.md.template"
+    ".plugins/devflow/templates/domains/concern.md.template:.devflow/templates/domains/concern.md.template"
 )
 
 # Help message
