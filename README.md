@@ -44,9 +44,9 @@ DevFlow brings structure, automation, and intelligence to feature development:
 
 ### Workflow Commands (10 total)
 
-**Note:** Commands are namespaced as `/devflow:*` when installed as a plugin, or `/` when manually installed.
+**Note:** All commands are namespaced as `/devflow:*` (e.g., `/devflow:init`, `/devflow:spec`).
 
-**`/devflow:init`** (or `/init`) - Initialize DevFlow in your project
+**`/devflow:init`** - Initialize DevFlow in your project
 - Interactive wizard for project constitution
 - Automatic architecture documentation for existing projects
 - Sets up cross-cutting concerns documentation
@@ -209,15 +209,13 @@ Skills are **model-invoked** - Claude autonomously decides when to use them base
 
 ## Installation
 
-### 🔌 Plugin Installation (Recommended)
-
-**Install via Claude Code plugin system:**
+**DevFlow is a Claude Code plugin. Install via the plugin system:**
 
 ```bash
 # 1. Navigate to your project
 cd /path/to/your/project
 
-# 2. Install DevFlow plugin
+# 2. Add marketplace and install plugin
 /plugin marketplace add mathewtaylor/devflow
 /plugin install devflow
 
@@ -230,142 +228,40 @@ cd /path/to/your/project
 
 **That's it!** DevFlow is now managing your feature development.
 
-**Benefits of plugin installation:**
-- ✅ One command installation - no scripts to download
-- ✅ Automatic updates when new versions release
+**Benefits:**
+- ✅ Simple installation - two commands
+- ✅ Automatic updates via `/plugin update devflow`
 - ✅ Clean uninstall via `/plugin uninstall devflow`
 - ✅ Works on all platforms (Windows/Mac/Linux)
 
 ---
 
-### 🚀 Manual Installation (Alternative)
-
-**From your project directory:**
-
-```bash
-# Navigate to your project
-cd /path/to/your/project
-
-# Windows users: Open Git Bash terminal (not PowerShell)
-
-# Install DevFlow (creates .claude/ and .devflow/ directories)
-curl -sSL https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/install-devflow.sh | bash
-
-# Initialize (creates constitution, architecture, integrates with CLAUDE.md)
-/init
-
-# Create your first feature
-/spec user-authentication
-```
-
-**Windows Note:** All commands above should be run in Git Bash, not PowerShell.
-
----
-
 ### Requirements
 
-- **Claude Code CLI** (latest version)
-- **Node.js** (for state.json utilities)
-- **Bash shell**
+**Claude Code CLI** (latest version)
+**Node.js** (for state.json utilities)
+**Bash shell** - DevFlow commands use bash for file operations:
   - **Linux/Mac:** Already installed ✓
   - **Windows:** Git Bash (comes with [Git for Windows](https://git-scm.com/download/win))
 
-### Why Git Bash on Windows?
+**Windows users:** Ensure you're running Claude Code from Git Bash terminal, not PowerShell.
 
-DevFlow's slash commands use bash for file operations and state queries. Git Bash provides these POSIX utilities on Windows.
-
-**Checking if you have it:**
-```bash
-bash --version
-# Should show: GNU bash, version X.X.X
-```
-
-**If not installed:**
-Download [Git for Windows](https://git-scm.com/download/win) - Git Bash is included in the installation.
-
-### Bash Installation (Linux/Mac/Git Bash on Windows)
-
-```bash
-# 1. Navigate to your project directory
-cd /path/to/your/project
-
-# 2. Install DevFlow
-curl -sSL https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/install-devflow.sh | bash
-
-# Or download, review, then run
-curl -O https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/install-devflow.sh
-chmod +x install-devflow.sh
-./install-devflow.sh
-
-# 3. Initialize DevFlow
-/init
-```
-
-### PowerShell Installation (Windows)
-
-```powershell
-# 1. Navigate to your project directory
-cd C:\path\to\your\project
-
-# 2. Download and run installer
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/Install-DevFlow.ps1" -OutFile "Install-DevFlow.ps1"
-.\Install-DevFlow.ps1
-
-# Optional: Install to different directory without navigating
-.\Install-DevFlow.ps1 -TargetPath "C:\MyProject"
-
-# 3. Initialize DevFlow
-/init
-```
-
-### Manual Installation
-
-If you prefer manual setup:
-
-```bash
-# 1. Clone repository
-git clone https://github.com/mathewtaylor/devflow.git
-cd devflow
-
-# 2. Copy files to your project
-# Copy Claude Code integration (agents and commands)
-cp -r devflow/integrations/claude/agents /path/to/your-project/.claude/
-cp -r devflow/integrations/claude/commands /path/to/your-project/.claude/
-
-# Copy shared templates and utilities
-cp -r devflow/templates /path/to/your-project/.devflow/
-cp -r devflow/lib /path/to/your-project/.devflow/
-cp devflow/state.json.schema /path/to/your-project/.devflow/
-cp devflow/instructions.md /path/to/your-project/.devflow/
-
-# 3. Initialize DevFlow
-cd /path/to/your-project
-/init
-```
+---
 
 ### What Gets Installed
 
-**Plugin Installation:**
-- `.claude/plugins/devflow/` - Plugin files (commands, agents, skills)
-- `.devflow/` - Created by `/devflow:init` (templates, lib, state)
+Plugin installation creates:
+- `.devflow/` directory in your project (created by `/devflow:init`)
+  - `constitution.md` - Project principles and standards
+  - `architecture.md` - System structure and patterns
+  - `state.json` - Feature workflow state
+  - `scripts/` - Utilities (copied from plugin)
+  - `templates/` - Infrastructure templates (copied from plugin)
+  - `domains/` - Cross-cutting concerns documentation
 
-**Manual Installation:**
-- `.claude/agents/` - 8 specialized AI agents
-- `.claude/commands/devflow/` - 10 slash commands
-- `.claude/skills/devflow-*` - 5 autonomous skills
-- `.devflow/templates/` - 9 infrastructure templates
-- `.devflow/lib/` - 2 utility libraries (state-io.js, cli.js)
-- `.devflow/` - Schema and instructions files
+**Note:** Commands, agents, and skills remain in the central plugin location (`~/.claude/plugins/`). Your project only contains configuration and documentation in `.devflow/`
 
-**Version:** 2025.10.24 (latest)
-
-**Note on Repository Structure:**
-DevFlow's repository is organized for multi-agent support:
-- `devflow/integrations/claude/` - Claude Code-specific files
-- Future: `devflow/integrations/codex/`, `devflow/integrations/gemini/`
-- Plugin structure enables reuse across AI coding assistants
-
-**Note:** Installation does NOT modify existing files. The `/init` (or `/devflow:init` for plugin) command will automatically integrate DevFlow instructions with your existing CLAUDE.md if present.
+**Note:** `/devflow:init` does NOT modify existing files. It will automatically integrate DevFlow instructions with your existing CLAUDE.md if present.
 
 ---
 

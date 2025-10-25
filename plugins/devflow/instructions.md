@@ -17,21 +17,21 @@ DevFlow transforms chaotic feature development into systematic, high-quality exe
 ## Three-Layer Architecture
 
 ### 1. Command Layer
-Slash commands in `.claude/commands/devflow/`:
+Slash commands invoked as `/devflow:*`:
 - YAML frontmatter controls tool access and model selection
 - `!` prefix: bash execution (dynamic state queries)
 - `@` prefix: file references (automatic context loading)
 - Models: `haiku` (simple), `sonnet` (execution), `opus` (deep thinking)
 
 ### 2. Agent Layer
-Specialized agents in `.claude/agents/`:
+Specialized agents (invoked automatically by commands):
 - Invoked via `Task()` tool
 - Structured inputs/outputs
 - Reusable across commands
 - Available: `architect`, `planner`, `state-manager`, `reviewer`, `tester`, `checkpoint-reviewer`, `git-operations-manager`, `readme-maintainer`
 
 ### 3. Skills Layer
-Autonomous capabilities in `.claude/skills/`:
+Autonomous capabilities (model-invoked automatically):
 - Model-invoked (Claude decides when to use)
 - **devflow-state**: Query workflow state and feature metadata
 - **devflow-context**: Load relevant domain documentation
@@ -54,7 +54,7 @@ State management in `.devflow/scripts/`:
 │   ├── constitution.md.template
 │   ├── architecture.md.template
 │   └── domains/
-├── lib/                        # Utilities (copied on init)
+├── scripts/                    # Utilities (copied on init)
 │   ├── state-io.js
 │   └── cli.js
 ├── state.json.schema          # Validation

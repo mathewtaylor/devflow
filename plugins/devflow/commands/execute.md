@@ -16,8 +16,8 @@ Implement tasks for: **$1** (or active feature)
 
 ## Current State
 
-- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature 2>/dev/null || node .devflow/scripts/cli.js query active_feature 2>/dev/null || echo "none"`
-- Feature exists: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_exists "$1" 2>/dev/null || node .devflow/scripts/cli.js query feature_exists "$1" 2>/dev/null || echo "false"`
+- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature`
+- Feature exists: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_exists "$1"`
 
 ## Your Task
 

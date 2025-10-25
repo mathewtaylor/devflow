@@ -23,23 +23,23 @@ Display comprehensive overview of DevFlow state and progress.
 
 ## Active Feature Info
 
-- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature 2>/dev/null || node .devflow/scripts/cli.js query active_feature 2>/dev/null || echo "none"`
-- Active feature name: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature_name 2>/dev/null || node .devflow/scripts/cli.js query active_feature_name 2>/dev/null || echo "N/A"`
-- Active phase: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_phase 2>/dev/null || node .devflow/scripts/cli.js query active_phase 2>/dev/null || echo "N/A"`
-- Active progress: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_progress 2>/dev/null || node .devflow/scripts/cli.js query active_progress 2>/dev/null || echo "N/A"`
+- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature`
+- Active feature name: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature_name`
+- Active phase: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_phase`
+- Active progress: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_progress`
 
 ## Features Summary
 
-- Total features: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_count 2>/dev/null || node .devflow/scripts/cli.js query feature_count 2>/dev/null || echo "0"`
-- Pending: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query pending_count 2>/dev/null || node .devflow/scripts/cli.js query pending_count 2>/dev/null || echo "0"`
-- Active: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_count 2>/dev/null || node .devflow/scripts/cli.js query active_count 2>/dev/null || echo "0"`
-- Paused: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query paused_count 2>/dev/null || node .devflow/scripts/cli.js query paused_count 2>/dev/null || echo "0"`
-- Completed: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query completed_count 2>/dev/null || node .devflow/scripts/cli.js query completed_count 2>/dev/null || echo "0"`
+- Total features: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_count`
+- Pending: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query pending_count`
+- Active: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_count`
+- Paused: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query paused_count`
+- Completed: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query completed_count`
 
 ## Recent Activity
 
-- Latest feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query latest_feature 2>/dev/null || node .devflow/scripts/cli.js query latest_feature 2>/dev/null || echo "none"`
-- Last initialized: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query last_initialized 2>/dev/null || node .devflow/scripts/cli.js query last_initialized 2>/dev/null || echo "unknown"`
+- Latest feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query latest_feature`
+- Last initialized: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query last_initialized`
 
 ---
 

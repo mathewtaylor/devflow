@@ -22,28 +22,20 @@ Create personalized constitution and architecture documentation for this project
 
 **If .devflow does NOT exist:**
 
-1. **Check installation method:**
-   - Plugin installed: !`test -n "${CLAUDE_PLUGIN_ROOT}" && echo "plugin" || echo "manual"`
-
-2. **If plugin installation detected** (`${CLAUDE_PLUGIN_ROOT}` is set):
+1. **Copy plugin files to project:**
    - Create .devflow directory: !`mkdir -p .devflow`
-   - Copy templates: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp -r "${CLAUDE_PLUGIN_ROOT}/templates" .devflow/ || true`
-   - Copy libraries: !`test -n "${CLAUDE_PLUGIN_ROOT}" && mkdir -p .devflow/lib && cp "${CLAUDE_PLUGIN_ROOT}/lib"/*.js .devflow/scripts/ || true`
-   - Copy schema: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp "${CLAUDE_PLUGIN_ROOT}/state.json.schema" .devflow/ || true`
-   - Copy instructions: !`test -n "${CLAUDE_PLUGIN_ROOT}" && cp "${CLAUDE_PLUGIN_ROOT}/instructions.md" .devflow/ || true`
-
-3. **If manual installation** (`${CLAUDE_PLUGIN_ROOT}` is NOT set):
-   - Files should already exist from install script
-   - If missing, inform user: "Please run the DevFlow installation script first"
-   - Installation guide: https://github.com/mathewtaylor/devflow#installation
+   - Copy templates: !`cp -r "${CLAUDE_PLUGIN_ROOT}/templates" .devflow/`
+   - Copy scripts: !`mkdir -p .devflow/scripts && cp "${CLAUDE_PLUGIN_ROOT}/scripts"/*.js .devflow/scripts/`
+   - Copy schema: !`cp "${CLAUDE_PLUGIN_ROOT}/state.json.schema" .devflow/`
+   - Copy instructions: !`cp "${CLAUDE_PLUGIN_ROOT}/instructions.md" .devflow/`
 
 **After ensuring .devflow/ exists, proceed with initialization.**
 
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "yes" || echo "no"`
-- Existing code detected: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query code_detected 2>/dev/null || node .devflow/scripts/cli.js query code_detected 2>/dev/null || echo "unknown"`
-- Package files found: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query package_files 2>/dev/null || node .devflow/scripts/cli.js query package_files 2>/dev/null || echo "unknown"`
+- Existing code detected: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query code_detected`
+- Package files found: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query package_files`
 
 ## Your Task
 
@@ -164,7 +156,7 @@ Create `.devflow/state.json`:
 
 Check for existing documentation files:
 
-- Markdown count: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md" 2>/dev/null || node .devflow/scripts/cli.js query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md" 2>/dev/null || echo "0"`
+- Markdown count: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md"`
 
 **If markdown count > 5:**
 

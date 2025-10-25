@@ -12,7 +12,7 @@
       "name": "devflow",
       "source": "./plugins/devflow",
       "description": "Agentic feature management system with structured workflow (Spec → Plan → Tasks → Execute). Includes 10 slash commands, 8 specialized agents, and 5 autonomous skills.",
-      "version": "1.0.5",
+      "version": "2.0.0",
       "author": {
         "name": "Mathew Taylor"
       },
