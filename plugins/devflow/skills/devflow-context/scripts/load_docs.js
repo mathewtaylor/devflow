@@ -15,9 +15,9 @@
 const path = require('path');
 const fs = require('fs');
 
-// Import from user's project .devflow/lib/
+// Import from user's project .devflow/scripts/
 const projectRoot = process.cwd();
-const stateIOPath = path.join(projectRoot, '.devflow/lib/state-io.js');
+const stateIOPath = path.join(projectRoot, '.devflow/scripts/state-io.js');
 
 // Check if DevFlow is initialized
 if (!fs.existsSync(stateIOPath)) {

@@ -3,7 +3,7 @@
  * DevFlow Feature Details Script
  *
  * Gets detailed information about a specific feature.
- * Imports utilities from the user's project .devflow/lib/ directory.
+ * Imports utilities from the user's project .devflow/scripts/ directory.
  *
  * Usage:
  *   node get_feature.js [feature-name]
@@ -17,9 +17,9 @@
 const path = require('path');
 const fs = require('fs');
 
-// Import from user's project .devflow/lib/
+// Import from user's project .devflow/scripts/
 const projectRoot = process.cwd();
-const stateIOPath = path.join(projectRoot, '.devflow/lib/state-io.js');
+const stateIOPath = path.join(projectRoot, '.devflow/scripts/state-io.js');
 
 // Check if DevFlow is initialized
 if (!fs.existsSync(stateIOPath)) {
@@ -27,7 +27,7 @@ if (!fs.existsSync(stateIOPath)) {
     console.error('');
     console.error('To initialize DevFlow, run: /devflow:init');
     console.error('');
-    console.error('Expected file: .devflow/lib/state-io.js');
+    console.error('Expected file: .devflow/scripts/state-io.js');
     process.exit(1);
 }
 

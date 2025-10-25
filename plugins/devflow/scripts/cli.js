@@ -7,12 +7,12 @@
  * Reduces permission prompts by standardizing all queries into a single command pattern.
  *
  * Usage:
- *   node .devflow/lib/cli.js query <query-type> [args...]
+ *   node .devflow/scripts/cli.js query <query-type> [args...]
  *
  * Examples:
- *   node .devflow/lib/cli.js query active_feature
- *   node .devflow/lib/cli.js query has_spec feature-name
- *   node .devflow/lib/cli.js query feature_count
+ *   node .devflow/scripts/cli.js query active_feature
+ *   node .devflow/scripts/cli.js query has_spec feature-name
+ *   node .devflow/scripts/cli.js query feature_count
  */
 
 const fs = require('fs');
@@ -295,12 +295,12 @@ function main() {
 
     if (!command || !commands[command]) {
         process.stderr.write('DevFlow CLI Helper\n\n');
-        process.stderr.write('Usage: node .devflow/lib/cli.js <command> [args...]\n\n');
+        process.stderr.write('Usage: node .devflow/scripts/cli.js <command> [args...]\n\n');
         process.stderr.write('Commands:\n');
         process.stderr.write('  query <query-type> [args...]  - Query DevFlow state\n\n');
         process.stderr.write('Examples:\n');
-        process.stderr.write('  node .devflow/lib/cli.js query active_feature\n');
-        process.stderr.write('  node .devflow/lib/cli.js query has_spec feature-name\n');
+        process.stderr.write('  node .devflow/scripts/cli.js query active_feature\n');
+        process.stderr.write('  node .devflow/scripts/cli.js query has_spec feature-name\n');
         process.exit(1);
     }
 

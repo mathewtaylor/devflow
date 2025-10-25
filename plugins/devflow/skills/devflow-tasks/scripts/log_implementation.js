@@ -16,7 +16,7 @@ const path = require('path');
 const fs = require('fs');
 
 const projectRoot = process.cwd();
-const stateIOPath = path.join(projectRoot, '.devflow/lib/state-io.js');
+const stateIOPath = path.join(projectRoot, '.devflow/scripts/state-io.js');
 
 if (!fs.existsSync(stateIOPath)) {
     console.error('ERROR: DevFlow not initialized');

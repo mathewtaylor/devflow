@@ -22,7 +22,7 @@ When invoked:
 ### Example: Update current_task
 
 ```javascript
-const { readState, writeState, validateSchema } = require('./.devflow/lib/state-io.js');
+const { readState, writeState, validateSchema } = require('./.devflow/scripts/state-io.js');
 
 // 1. Read current state
 const state = readState();
@@ -61,7 +61,7 @@ try {
 ### Example: Transition phase
 
 ```javascript
-const { readState, writeState, validateSchema } = require('./.devflow/lib/state-io.js');
+const { readState, writeState, validateSchema } = require('./.devflow/scripts/state-io.js');
 
 const state = readState();
 const featureKey = state.active_feature;
@@ -92,7 +92,7 @@ try {
 ### Example: Manage snapshot
 
 ```javascript
-const { readState, writeState, validateSchema } = require('./.devflow/lib/state-io.js');
+const { readState, writeState, validateSchema } = require('./.devflow/scripts/state-io.js');
 
 // Set snapshot when pausing
 const state = readState();
@@ -124,7 +124,7 @@ state.features[featureKey].snapshot = null;
 ### Example: Create build-feature
 
 ```javascript
-const { readState, writeState, validateSchema } = require('./.devflow/lib/state-io.js');
+const { readState, writeState, validateSchema } = require('./.devflow/scripts/state-io.js');
 
 // Create build-feature with streamlined workflow
 const state = readState();

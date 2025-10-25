@@ -56,7 +56,7 @@ const checks = {
     },
 
     stateSchemaValid: () => {
-        const stateIOPath = path.join(projectRoot, '.devflow/lib/state-io.js');
+        const stateIOPath = path.join(projectRoot, '.devflow/scripts/state-io.js');
 
         if (!fs.existsSync(stateIOPath)) {
             return {
@@ -96,8 +96,8 @@ const checks = {
     },
 
     utilitiesPresent: () => {
-        const stateIOPath = path.join(projectRoot, '.devflow/lib/state-io.js');
-        const cliPath = path.join(projectRoot, '.devflow/lib/cli.js');
+        const stateIOPath = path.join(projectRoot, '.devflow/scripts/state-io.js');
+        const cliPath = path.join(projectRoot, '.devflow/scripts/cli.js');
 
         const stateIOExists = fs.existsSync(stateIOPath);
         const cliExists = fs.existsSync(cliPath);
@@ -114,7 +114,7 @@ const checks = {
     },
 
     singleActiveFeature: () => {
-        const stateIOPath = path.join(projectRoot, '.devflow/lib/state-io.js');
+        const stateIOPath = path.join(projectRoot, '.devflow/scripts/state-io.js');
 
         if (!fs.existsSync(stateIOPath)) {
             return { passed: true, message: 'Single active feature (skipped - no state utilities)' };
@@ -222,7 +222,7 @@ function quickDiagnostic() {
 
     if (stateExists) {
         try {
-            const { readState } = require(path.join(projectRoot, '.devflow/lib/state-io.js'));
+            const { readState } = require(path.join(projectRoot, '.devflow/scripts/state-io.js'));
             const state = readState();
             console.log(`\nActive feature: ${state.active_feature || 'none'}`);
             console.log(`Total features: ${Object.keys(state.features).length}`);

@@ -31,7 +31,7 @@ function checkArchitectureExists() {
  * Get feature implementation details
  */
 function getFeatureDetails(featureName) {
-    const stateIOPath = path.join(projectRoot, '.devflow/lib/state-io.js');
+    const stateIOPath = path.join(projectRoot, '.devflow/scripts/state-io.js');
 
     if (!fs.existsSync(stateIOPath)) {
         throw new Error('DevFlow not initialized');
