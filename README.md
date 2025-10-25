@@ -44,35 +44,37 @@ DevFlow brings structure, automation, and intelligence to feature development:
 
 ### Workflow Commands (10 total)
 
-**`/init`** - Initialize DevFlow in your project
+**Note:** Commands are namespaced as `/devflow:*` when installed as a plugin, or `/` when manually installed.
+
+**`/devflow:init`** (or `/init`) - Initialize DevFlow in your project
 - Interactive wizard for project constitution
 - Automatic architecture documentation for existing projects
 - Sets up cross-cutting concerns documentation
 
-**`/spec [feature-name]`** - Create feature specifications (full workflow)
+**`/devflow:spec [feature-name]`** (or `/spec`) - Create feature specifications (full workflow)
 - Interactive wizard guides requirements gathering
 - User stories and acceptance criteria
 - Cross-cutting concerns tagging for smart context loading
 
-**`/build-feature [description]`** - Streamlined workflow for small features (< 2 hours)
+**`/devflow:build-feature [description]`** (or `/build-feature`) - Streamlined workflow for small features (< 2 hours)
 - Interactive wizard with 2-4 targeted clarification questions
 - Creates simplified spec and auto-generates tasks
 - Immediately starts execution with same quality gates
 - Ideal for bug fixes, UI tweaks, simple enhancements
 
-**`/plan`** - Generate technical implementation plans
+**`/devflow:plan`** (or `/plan`) - Generate technical implementation plans
 - AI Architect agent (Opus with extended thinking)
 - Component breakdown, data models, API designs
 - Addresses security, performance, and architectural fit
 - Creates ADRs for significant decisions
 
-**`/tasks`** - Break plans into executable tasks
+**`/devflow:tasks`** (or `/tasks`) - Break plans into executable tasks
 - Task Planner agent creates atomic tasks (<2 hours each)
 - Dependency tracking: `[depends: 5,7,9]`
 - Complexity estimation (small/medium/large)
 - Logical ordering (data → logic → API → tests)
 
-**`/execute`** - Implement with automated quality gates
+**`/devflow:execute`** (or `/execute`) - Implement with automated quality gates
 - Sequential task execution with user confirmation
 - **Per-Task Code Review** (Opus + extended thinking)
   - Security, quality, standards validation
@@ -97,26 +99,26 @@ DevFlow brings structure, automation, and intelligence to feature development:
 
 ### Utility Commands
 
-**`/status`** - View project status
+**`/devflow:status`** (or `/status`) - View project status
 - Active feature and progress
 - All features table (pending/active/paused/completed)
 - Context usage estimates
 - Quick action suggestions
 
-**`/think [question]`** - Deep analysis for complex decisions
+**`/devflow:think [question]`** (or `/think`) - Deep analysis for complex decisions
 - Opus model with extended thinking
 - Structured analysis framework
 - Multiple options with tradeoffs
 - Actionable recommendations
 - Optional ADR creation
 
-**`/consolidate-docs`** - Organize existing documentation
+**`/devflow:consolidate-docs`** (or `/consolidate-docs`) - Organize existing documentation
 - Scans all markdown files in project
 - Consolidates scattered technical docs into DevFlow domains
 - Provides archival recommendations
 - Safe migration preserves original files
 
-**`/readme-manager`** - Update project README
+**`/devflow:readme-manager`** (or `/readme-manager`) - Update project README
 - Invokes readme-maintainer agent
 - Analyzes current project state
 - Updates or creates comprehensive README.md
@@ -172,11 +174,71 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Remediation subtask creation
 - Multi-level quality assurance
 
+### Autonomous Skills (5 total)
+
+Skills are **model-invoked** - Claude autonomously decides when to use them based on context:
+
+**devflow-state** - State querying and feature metadata
+- Reads workflow state, active features, task progress
+- Queries: active_feature, active_phase, feature_count, etc.
+- Autonomous context gathering during commands
+
+**devflow-context** - Smart documentation loading
+- Loads relevant domain docs based on keywords and tags
+- Pattern matching: "auth" → authentication.md, "cache" → caching.md
+- Token budget awareness prevents over-loading
+
+**devflow-validator** - Setup and transition validation
+- Validates DevFlow initialization and state integrity
+- Checks phase transition prerequisites
+- Dependency and file existence validation
+
+**devflow-docs** - Living documentation management
+- Updates architecture.md after code changes
+- Generates retrospectives from implementation logs
+- Maintains documentation standards
+
+**devflow-tasks** - Task tracking and logging
+- Marks tasks complete in tasks.md
+- Updates state.json with progress
+- Logs implementation details automatically
+
+**Why skills matter:** They enable Claude to autonomously gather context, validate state, and manage documentation without explicit user commands—making the workflow more intelligent and seamless.
+
 ---
 
 ## Installation
 
-### 🚀 Quick Start (30 seconds)
+### 🔌 Plugin Installation (Recommended)
+
+**Install via Claude Code plugin system:**
+
+```bash
+# 1. Navigate to your project
+cd /path/to/your/project
+
+# 2. Install DevFlow plugin
+/plugin marketplace add https://github.com/mathewtaylor/devflow
+/plugin install devflow
+
+# 3. Initialize DevFlow (creates .devflow/, integrates with CLAUDE.md)
+/devflow:init
+
+# 4. Create your first feature
+/devflow:spec user-authentication
+```
+
+**That's it!** DevFlow is now managing your feature development.
+
+**Benefits of plugin installation:**
+- ✅ One command installation - no scripts to download
+- ✅ Automatic updates when new versions release
+- ✅ Clean uninstall via `/plugin uninstall devflow`
+- ✅ Works on all platforms (Windows/Mac/Linux)
+
+---
+
+### 🚀 Manual Installation (Alternative)
 
 **From your project directory:**
 
@@ -195,8 +257,6 @@ curl -sSL https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/in
 # Create your first feature
 /spec user-authentication
 ```
-
-**That's it!** DevFlow is now managing your feature development.
 
 **Windows Note:** All commands above should be run in Git Bash, not PowerShell.
 
@@ -285,9 +345,14 @@ cd /path/to/your-project
 
 ### What Gets Installed
 
-The installer creates:
+**Plugin Installation:**
+- `.claude/plugins/devflow/` - Plugin files (commands, agents, skills)
+- `.devflow/` - Created by `/devflow:init` (templates, lib, state)
+
+**Manual Installation:**
 - `.claude/agents/` - 8 specialized AI agents
 - `.claude/commands/devflow/` - 10 slash commands
+- `.claude/skills/devflow-*` - 5 autonomous skills
 - `.devflow/templates/` - 9 infrastructure templates
 - `.devflow/lib/` - 2 utility libraries (state-io.js, cli.js)
 - `.devflow/` - Schema and instructions files
@@ -298,9 +363,9 @@ The installer creates:
 DevFlow's repository is organized for multi-agent support:
 - `devflow/integrations/claude/` - Claude Code-specific files
 - Future: `devflow/integrations/codex/`, `devflow/integrations/gemini/`
-- Installation maps to `.claude/` and `.devflow/` in your project
+- Plugin structure enables reuse across AI coding assistants
 
-**Note:** Installation does NOT modify existing files. The `/init` command will automatically integrate DevFlow instructions with your existing CLAUDE.md if present.
+**Note:** Installation does NOT modify existing files. The `/init` (or `/devflow:init` for plugin) command will automatically integrate DevFlow instructions with your existing CLAUDE.md if present.
 
 ---
 

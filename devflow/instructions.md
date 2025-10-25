@@ -1,309 +1,315 @@
-# DevFlow Instructions for Claude Code
+# DevFlow Instructions
 
-This project uses **DevFlow** - an agentic workflow system for structured feature development.
+**DevFlow** is an agentic feature management system for Claude Code that provides a structured workflow for building features with automated quality gates.
 
----
+## System Overview
 
-## ⚠️ CRITICAL: Context Space Management
+DevFlow transforms chaotic feature development into systematic, high-quality execution:
+**Spec → Plan → Tasks → Execute**
 
-**BEFORE executing ANY DevFlow command**, you MUST:
+**Components:**
+- **10 slash commands** (`/devflow:*`) for workflow phases
+- **8 specialized AI agents** for architecture, planning, code review, testing
+- **5 autonomous skills** for state management, validation, documentation
+- **Smart context management** (three-tier documentation loading)
+- **Living documentation** synchronized with code changes
 
-1. **Check current context usage** against your token budget
-2. **Estimate token cost** of the command you're about to execute
-3. **Alert the user** if the command may require context compacting before completion
+## Three-Layer Architecture
 
-### Context Estimation by Command
+### 1. Command Layer
+Slash commands in `.claude/commands/devflow/`:
+- YAML frontmatter controls tool access and model selection
+- `!` prefix: bash execution (dynamic state queries)
+- `@` prefix: file references (automatic context loading)
+- Models: `haiku` (simple), `sonnet` (execution), `opus` (deep thinking)
 
-| Command | Estimated Context Usage | Notes |
-|---------|------------------------|-------|
-| `/init` | 5,000-10,000 tokens | Scans codebase, creates constitution + architecture |
-| `/spec` | 3,000-5,000 tokens | Loads constitution, architecture, domains index |
-| `/plan` | 10,000-20,000 tokens | Loads constitution, architecture, spec, domain docs (Architect agent uses extended thinking) |
-| `/tasks` | 8,000-15,000 tokens | Loads constitution, spec, plan, domain docs |
-| `/execute` | 15,000-30,000+ tokens PER TASK | Highest cost - loads all docs + source code + runs review/test agents |
-| `/status` | 2,000-3,000 tokens | Minimal - mostly state queries |
-| `/think` | 5,000-15,000 tokens | Deep analysis with extended thinking |
+### 2. Agent Layer
+Specialized agents in `.claude/agents/`:
+- Invoked via `Task()` tool
+- Structured inputs/outputs
+- Reusable across commands
+- Available: `architect`, `planner`, `state-manager`, `reviewer`, `tester`, `checkpoint-reviewer`, `git-operations-manager`, `readme-maintainer`
 
-### Warning Protocol
+### 3. Skills Layer
+Autonomous capabilities in `.claude/skills/`:
+- Model-invoked (Claude decides when to use)
+- **devflow-state**: Query workflow state and feature metadata
+- **devflow-context**: Load relevant domain documentation
+- **devflow-validator**: Validate setup and transitions
+- **devflow-docs**: Manage living documentation
+- **devflow-tasks**: Track task completion and logging
 
-**IF** (current context usage + estimated command cost) > (80% of total budget):
-
-```
-⚠️ CONTEXT ALERT
-
-Current Usage: XX,XXX / XXX,XXX tokens (XX%)
-Estimated for [command]: ~XX,XXX tokens
-Total Expected: ~XX,XXX tokens (XX% of budget)
-
-This command may trigger context compacting during execution.
-
-Options:
-a) Continue - Risk compacting mid-command (may lose context)
-b) Create snapshot first - Save current state, compact, then proceed
-c) Cancel - Review context and decide next steps
-
-Your choice:
-```
-
-### Snapshot Creation Before Large Commands
-
-For commands estimated >20K tokens, **recommend creating a snapshot**:
-
-```bash
-# Suggest to user:
-Before running /execute, I recommend creating a context snapshot
-to ensure we can resume if compacting is needed.
-
-Create snapshot? (y/n):
-```
-
-If yes:
-1. Create `.devflow/snapshots/snap_[feature]_[timestamp].md`
-2. Include: completed tasks, current state, key decisions, next steps
-3. Proceed with command
-
----
-
-## DevFlow Overview
-
-DevFlow provides:
-- **Structured workflow:** Spec → Plan → Tasks → Execute with intelligent agents
-- **Living documentation:** Constitution, architecture, and cross-cutting concerns auto-maintained
-- **Smart context loading:** Only loads relevant documentation to optimize token usage
-- **Feature tracking:** Comprehensive state management for multi-feature projects
-
----
-
-## Available Commands
-
-### Core Workflow
-- `/init` - Initialize DevFlow (create constitution + architecture documentation)
-- `/spec [feature-name]` - Create feature specification through interactive wizard
-- `/plan` - Generate technical implementation plan (invokes Architect agent)
-- `/tasks` - Break plan into atomic, executable tasks (invokes Task Planner agent)
-- `/execute [feature-name]?` - Execute tasks with automated reviews and testing
-
-### Utility Commands
-- `/status` - Show current progress, active features, and context usage
-- `/think [question]` - Deep analysis with extended thinking for complex decisions
-
----
+### 4. State Layer
+State management in `.devflow/lib/`:
+- `state-io.js`: Atomic state operations with automatic backups
+- `cli.js`: Command-line query interface
+- `state.json.schema`: Validation schema
+- State Manager agent: Intelligent transition validation
 
 ## Documentation Structure
 
 ```
 .devflow/
-├── constitution.md        # Project principles & standards (ALWAYS READ FIRST)
-├── architecture.md        # Current system state (ALWAYS READ FIRST)
-├── state.json            # Current progress and feature tracking
-│
-├── domains/              # Cross-cutting concerns (load on-demand)
-│   ├── _index.md         # Quick reference (always load)
-│   ├── security/
-│   │   ├── authentication.md
-│   │   ├── authorization.md
-│   │   └── encryption.md
-│   ├── infrastructure/
-│   │   ├── multi-tenancy.md
-│   │   ├── caching.md
-│   │   ├── logging.md
-│   │   └── error-handling.md
-│   ├── data/
-│   │   ├── database-conventions.md
-│   │   ├── migrations.md
-│   │   └── audit-trails.md
-│   └── integration/
-│       ├── third-party-apis.md
-│       └── message-queues.md
-│
-├── features/             # Per-feature documentation
-│   └── yyyymmdd-feature-name/
-│       ├── spec.md
-│       ├── plan.md
-│       ├── tasks.md
-│       ├── implementation.md
-│       └── retrospective.md
-│
-├── decisions/            # Architecture Decision Records (ADRs)
-└── snapshots/            # Context snapshots for resume functionality
+├── templates/                  # Infrastructure (copied on init)
+│   ├── constitution.md.template
+│   ├── architecture.md.template
+│   └── domains/
+├── lib/                        # Utilities (copied on init)
+│   ├── state-io.js
+│   └── cli.js
+├── state.json.schema          # Validation
+├── constitution.md            # Project principles (always loaded)
+├── architecture.md            # System overview (always loaded)
+├── state.json                 # Progress tracking
+├── domains/                   # Cross-cutting concerns
+│   ├── _index.md              # Quick reference (always loaded)
+│   └── {category}/{concern}.md # Detailed docs (on-demand)
+└── features/                  # Per-feature lifecycle
+    └── yyyymmdd-feature-name/
+        ├── spec.md
+        ├── plan.md
+        ├── tasks.md
+        ├── implementation.md
+        ├── retrospective.md
+        └── snapshot.md        # Resume context
 ```
 
----
+## Core Workflow
 
-## Context Loading Strategy
+### `/devflow:init` - Initialize DevFlow
+- Creates constitution.md (project principles and standards)
+- **Existing projects:** Scans codebase → generates architecture.md
+- **New projects:** Suggests patterns → generates blueprint
+- Sets up cross-cutting concerns documentation
+- Copies templates and utilities to `.devflow/`
 
-### Always Load (Tier 1 - Core Context)
-1. **constitution.md** (~1000 tokens) - Project principles, tech stack, standards
-2. **architecture.md** (~1500 tokens) - Current system structure
-3. **domains/_index.md** (~500 tokens) - Quick reference for cross-cutting concerns
+### `/devflow:spec [feature-name]` - Full Feature Workflow
+- Interactive wizard captures requirements
+- Feature naming: `yyyymmdd-feature-slug` (e.g., `20251020-user-auth`)
+- Tags cross-cutting concerns for smart context loading
+- Creates `.devflow/features/yyyymmdd-feature-name/spec.md`
+- Use for features > 2-4 hours requiring comprehensive planning
 
-**Total Tier 1:** ~3000 tokens
+### `/devflow:build-feature [description]?` - Streamlined Workflow
+- Fast-track for features < 2 hours (bug fixes, UI tweaks)
+- 2-4 targeted clarification questions
+- Simplified spec + flat task list (5-10 tasks)
+- Immediate execution with quality gates
+- Phases: SPEC → EXECUTE → DONE (skips PLAN/TASKS)
 
-### Feature-Specific (Tier 2 - Dynamic Loading)
-When working on a feature, load:
-1. Current feature's **spec.md**, **plan.md**, **tasks.md** (~2000 tokens)
-2. Relevant source code files (~5000 tokens)
+### `/devflow:plan [feature-name]?` - Technical Planning
+- Invokes **Architect agent** (Opus + extended thinking)
+- Loads: constitution, architecture, spec, domain docs
+- Creates technical design: components, data models, APIs, security, testing
+- Optional: Creates ADR in `.devflow/decisions/`
+- Updates state: `phase=PLAN`
 
-**Total Tier 2:** ~7000 tokens
+### `/devflow:tasks [feature-name]?` - Task Breakdown
+- Invokes **Task Planner agent** (Sonnet)
+- Creates atomic tasks (<2 hours each)
+- Format: `- [ ] N. Description (complexity) [depends: x,y]`
+- Logical ordering: data layer → business logic → API → tests
+- Updates state: `phase=TASKS`
 
-### On-Demand Concerns (Tier 3 - Smart Loading)
-Load full concern documentation from `domains/` when:
-- **Keywords detected:** Feature mentions "auth", "permissions", "tenant", "cache", etc.
-- **Explicit tags:** User tagged concerns during `/spec`
-- **Agent intelligence:** Architect/Planner agents identify relevant concerns
+### `/devflow:execute [feature-name]?` - Implementation with Quality Gates
+Sequential task execution with user confirmation:
 
-**Per Concern:** ~1000 tokens each
+**For each task:**
+1. Check dependencies complete
+2. Implement following constitution standards
+3. **Code Review Gate** (Opus + extended thinking)
+   - Security, quality, architecture validation
+   - Auto-fix issues (max 3 attempts)
+   - Status: `APPROVED` or `CHANGES_REQUIRED`
+4. **Testing Gate** (Sonnet)
+   - Generate unit and integration tests
+   - Validate coverage requirements
+   - Auto-fix failures (max 3 attempts)
+5. Mark complete in tasks.md
+6. Log to implementation.md
+7. Update state: increment `current_task`
 
-**Total context budget:** ~15,000-20,000 tokens (well within limits for most commands)
+**Pause/resume supported:**
+- User can pause anytime
+- Optional snapshot preserves context
+- Resume loads snapshot automatically
 
----
+**On completion:**
+- Updates architecture.md
+- Generates retrospective.md
+- Marks feature: `phase=DONE`, `status=completed`
 
-## Working with DevFlow
+### `/devflow:status` - Progress Dashboard
+- Active feature and current task
+- All features table (pending/active/paused/completed)
+- Context usage estimates
+- Quick action suggestions
 
-### Starting a New Feature
+### `/devflow:think [question]` - Deep Analysis
+- Opus + extended thinking for complex decisions
+- Structured analysis: context → options → tradeoffs → recommendation
+- Optional: Creates Architecture Decision Record (ADR)
+- Use for: technology selection, architectural patterns, design decisions
 
-1. Run `/spec feature-name` to create specification
-   - Answer interactive questions
-   - Tag relevant cross-cutting concerns
-   - Result: `.devflow/features/yyyymmdd-feature-name/spec.md`
+## Smart Context Loading (Three-Tier)
 
-2. Run `/plan` to generate technical design
-   - Architect agent analyzes spec + constitution + architecture
-   - Proposes approach, patterns, libraries
-   - Result: `plan.md` in feature folder
+**Tier 1: Always Loaded** (~3K tokens)
+- `.devflow/constitution.md` - Project principles
+- `.devflow/architecture.md` - System overview
+- `.devflow/domains/_index.md` - Concerns reference
 
-3. Run `/tasks` to break down into atomic tasks
-   - Task Planner agent creates executable checklist
-   - Each task <2hrs, with dependencies and complexity
-   - Result: `tasks.md` with checkboxes
+**Tier 2: Feature-Specific** (~5-7K tokens)
+- Current feature: spec.md, plan.md, tasks.md
+- Relevant source files for task
 
-4. Run `/execute` to implement
-   - Execute tasks sequentially
-   - Auto-review code (Code Reviewer agent)
-   - Auto-generate tests (Test Engineer agent)
-   - Update documentation (Documentation agent)
-   - Result: Completed feature + updated architecture
+**Tier 3: On-Demand** (~1-3K tokens each)
+- Domain docs loaded when:
+  - Feature tags concerns in spec
+  - Keywords detected (e.g., "auth" → `authentication.md`)
+  - Agent recognizes patterns
 
-### When User Asks General Questions
+**Result:** 15-20K tokens vs 100K+ without smart loading
 
-1. **Check constitution.md** for project principles and standards
-2. **Check architecture.md** for system structure and components
-3. **Check domains/_index.md** for relevant concerns
-4. **Load full concern docs** only when detailed info needed
+## Quality Gates with Retry Logic
 
-### Reading State
+**Code Review:**
+1. Initial review
+2. If issues: Auto-fix and retry
+3. Max 3 attempts
+4. After 3 failures: Ask user (continue/skip/pause/manual)
 
-Always check `.devflow/state.json` to understand:
-- Current progress and active features
-- Feature phases and task counts
-- Paused features that can be resumed
+**Testing:**
+1. Generate tests
+2. Run tests
+3. If failures: Auto-fix and retry
+4. Max 3 attempts
+5. After 3 failures: Ask user
 
-Example:
-```json
-{
-  "initialized": true,
-  "active_feature": "20251020-user-auth",
-  "features": {
-    "20251020-user-auth": {
-      "display_name": "User Authentication",
-      "status": "active",
-      "phase": "EXECUTE",
-      "current_task": 6,
-      "concerns": ["authentication", "authorization"]
-    }
-  }
-}
-```
+## Key Behavioral Patterns
 
----
-
-## Feature Naming Convention
-
-Features use format: `yyyymmdd-feature-name`
-
-Examples:
-- `20251020-user-authentication`
-- `20251022-payment-integration`
-- `20251025-email-notifications`
-
-**Benefits:**
+### Feature Naming Convention
+Format: `yyyymmdd-feature-slug`
+- Examples: `20251020-user-authentication`, `20251022-payment-integration`
 - Chronological ordering
-- Unique identifiers (date prevents conflicts)
-- Concise names (2-4 words)
+- Ensures uniqueness
+- Used as folder name and state.json key
+
+### State Transitions
+**Valid phases:** `SPEC → PLAN → TASKS → EXECUTE → DONE`
+- Skipping allowed (with warnings)
+- Backward movement allowed (rare)
+- Single active feature enforced
+- File existence validated
+
+### Cross-Cutting Concerns
+**Add new concern:**
+1. Create `domains/{category}/{concern}.md`
+2. Add one-line summary to `domains/_index.md`
+3. Tag in feature specs to trigger loading
+4. Document keywords for auto-loading
+
+## Agent Specializations
+
+**Architect** (opus + extended thinking)
+- Technical planning and design decisions
+- Tech stack awareness (.NET, Node.js, Python, React, etc.)
+- Creates ADRs for significant decisions
+
+**Task Planner** (sonnet)
+- Break plans into atomic, executable tasks
+- Task sizing: Small (<1hr), Medium (1-2hrs), Large (2hrs)
+- Dependency tracking
+
+**Code Reviewer** (opus + extended thinking)
+- Deep code review with security focus
+- Constitution compliance
+- Architecture alignment
+- Output: `APPROVED` or `CHANGES_REQUIRED`
+
+**Test Engineer** (sonnet)
+- Generate comprehensive tests
+- AAA pattern (Arrange-Act-Assert)
+- Validate coverage requirements
+- Output: PASS/FAIL with specifics
+
+**State Manager** (sonnet)
+- Intelligent state transitions
+- Single active feature enforcement
+- Phase progression guidance
+- Philosophy: Guided flexibility (warns, doesn't block)
+
+**Checkpoint Reviewer** (opus + extended thinking)
+- Reviews paused/completed features
+- Validates documentation completeness
+- Ensures quality before marking done
+
+**Git Operations Manager** (sonnet)
+- Handles git operations during execution
+- Creates feature branches
+- Commits with descriptive messages
+
+**README Maintainer** (sonnet)
+- Keeps README synchronized with architecture
+- Updates after feature completion
+
+## Autonomous Skills
+
+Skills are model-invoked (Claude decides when to use based on context):
+
+**devflow-state**
+- Reads state including active features, phases, task progress
+- Queries: active_feature, active_phase, feature_count, etc.
+- Scripts: query_state.js, get_feature.js
+
+**devflow-context**
+- Loads domain documentation based on keywords/tags
+- Pattern matching: Keywords → domain docs
+- Token budget awareness
+- Script: load_docs.js
+
+**devflow-validator**
+- Validates DevFlow setup and state integrity
+- Checks phase transition prerequisites
+- Validates dependencies and file existence
+- Scripts: check_setup.js, check_transition.js
+
+**devflow-docs**
+- Manages living documentation
+- Updates architecture.md after changes
+- Generates retrospectives
+- Scripts: update_architecture.js, generate_retro.js
+
+**devflow-tasks**
+- Tracks task completion in tasks.md
+- Updates checkboxes and state
+- Logs to implementation.md
+- Scripts: mark_complete.js, get_next_task.js, log_implementation.js
+
+## Common Pitfalls to Avoid
+
+❌ Don't skip `/devflow:init` - Constitution and architecture are foundational
+❌ Don't work on multiple active features - State manager enforces single active
+❌ Don't bypass quality gates - Code review and testing catch critical issues
+❌ Don't manually edit state.json - Use state-io.js or State Manager agent
+❌ Don't ignore architecture updates - Living docs prevent drift
+❌ Don't skip retrospectives - Lessons learned improve future work
+
+## Philosophy
+
+**Structured without rigidity:** Workflow guides but allows flexibility (guided warnings, not blocking)
+
+**Quality by default:** Automated code review and testing catch issues early
+
+**Living documentation:** Specs, plans, and architecture stay synchronized with code
+
+**Smart context:** Load only what's relevant (15-20K vs 100K+ tokens)
+
+**Pause/resume friendly:** State management enables interruption without loss
+
+**Decision capture:** ADRs preserve architectural reasoning
+
+**Progressive enhancement:** Start simple (`/devflow:init` + `/devflow:spec`), add complexity as needed
 
 ---
 
-## Important Behaviors
-
-### Context-Aware Execution
-- **ALWAYS** check context space before executing commands
-- **WARN** user if command may trigger compacting
-- **SUGGEST** snapshot creation for large operations (/execute, /plan with complex features)
-- **PAUSE** execution if context critically low and ask user for guidance
-
-### Guided Flexibility
-- Workflow is **Spec → Plan → Tasks → Execute**
-- Users CAN skip steps (e.g., go straight to `/execute`)
-- Warn them about skipped steps, but **allow** it
-- Example: "⚠️ Warning: No plan found. Consider running `/plan` first. Continue anyway? (y/n)"
-
-### Single Active Feature
-- Only ONE feature can be `status: "active"` at a time
-- If user tries to activate a new feature while one is active, prompt to pause/complete the current one
-
-### Context Optimization
-- Use `.devflowignore` to exclude irrelevant files (node_modules, build outputs, etc.)
-- Load domain docs only when triggered by keywords or tags
-- Monitor token usage and suggest creating snapshots if approaching limits
-
----
-
-## If DevFlow Not Initialized
-
-If `.devflow/constitution.md` doesn't exist, suggest:
-
-```
-❌ DevFlow has not been initialized in this project.
-
-Run /init to set up DevFlow's documentation and workflow system.
-```
-
----
-
-## Sub-Agents
-
-DevFlow uses specialized agents in `.claude/agents/`:
-
-- **state-manager** - Validates transitions, manages feature state
-- **architect** - Deep architectural analysis and technical planning (Opus + extended thinking)
-- **planner** - Breaks plans into atomic, executable tasks
-- **reviewer** - Reviews code for quality, standards, security (Opus + extended thinking)
-- **tester** - Generates and runs tests
-- **git-operations-manager** - Handles all git operations (commits, pushes, branches, worktrees)
-
-Agents are invoked automatically by slash commands.
-
----
-
-## Best Practices
-
-1. **Check context space FIRST** before any DevFlow command
-2. **Always read constitution first** when starting a new session
-3. **Check state.json** to understand current progress
-4. **Load concern docs intelligently** based on feature needs
-5. **Update architecture.md** after significant features
-6. **Create ADRs** for major architectural decisions
-7. **Use snapshots** for long-running features to manage context
-8. **Warn users proactively** about context consumption
-
----
-
-## Getting Help
-
-- Run `/help` for Claude Code general help
-- Check `.devflow/constitution.md` for project-specific standards
-- Review `.devflow/features/` for examples of completed features
-
----
-
-**DevFlow Version:** 1.0
+**DevFlow transforms feature development from chaos to systematic, high-quality execution with AI-powered quality gates.**

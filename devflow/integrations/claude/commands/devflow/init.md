@@ -14,6 +14,31 @@ version: 2025.10.23
 
 Create personalized constitution and architecture documentation for this project.
 
+## Setup DevFlow Infrastructure
+
+**BEFORE proceeding, ensure .devflow/ directory structure exists:**
+
+- Check if .devflow exists: !`test -d .devflow && echo "exists" || echo "not_exists"`
+
+**If .devflow does NOT exist:**
+
+1. **Check installation method:**
+   - Plugin installed: !`test -n "${CLAUDE_PLUGIN_ROOT}" && echo "plugin" || echo "manual"`
+
+2. **If plugin installation detected** (`${CLAUDE_PLUGIN_ROOT}` is set):
+   - Create .devflow directory: !`mkdir -p .devflow`
+   - Copy templates: !`cp -r "${CLAUDE_PLUGIN_ROOT}/devflow/templates" .devflow/`
+   - Copy libraries: !`mkdir -p .devflow/lib && cp "${CLAUDE_PLUGIN_ROOT}/devflow/lib"/*.js .devflow/lib/`
+   - Copy schema: !`cp "${CLAUDE_PLUGIN_ROOT}/devflow/state.json.schema" .devflow/`
+   - Copy instructions: !`cp "${CLAUDE_PLUGIN_ROOT}/devflow/instructions.md" .devflow/`
+
+3. **If manual installation** (`${CLAUDE_PLUGIN_ROOT}` is NOT set):
+   - Files should already exist from install script
+   - If missing, inform user: "Please run the DevFlow installation script first"
+   - Installation guide: https://github.com/mathewtaylor/devflow#installation
+
+**After ensuring .devflow/ exists, proceed with initialization.**
+
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "yes" || echo "no"`
