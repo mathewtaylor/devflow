@@ -40,8 +40,8 @@ $GitHubRepo = "https://raw.githubusercontent.com/mathewtaylor/devflow/main"
 $MaxRetries = 3
 
 # File list to download
-# ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 8 agents, 10 commands, 13 templates/utilities
+# ⚠️ IMPORTANT: When adding new agents, commands, or skills, update this list!
+# Current counts: 8 agents, 10 commands, 5 skills (17 files), 13 templates/utilities
 # Format: @{Source='repo_path'; Dest='install_path'}
 $FilesToDownload = @(
     # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
@@ -65,6 +65,34 @@ $FilesToDownload = @(
     @{Source=".devflow/integrations/claude/commands/devflow/build-feature.md"; Dest=".claude/commands/devflow/build-feature.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/consolidate-docs.md"; Dest=".claude/commands/devflow/consolidate-docs.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/readme-manager.md"; Dest=".claude/commands/devflow/readme-manager.md"},
+
+    # Skills (5 skills, 17 files total) - Source: devflow/integrations/claude/skills, Dest: .claude/skills
+    # devflow-state skill (3 files)
+    @{Source=".devflow/integrations/claude/skills/devflow-state/SKILL.md"; Dest=".claude/skills/devflow-state/SKILL.md"},
+    @{Source=".devflow/integrations/claude/skills/devflow-state/scripts/query_state.js"; Dest=".claude/skills/devflow-state/scripts/query_state.js"},
+    @{Source=".devflow/integrations/claude/skills/devflow-state/scripts/get_feature.js"; Dest=".claude/skills/devflow-state/scripts/get_feature.js"},
+
+    # devflow-context skill (3 files)
+    @{Source=".devflow/integrations/claude/skills/devflow-context/SKILL.md"; Dest=".claude/skills/devflow-context/SKILL.md"},
+    @{Source=".devflow/integrations/claude/skills/devflow-context/scripts/load_docs.js"; Dest=".claude/skills/devflow-context/scripts/load_docs.js"},
+    @{Source=".devflow/integrations/claude/skills/devflow-context/references/pattern_mapping.md"; Dest=".claude/skills/devflow-context/references/pattern_mapping.md"},
+
+    # devflow-validator skill (3 files)
+    @{Source=".devflow/integrations/claude/skills/devflow-validator/SKILL.md"; Dest=".claude/skills/devflow-validator/SKILL.md"},
+    @{Source=".devflow/integrations/claude/skills/devflow-validator/scripts/check_setup.js"; Dest=".claude/skills/devflow-validator/scripts/check_setup.js"},
+    @{Source=".devflow/integrations/claude/skills/devflow-validator/scripts/check_transition.js"; Dest=".claude/skills/devflow-validator/scripts/check_transition.js"},
+
+    # devflow-docs skill (4 files)
+    @{Source=".devflow/integrations/claude/skills/devflow-docs/SKILL.md"; Dest=".claude/skills/devflow-docs/SKILL.md"},
+    @{Source=".devflow/integrations/claude/skills/devflow-docs/scripts/update_architecture.js"; Dest=".claude/skills/devflow-docs/scripts/update_architecture.js"},
+    @{Source=".devflow/integrations/claude/skills/devflow-docs/scripts/generate_retro.js"; Dest=".claude/skills/devflow-docs/scripts/generate_retro.js"},
+    @{Source=".devflow/integrations/claude/skills/devflow-docs/references/documentation_standards.md"; Dest=".claude/skills/devflow-docs/references/documentation_standards.md"},
+
+    # devflow-tasks skill (4 files)
+    @{Source=".devflow/integrations/claude/skills/devflow-tasks/SKILL.md"; Dest=".claude/skills/devflow-tasks/SKILL.md"},
+    @{Source=".devflow/integrations/claude/skills/devflow-tasks/scripts/mark_complete.js"; Dest=".claude/skills/devflow-tasks/scripts/mark_complete.js"},
+    @{Source=".devflow/integrations/claude/skills/devflow-tasks/scripts/get_next_task.js"; Dest=".claude/skills/devflow-tasks/scripts/get_next_task.js"},
+    @{Source=".devflow/integrations/claude/skills/devflow-tasks/scripts/log_implementation.js"; Dest=".claude/skills/devflow-tasks/scripts/log_implementation.js"},
 
     # Templates and utilities (13 total) - Source and destination are the same
     @{Source=".devflow/lib/state-io.js"; Dest=".devflow/lib/state-io.js"},
@@ -100,9 +128,10 @@ function Show-Help {
     Write-Host "What gets installed:"
     Write-Host "  • 8 agents in .claude/agents/"
     Write-Host "  • 10 commands in .claude/commands/devflow/"
+    Write-Host "  • 5 skills in .claude/skills/ (NEW! - autonomous assistance)"
     Write-Host "  • 13 templates and utilities in .devflow/"
     Write-Host ""
-    Write-Host "After installation, run: /init"
+    Write-Host "After installation, run: /devflow:init"
     Write-Host ""
     exit 0
 }
@@ -334,7 +363,8 @@ function Test-Installation {
         ".devflow\lib\state-io.js",
         ".devflow\state.json.schema",
         ".devflow\templates\constitution.md.template",
-        ".claude\commands\devflow\init.md"
+        ".claude\commands\devflow\init.md",
+        ".claude\skills\devflow-state\SKILL.md"
     )
 
     $errors = 0
@@ -364,15 +394,16 @@ function Show-SuccessMessage {
     Write-Host ""
     Write-Host "Files installed:"
     Write-Host "  • 8 agents in .claude/agents/"
-    Write-Host "  • 9 commands in .claude/commands/devflow/"
-    Write-Host "  • 10 templates and utilities in .devflow/"
+    Write-Host "  • 10 commands in .claude/commands/devflow/"
+    Write-Host "  • 5 skills in .claude/skills/ (NEW! - autonomous assistance)"
+    Write-Host "  • 13 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "Next steps:"
-    Write-Host "  1. Run: /init"
+    Write-Host "  1. Run: /devflow:init"
     Write-Host "     This will create your constitution, architecture docs,"
     Write-Host "     and integrate with CLAUDE.md"
     Write-Host ""
-    Write-Host "  2. Start building: /spec your-feature-name"
+    Write-Host "  2. Start building: /devflow:spec your-feature-name"
     Write-Host ""
     Write-Host "Note: DevFlow commands require bash." -ForegroundColor Yellow
     Write-Host "      Windows users: Use Git Bash terminal, not PowerShell" -ForegroundColor Yellow

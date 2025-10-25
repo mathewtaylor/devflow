@@ -19,8 +19,8 @@ TARGET_DIR="${1:-.}"
 MAX_RETRIES=3
 
 # File list to download
-# ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 8 agents, 10 commands, 13 templates/utilities
+# ⚠️ IMPORTANT: When adding new agents, commands, or skills, update this list!
+# Current counts: 8 agents, 10 commands, 5 skills (17 files), 13 templates/utilities
 # Format: "source_path:destination_path" (source from repo, destination in user project)
 declare -a FILES=(
     # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
@@ -44,6 +44,34 @@ declare -a FILES=(
     ".devflow/integrations/claude/commands/devflow/build-feature.md:.claude/commands/devflow/build-feature.md"
     ".devflow/integrations/claude/commands/devflow/consolidate-docs.md:.claude/commands/devflow/consolidate-docs.md"
     ".devflow/integrations/claude/commands/devflow/readme-manager.md:.claude/commands/devflow/readme-manager.md"
+
+    # Skills (5 skills, 17 files total) - Source: devflow/integrations/claude/skills, Dest: .claude/skills
+    # devflow-state skill (3 files)
+    ".devflow/integrations/claude/skills/devflow-state/SKILL.md:.claude/skills/devflow-state/SKILL.md"
+    ".devflow/integrations/claude/skills/devflow-state/scripts/query_state.js:.claude/skills/devflow-state/scripts/query_state.js"
+    ".devflow/integrations/claude/skills/devflow-state/scripts/get_feature.js:.claude/skills/devflow-state/scripts/get_feature.js"
+
+    # devflow-context skill (3 files)
+    ".devflow/integrations/claude/skills/devflow-context/SKILL.md:.claude/skills/devflow-context/SKILL.md"
+    ".devflow/integrations/claude/skills/devflow-context/scripts/load_docs.js:.claude/skills/devflow-context/scripts/load_docs.js"
+    ".devflow/integrations/claude/skills/devflow-context/references/pattern_mapping.md:.claude/skills/devflow-context/references/pattern_mapping.md"
+
+    # devflow-validator skill (3 files)
+    ".devflow/integrations/claude/skills/devflow-validator/SKILL.md:.claude/skills/devflow-validator/SKILL.md"
+    ".devflow/integrations/claude/skills/devflow-validator/scripts/check_setup.js:.claude/skills/devflow-validator/scripts/check_setup.js"
+    ".devflow/integrations/claude/skills/devflow-validator/scripts/check_transition.js:.claude/skills/devflow-validator/scripts/check_transition.js"
+
+    # devflow-docs skill (4 files)
+    ".devflow/integrations/claude/skills/devflow-docs/SKILL.md:.claude/skills/devflow-docs/SKILL.md"
+    ".devflow/integrations/claude/skills/devflow-docs/scripts/update_architecture.js:.claude/skills/devflow-docs/scripts/update_architecture.js"
+    ".devflow/integrations/claude/skills/devflow-docs/scripts/generate_retro.js:.claude/skills/devflow-docs/scripts/generate_retro.js"
+    ".devflow/integrations/claude/skills/devflow-docs/references/documentation_standards.md:.claude/skills/devflow-docs/references/documentation_standards.md"
+
+    # devflow-tasks skill (4 files)
+    ".devflow/integrations/claude/skills/devflow-tasks/SKILL.md:.claude/skills/devflow-tasks/SKILL.md"
+    ".devflow/integrations/claude/skills/devflow-tasks/scripts/mark_complete.js:.claude/skills/devflow-tasks/scripts/mark_complete.js"
+    ".devflow/integrations/claude/skills/devflow-tasks/scripts/get_next_task.js:.claude/skills/devflow-tasks/scripts/get_next_task.js"
+    ".devflow/integrations/claude/skills/devflow-tasks/scripts/log_implementation.js:.claude/skills/devflow-tasks/scripts/log_implementation.js"
 
     # Templates and utilities (13 total) - Source and destination are the same
     ".devflow/lib/state-io.js:.devflow/lib/state-io.js"
@@ -81,9 +109,10 @@ Example:
 What gets installed:
   • 8 agents in .claude/agents/
   • 10 commands in .claude/commands/devflow/
+  • 5 skills in .claude/skills/ (NEW! - autonomous assistance)
   • 13 templates and utilities in .devflow/
 
-After installation, run: /init
+After installation, run: /devflow:init
 EOF
     exit 0
 }
@@ -293,6 +322,7 @@ validate_installation() {
         ".devflow/state.json.schema"
         ".devflow/templates/constitution.md.template"
         ".claude/commands/devflow/init.md"
+        ".claude/skills/devflow-state/SKILL.md"
     )
 
     for file in "${critical_files[@]}"; do
@@ -319,15 +349,16 @@ show_success() {
     echo ""
     echo "Files installed:"
     echo "  • 8 agents in .claude/agents/"
-    echo "  • 9 commands in .claude/commands/devflow/"
-    echo "  • 10 templates and utilities in .devflow/"
+    echo "  • 10 commands in .claude/commands/devflow/"
+    echo "  • 5 skills in .claude/skills/ (NEW! - autonomous assistance)"
+    echo "  • 13 templates and utilities in .devflow/"
     echo ""
     echo "Next steps:"
-    echo "  1. Run: /init"
+    echo "  1. Run: /devflow:init"
     echo "     This will create your constitution, architecture docs,"
     echo "     and integrate with CLAUDE.md"
     echo ""
-    echo "  2. Start building: /spec your-feature-name"
+    echo "  2. Start building: /devflow:spec your-feature-name"
     echo ""
     echo "Note: DevFlow commands require bash."
     echo "      Windows users: Use Git Bash terminal"
