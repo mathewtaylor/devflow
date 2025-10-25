@@ -18,7 +18,7 @@
     "testing",
     "code-review"
   ],
-  "commands": "./devflow/integrations/claude/commands",
-  "agents": "./devflow/integrations/claude/agents",
-  "skills": "./devflow/integrations/claude/skills"
+  "commands": "./devflow/integrations/claude/commands/",
+  "agents": "./devflow/integrations/claude/agents/",
+  "skills": "./devflow/integrations/claude/skills/"
 }
