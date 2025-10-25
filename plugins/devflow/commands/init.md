@@ -164,7 +164,7 @@ Create `.devflow/state.json`:
 
 Check for existing documentation files:
 
-- Markdown count: !`node .devflow/lib/cli.js query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md"`
+- Markdown count: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md" 2>/dev/null || node .devflow/lib/cli.js query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md" 2>/dev/null || echo "0"`
 
 **If markdown count > 5:**
 

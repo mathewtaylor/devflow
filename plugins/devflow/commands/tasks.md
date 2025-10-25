@@ -19,9 +19,9 @@ If not: Use active feature or most recent pending/active from state.json
 
 ## Current State for Feature
 
-- Has plan: !`node .devflow/lib/cli.js query has_plan "$1"`
-- Has tasks: !`node .devflow/lib/cli.js query has_tasks "$1"`
-- Current phase: !`node .devflow/lib/cli.js query current_phase "$1"`
+- Has plan: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query has_plan "$1" 2>/dev/null || node .devflow/lib/cli.js query has_plan "$1" 2>/dev/null || echo "false"`
+- Has tasks: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query has_tasks "$1" 2>/dev/null || node .devflow/lib/cli.js query has_tasks "$1" 2>/dev/null || echo "false"`
+- Current phase: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query current_phase "$1" 2>/dev/null || node .devflow/lib/cli.js query current_phase "$1" 2>/dev/null || echo "N/A"`
 
 ## Context for Task Planner
 

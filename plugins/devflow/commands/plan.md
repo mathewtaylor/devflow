@@ -19,9 +19,9 @@ If not: Use active feature from state.json, or most recent pending/active featur
 
 ## Current State for Feature
 
-- Feature exists: !`node .devflow/lib/cli.js query feature_exists "$1"`
-- Has spec: !`node .devflow/lib/cli.js query has_spec "$1"`
-- Has plan: !`node .devflow/lib/cli.js query has_plan "$1"`
+- Feature exists: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query feature_exists "$1" 2>/dev/null || node .devflow/lib/cli.js query feature_exists "$1" 2>/dev/null || echo "false"`
+- Has spec: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query has_spec "$1" 2>/dev/null || node .devflow/lib/cli.js query has_spec "$1" 2>/dev/null || echo "false"`
+- Has plan: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query has_plan "$1" 2>/dev/null || node .devflow/lib/cli.js query has_plan "$1" 2>/dev/null || echo "false"`
 
 ## Context for Architect
 
