@@ -42,8 +42,8 @@ Create personalized constitution and architecture documentation for this project
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "yes" || echo "no"`
-- Existing code detected: !`node .devflow/lib/cli.js query code_detected`
-- Package files found: !`node .devflow/lib/cli.js query package_files`
+- Existing code detected: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query code_detected 2>/dev/null || node .devflow/lib/cli.js query code_detected 2>/dev/null || echo "unknown"`
+- Package files found: !`node "${CLAUDE_PLUGIN_ROOT}/lib/cli.js" query package_files 2>/dev/null || node .devflow/lib/cli.js query package_files 2>/dev/null || echo "unknown"`
 
 ## Your Task
 
