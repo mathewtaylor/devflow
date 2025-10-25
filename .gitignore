@@ -5,3 +5,6 @@
 # DevFlow runtime files (if .devflow/ is tracked in other projects)
 *.bak
 *.tmp
+
+# Plugin testing guide (local development only)
+PLUGIN_TESTING.md
