@@ -17,8 +17,8 @@ Create a comprehensive specification for: **$ARGUMENTS**
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "✓" || (echo "✗ Run /init first" && exit 1)`
-- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature`
-- Total features: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_count`
+- Active feature: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');s.active_feature||'none'}catch(e){'none'}" || echo 'none'`
+- Total features: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');s?Object.keys(s.features).length.toString():'0'}catch(e){'0'}" || echo '0'`
 
 ## Project Context
 

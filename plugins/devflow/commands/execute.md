@@ -16,8 +16,8 @@ Implement tasks for: **$1** (or active feature)
 
 ## Current State
 
-- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature`
-- Feature exists: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_exists "$1"`
+- Active feature: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');s.active_feature||'none'}catch(e){'none'}" || echo 'none'`
+- Feature exists: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');const arg='$1';const keys=Object.keys(s.features||{});keys.find(k=>k.includes(arg))?'yes':'no'}catch(e){'no'}" || echo 'no'`
 
 ## Your Task
 

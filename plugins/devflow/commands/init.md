@@ -20,22 +20,16 @@ Create personalized constitution and architecture documentation for this project
 
 - Check if .devflow exists: !`test -d .devflow && echo "exists" || echo "not_exists"`
 
-**If .devflow does NOT exist:**
-
-1. **Copy plugin files to project:**
-   - Create .devflow directory: !`mkdir -p .devflow`
-   - Copy templates: !`cp -r "${CLAUDE_PLUGIN_ROOT}/templates" .devflow/`
-   - Copy scripts: !`mkdir -p .devflow/scripts && cp "${CLAUDE_PLUGIN_ROOT}/scripts"/*.js .devflow/scripts/`
-   - Copy schema: !`cp "${CLAUDE_PLUGIN_ROOT}/state.json.schema" .devflow/`
-   - Copy instructions: !`cp "${CLAUDE_PLUGIN_ROOT}/instructions.md" .devflow/`
+**If .devflow does NOT exist, you MUST copy plugin files to the project FIRST:**Use the Bash tool to run these commands (they will work at runtime):```bashmkdir -p .devflowcp -r "${CLAUDE_PLUGIN_ROOT}/templates" .devflow/mkdir -p .devflow/scripts && cp "${CLAUDE_PLUGIN_ROOT}/scripts"/*.js .devflow/scripts/cp "${CLAUDE_PLUGIN_ROOT}/state.json.schema" .devflow/cp "${CLAUDE_PLUGIN_ROOT}/instructions.md" .devflow/```
 
 **After ensuring .devflow/ exists, proceed with initialization.**
 
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "yes" || echo "no"`
-- Existing code detected: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query code_detected`
-- Package files found: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query package_files`
+- Existing code detected: !`find . -type f ( -name '*.js' -o -name '*.ts' -o -name '*.cs' -o -name '*.py' ) -not -path './node_modules/*' -not -path './.git/*' 2>/dev/null | head -1 >/dev/null && echo 'yes' || echo 'no'`
+- Package files found: !`ls package.json requirements.txt pom.xml *.csproj 2>/dev/null | tr '
+' ', ' | sed 's/,$//' || echo 'none'`
 
 ## Your Task
 
@@ -156,7 +150,7 @@ Create `.devflow/state.json`:
 
 Check for existing documentation files:
 
-- Markdown count: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query markdown_count "README.md,CONTRIBUTING.md,CHANGELOG.md,LICENSE.md"`
+- Markdown count: !`find . -name '*.md' -not -path './node_modules/*' -not -path './.git/*' -not -path './.devflow/*' -not -name 'CLAUDE.md' 2>/dev/null | wc -l | tr -d ' '`
 
 **If markdown count > 5:**
 

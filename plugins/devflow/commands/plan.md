@@ -19,9 +19,9 @@ If not: Use active feature from state.json, or most recent pending/active featur
 
 ## Current State for Feature
 
-- Feature exists: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_exists "$1"`
-- Has spec: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query has_spec "$1"`
-- Has plan: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query has_plan "$1"`
+- Feature exists: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');const arg='$1';const keys=Object.keys(s.features||{});keys.find(k=>k.includes(arg))?'yes':'no'}catch(e){'no'}" || echo 'no'`
+- Has spec: !`test -f .devflow/state.json && node -e "const s=require('./.devflow/state.json');const arg='$1';const keys=Object.keys(s.features||{});const key=keys.find(k=>k.includes(arg));if(key){const fs=require('fs');process.stdout.write(fs.existsSync('.devflow/features/'+key+'/spec.md')?'yes':'no')}else{process.stdout.write('no')}" || echo 'no'`
+- Has plan: !`test -f .devflow/state.json && node -e "const s=require('./.devflow/state.json');const arg='$1';const keys=Object.keys(s.features||{});const key=keys.find(k=>k.includes(arg));if(key){const fs=require('fs');process.stdout.write(fs.existsSync('.devflow/features/'+key+'/plan.md')?'yes':'no')}else{process.stdout.write('no')}" || echo 'no'`
 
 ## Context for Architect
 

@@ -23,23 +23,23 @@ Display comprehensive overview of DevFlow state and progress.
 
 ## Active Feature Info
 
-- Active feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature`
-- Active feature name: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_feature_name`
-- Active phase: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_phase`
-- Active progress: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_progress`
+- Active feature: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');s.active_feature||'none'}catch(e){'none'}" || echo 'none'`
+- Active feature name: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');s.active_feature||'none'}catch(e){'none'}" || echo 'none'_name`
+- Active phase: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');!s||!s.active_feature?'N/A':s.features[s.active_feature]?.phase||'Unknown'}catch(e){'N/A'}" || echo 'N/A'`
+- Active progress: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');!s||!s.active_feature?'N/A':(s.features[s.active_feature]?.current_task||'0')+'/tasks'}catch(e){'N/A'}" || echo 'N/A'`
 
 ## Features Summary
 
-- Total features: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query feature_count`
-- Pending: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query pending_count`
-- Active: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query active_count`
-- Paused: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query paused_count`
-- Completed: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query completed_count`
+- Total features: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');s?Object.keys(s.features).length.toString():'0'}catch(e){'0'}" || echo '0'`
+- Pending: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');!s?'0':Object.values(s.features).filter(f=>f.status==='pending').length.toString()}catch(e){'0'}" || echo '0'`
+- Active: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');!s?'0':Object.values(s.features).filter(f=>f.status==='active').length.toString()}catch(e){'0'}" || echo '0'`
+- Paused: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');!s?'0':Object.values(s.features).filter(f=>f.status==='paused').length.toString()}catch(e){'0'}" || echo '0'`
+- Completed: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');!s?'0':Object.values(s.features).filter(f=>f.status==='completed').length.toString()}catch(e){'0'}" || echo '0'`
 
 ## Recent Activity
 
-- Latest feature: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query latest_feature`
-- Last initialized: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query last_initialized`
+- Latest feature: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');!s?'None':Object.keys(s.features).sort().reverse()[0]||'None'}catch(e){'None'}" || echo 'None'`
+- Last initialized: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');!s||!s.initialized_at?'Never':new Date(s.initialized_at).toLocaleDateString('en-US')}catch(e){'Unknown'}" || echo 'Unknown'`
 
 ---
 

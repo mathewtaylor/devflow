@@ -19,9 +19,9 @@ If not: Use active feature or most recent pending/active from state.json
 
 ## Current State for Feature
 
-- Has plan: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query has_plan "$1"`
-- Has tasks: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query has_tasks "$1"`
-- Current phase: !`node "${CLAUDE_PLUGIN_ROOT}/scripts/cli.js" query current_phase "$1"`
+- Has plan: !`test -f .devflow/state.json && node -e "const s=require('./.devflow/state.json');const arg='$1';const keys=Object.keys(s.features||{});const key=keys.find(k=>k.includes(arg));if(key){const fs=require('fs');process.stdout.write(fs.existsSync('.devflow/features/'+key+'/plan.md')?'yes':'no')}else{process.stdout.write('no')}" || echo 'no'`
+- Has tasks: !`test -f .devflow/state.json && node -e "const s=require('./.devflow/state.json');const arg='$1';const keys=Object.keys(s.features||{});const key=keys.find(k=>k.includes(arg));if(key){const fs=require('fs');process.stdout.write(fs.existsSync('.devflow/features/'+key+'/tasks.md')?'yes':'no')}else{process.stdout.write('no')}" || echo 'no'`
+- Current phase: !`test -f .devflow/state.json && node -pe "try{const s=require('./.devflow/state.json');const arg='$1';const keys=Object.keys(s.features||{});const key=keys.find(k=>k.includes(arg));key?s.features[key]?.phase||'unknown':'unknown'}catch(e){'unknown'}" || echo 'unknown'`
 
 ## Context for Task Planner
 
