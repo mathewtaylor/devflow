@@ -41,20 +41,21 @@ $MaxRetries = 3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 8 agents, 10 commands, 13 templates/utilities
+# Current counts: 9 agents, 11 commands, 13 templates/utilities
 # Format: @{Source='repo_path'; Dest='install_path'}
 $FilesToDownload = @(
-    # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
+    # Agents (9 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
     @{Source=".devflow/integrations/claude/agents/architect.md"; Dest=".claude/agents/architect.md"},
     @{Source=".devflow/integrations/claude/agents/checkpoint-reviewer.md"; Dest=".claude/agents/checkpoint-reviewer.md"},
     @{Source=".devflow/integrations/claude/agents/git-operations-manager.md"; Dest=".claude/agents/git-operations-manager.md"},
+    @{Source=".devflow/integrations/claude/agents/ideas.md"; Dest=".claude/agents/ideas.md"},
     @{Source=".devflow/integrations/claude/agents/planner.md"; Dest=".claude/agents/planner.md"},
     @{Source=".devflow/integrations/claude/agents/readme-maintainer.md"; Dest=".claude/agents/readme-maintainer.md"},
     @{Source=".devflow/integrations/claude/agents/reviewer.md"; Dest=".claude/agents/reviewer.md"},
     @{Source=".devflow/integrations/claude/agents/state-manager.md"; Dest=".claude/agents/state-manager.md"},
     @{Source=".devflow/integrations/claude/agents/tester.md"; Dest=".claude/agents/tester.md"},
 
-    # Commands (10 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
+    # Commands (11 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
     @{Source=".devflow/integrations/claude/commands/devflow/init.md"; Dest=".claude/commands/devflow/init.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/spec.md"; Dest=".claude/commands/devflow/spec.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/plan.md"; Dest=".claude/commands/devflow/plan.md"},
@@ -64,6 +65,7 @@ $FilesToDownload = @(
     @{Source=".devflow/integrations/claude/commands/devflow/think.md"; Dest=".claude/commands/devflow/think.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/build-feature.md"; Dest=".claude/commands/devflow/build-feature.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/consolidate-docs.md"; Dest=".claude/commands/devflow/consolidate-docs.md"},
+    @{Source=".devflow/integrations/claude/commands/devflow/idea.md"; Dest=".claude/commands/devflow/idea.md"},
     @{Source=".devflow/integrations/claude/commands/devflow/readme-manager.md"; Dest=".claude/commands/devflow/readme-manager.md"},
 
     # Templates and utilities (13 total) - Source and destination are the same
@@ -98,8 +100,8 @@ function Show-Help {
     Write-Host "  .\Install-DevFlow.ps1 -TargetPath C:\MyProject"
     Write-Host ""
     Write-Host "What gets installed:"
-    Write-Host "  • 8 agents in .claude/agents/"
-    Write-Host "  • 10 commands in .claude/commands/devflow/"
+    Write-Host "  • 9 agents in .claude/agents/"
+    Write-Host "  • 11 commands in .claude/commands/devflow/"
     Write-Host "  • 13 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "After installation, run: /init"
@@ -363,8 +365,8 @@ function Show-SuccessMessage {
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
     Write-Host ""
     Write-Host "Files installed:"
-    Write-Host "  • 8 agents in .claude/agents/"
-    Write-Host "  • 9 commands in .claude/commands/devflow/"
+    Write-Host "  • 9 agents in .claude/agents/"
+    Write-Host "  • 11 commands in .claude/commands/devflow/"
     Write-Host "  • 10 templates and utilities in .devflow/"
     Write-Host ""
     Write-Host "Next steps:"

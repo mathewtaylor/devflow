@@ -46,7 +46,7 @@ DevFlow brings structure, automation, and intelligence to feature development:
 
 ## Key Features
 
-### Workflow Commands (10 total)
+### Workflow Commands (11 total)
 
 **`/init`** - Initialize DevFlow in your project
 - Interactive wizard for project constitution
@@ -126,7 +126,16 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Updates or creates comprehensive README.md
 - Ensures documentation accuracy
 
-### Intelligent Agents (8 total)
+**`/idea [text | complete N | clear]`** - Quick idea capture
+- Capture ideas without leaving the terminal
+- Add: `/idea "Your idea here"`
+- List: `/idea` (shows all ideas)
+- Mark complete: `/idea complete 3`
+- Clear done: `/idea clear`
+- Stored in `.devflow/ideas.md`
+- Uses ideas agent for isolated context
+
+### Intelligent Agents (9 total)
 
 **Architect Agent** (Opus)
 - Technical planning and design

@@ -20,20 +20,21 @@ MAX_RETRIES=3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 8 agents, 10 commands, 13 templates/utilities
+# Current counts: 9 agents, 11 commands, 13 templates/utilities
 # Format: "source_path:destination_path" (source from repo, destination in user project)
 declare -a FILES=(
-    # Agents (8 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
+    # Agents (9 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
     ".devflow/integrations/claude/agents/architect.md:.claude/agents/architect.md"
     ".devflow/integrations/claude/agents/checkpoint-reviewer.md:.claude/agents/checkpoint-reviewer.md"
     ".devflow/integrations/claude/agents/git-operations-manager.md:.claude/agents/git-operations-manager.md"
+    ".devflow/integrations/claude/agents/ideas.md:.claude/agents/ideas.md"
     ".devflow/integrations/claude/agents/planner.md:.claude/agents/planner.md"
     ".devflow/integrations/claude/agents/readme-maintainer.md:.claude/agents/readme-maintainer.md"
     ".devflow/integrations/claude/agents/reviewer.md:.claude/agents/reviewer.md"
     ".devflow/integrations/claude/agents/state-manager.md:.claude/agents/state-manager.md"
     ".devflow/integrations/claude/agents/tester.md:.claude/agents/tester.md"
 
-    # Commands (10 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
+    # Commands (11 total) - Source: devflow/integrations/claude/commands, Dest: .claude/commands
     ".devflow/integrations/claude/commands/devflow/init.md:.claude/commands/devflow/init.md"
     ".devflow/integrations/claude/commands/devflow/spec.md:.claude/commands/devflow/spec.md"
     ".devflow/integrations/claude/commands/devflow/plan.md:.claude/commands/devflow/plan.md"
@@ -43,6 +44,7 @@ declare -a FILES=(
     ".devflow/integrations/claude/commands/devflow/think.md:.claude/commands/devflow/think.md"
     ".devflow/integrations/claude/commands/devflow/build-feature.md:.claude/commands/devflow/build-feature.md"
     ".devflow/integrations/claude/commands/devflow/consolidate-docs.md:.claude/commands/devflow/consolidate-docs.md"
+    ".devflow/integrations/claude/commands/devflow/idea.md:.claude/commands/devflow/idea.md"
     ".devflow/integrations/claude/commands/devflow/readme-manager.md:.claude/commands/devflow/readme-manager.md"
 
     # Templates and utilities (13 total) - Source and destination are the same
@@ -79,8 +81,8 @@ Example:
   $0 /path/to/project  # Install in specific directory
 
 What gets installed:
-  • 8 agents in .claude/agents/
-  • 10 commands in .claude/commands/devflow/
+  • 9 agents in .claude/agents/
+  • 11 commands in .claude/commands/devflow/
   • 13 templates and utilities in .devflow/
 
 After installation, run: /init
@@ -318,8 +320,8 @@ show_success() {
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo ""
     echo "Files installed:"
-    echo "  • 8 agents in .claude/agents/"
-    echo "  • 9 commands in .claude/commands/devflow/"
+    echo "  • 9 agents in .claude/agents/"
+    echo "  • 11 commands in .claude/commands/devflow/"
     echo "  • 10 templates and utilities in .devflow/"
     echo ""
     echo "Next steps:"
