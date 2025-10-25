@@ -1,0 +1,250 @@
+#!/usr/bin/env node
+/**
+ * DevFlow Retrospective Generator
+ *
+ * Generates retrospective.md for a completed feature.
+ *
+ * Usage:
+ *   node generate_retro.js [feature-name]     # Generate retrospective
+ */
+
+const path = require('path');
+const fs = require('fs');
+
+const projectRoot = process.cwd();
+
+/**
+ * Get feature details
+ */
+function getFeatureDetails(featureName) {
+    const stateIOPath = path.join(projectRoot, '.devflow/lib/state-io.js');
+
+    if (!fs.existsSync(stateIOPath)) {
+        throw new Error('DevFlow not initialized');
+    }
+
+    const { readState } = require(stateIOPath);
+    const state = readState();
+
+    let featureKey = featureName;
+
+    if (!featureName) {
+        if (!state.active_feature) {
+            throw new Error('No active feature and no feature name provided');
+        }
+        featureKey = state.active_feature;
+    } else {
+        if (!state.features[featureName]) {
+            const keys = Object.keys(state.features);
+            const match = keys.find(k => k.includes(featureName));
+            if (!match) {
+                throw new Error(`Feature not found: ${featureName}`);
+            }
+            featureKey = match;
+        }
+    }
+
+    const feature = state.features[featureKey];
+    const featurePath = path.join(projectRoot, `.devflow/features/${featureKey}`);
+
+    return {
+        key: featureKey,
+        displayName: feature.display_name,
+        phase: feature.phase,
+        status: feature.status,
+        concerns: feature.concerns,
+        createdAt: feature.created_at,
+        path: featurePath
+    };
+}
+
+/**
+ * Count tasks from tasks.md
+ */
+function countTasks(featurePath) {
+    const tasksPath = path.join(featurePath, 'tasks.md');
+
+    if (!fs.existsSync(tasksPath)) {
+        return { total: 0, completed: 0 };
+    }
+
+    const content = fs.readFileSync(tasksPath, 'utf8');
+    const lines = content.split('\n');
+
+    const taskLines = lines.filter(line => /^- \[[ x]\]/.test(line.trim()));
+    const completedLines = lines.filter(line => /^- \[x\]/.test(line.trim()));
+
+    return {
+        total: taskLines.length,
+        completed: completedLines.length
+    };
+}
+
+/**
+ * Calculate duration
+ */
+function calculateDuration(createdAt) {
+    const start = new Date(createdAt);
+    const end = new Date();
+    const diffMs = end - start;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Less than 1 day';
+    if (diffDays === 1) return '1 day';
+    if (diffDays < 7) return `${diffDays} days`;
+    const weeks = Math.floor(diffDays / 7);
+    if (weeks === 1) return '1 week';
+    return `${weeks} weeks`;
+}
+
+/**
+ * Generate retrospective content
+ */
+function generateRetrospectiveContent(featureDetails, tasksData) {
+    const duration = calculateDuration(featureDetails.createdAt);
+    const completionDate = new Date().toISOString().split('T')[0];
+
+    return `# Retrospective - ${featureDetails.displayName}
+
+**Feature:** ${featureDetails.displayName}
+**Key:** ${featureDetails.key}
+**Completed:** ${completionDate}
+**Duration:** ${duration}
+
+## Summary
+
+${featureDetails.displayName} has been completed. This retrospective captures the experience, lessons learned, and recommendations for future similar work.
+
+## Metrics
+
+- **Tasks Completed:** ${tasksData.completed}/${tasksData.total}
+- **Tagged Concerns:** ${featureDetails.concerns.join(', ') || 'None'}
+- **Status:** ${featureDetails.status}
+- **Phase:** ${featureDetails.phase}
+
+## What Went Well
+
+1. **[Success 1]**
+   [Add description of what went well and why]
+
+2. **[Success 2]**
+   [Add description of what went well and why]
+
+3. **[Success 3]**
+   [Add description of what went well and why]
+
+## Challenges
+
+1. **[Challenge 1]**
+   - **Impact:** [How it affected progress]
+   - **Resolution:** [How it was overcome]
+   - **Prevention:** [How to avoid in future]
+
+2. **[Challenge 2]**
+   - **Impact:** [How it affected progress]
+   - **Resolution:** [How it was overcome]
+   - **Prevention:** [How to avoid in future]
+
+## Lessons Learned
+
+1. **[Lesson 1]**
+   [What was learned and how to apply it]
+
+2. **[Lesson 2]**
+   [What was learned and how to apply it]
+
+3. **[Lesson 3]**
+   [What was learned and how to apply it]
+
+## Recommendations
+
+### For Similar Features
+- [Recommendation for future similar work]
+- [Recommendation for future similar work]
+
+### For Process Improvements
+- [Recommendation for DevFlow or workflow process]
+- [Recommendation for DevFlow or workflow process]
+
+### For Architecture
+- [Architectural recommendation based on this experience]
+- [Architectural recommendation based on this experience]
+
+## Technical Debt
+
+[Any technical debt introduced during this feature that needs future attention]
+
+Examples:
+- Temporary workarounds that need proper solutions
+- Test coverage gaps
+- Performance optimizations deferred
+- Refactoring opportunities identified
+
+## Follow-up Items
+
+- [ ] [Follow-up item 1]
+- [ ] [Follow-up item 2]
+- [ ] [Follow-up item 3]
+
+---
+
+*Generated by DevFlow on ${new Date().toISOString().split('T')[0]}*
+*This retrospective should be manually reviewed and completed with actual observations*
+`;
+}
+
+/**
+ * Main execution
+ */
+function main() {
+    const args = process.argv.slice(2);
+    const featureName = args[0];
+
+    try {
+        console.log('Generating retrospective...\n');
+
+        const featureDetails = getFeatureDetails(featureName);
+        console.log(`Feature: ${featureDetails.key}`);
+        console.log(`Display name: ${featureDetails.displayName}`);
+        console.log(`Status: ${featureDetails.status}`);
+        console.log(`Phase: ${featureDetails.phase}\n`);
+
+        const tasksData = countTasks(featureDetails.path);
+        console.log(`Tasks: ${tasksData.completed}/${tasksData.total} completed\n`);
+
+        const retroContent = generateRetrospectiveContent(featureDetails, tasksData);
+        const retroPath = path.join(featureDetails.path, 'retrospective.md');
+
+        // Check if retrospective already exists
+        if (fs.existsSync(retroPath)) {
+            console.log('⚠️  Warning: retrospective.md already exists');
+            console.log(`   Location: ${retroPath}`);
+            console.log('');
+            console.log('Overwrite? (This will replace the existing retrospective)');
+            console.log('Manual review required before proceeding.');
+            process.exit(1);
+        }
+
+        // Write retrospective
+        fs.writeFileSync(retroPath, retroContent, 'utf8');
+
+        console.log('✓ Retrospective generated successfully\n');
+        console.log(`Location: ${retroPath}\n`);
+        console.log('Next steps:');
+        console.log('1. Review the generated retrospective');
+        console.log('2. Fill in the placeholder sections with actual observations');
+        console.log('3. Add specific examples and details');
+        console.log('4. Update metrics if available');
+        console.log('5. Commit the completed retrospective');
+
+    } catch (error) {
+        console.error(`Error: ${error.message}`);
+        process.exit(1);
+    }
+}
+
+if (require.main === module) {
+    main();
+}
+
+module.exports = { generateRetrospectiveContent, countTasks, calculateDuration };
