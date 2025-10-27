@@ -4,18 +4,6 @@
 
 > Structured workflow system that transforms how you build features—from specification to production-ready code with automated quality gates.
 
-**Version:** 1.9.0 (Stable Manual Install)
-**Branch:** `stable-manual-install`
-
-> ⚠️ This is the **stable manual installation version** of DevFlow. For the plugin version (experimental), see the `main` branch.
-
-**Latest Updates:**
-- **Stable Branch Created**: Clean manual installation without plugin dependencies
-- **Repository Restructure**: Multi-agent support preparation (claude/, codex/, gemini/ future structure)
-- **Snapshot Functionality**: Pause/resume with context preservation for execution workflow
-- **Phase Review Gate**: Automatic integration validation after parent task completion with remediation workflow
-- **Context Management**: Automatic monitoring with warnings at 150K tokens and compaction support
-
 ---
 
 ## The Problem
@@ -185,6 +173,12 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Remediation subtask creation
 - Multi-level quality assurance
 
+**Ideas Agent** (Haiku)
+- Quick idea capture and management
+- Add, list, complete, and clear ideas
+- Maintains .devflow/ideas.md checklist
+- Fast, isolated context for rapid capture
+
 ---
 
 ## Installation
@@ -254,23 +248,6 @@ chmod +x install-devflow.sh
 /init
 ```
 
-### PowerShell Installation (Windows)
-
-```powershell
-# 1. Navigate to your project directory
-cd C:\path\to\your\project
-
-# 2. Download and run installer
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/Install-DevFlow.ps1" -OutFile "Install-DevFlow.ps1"
-.\Install-DevFlow.ps1
-
-# Optional: Install to different directory without navigating
-.\Install-DevFlow.ps1 -TargetPath "C:\MyProject"
-
-# 3. Initialize DevFlow
-/init
-```
-
 ### Manual Installation
 
 If you prefer manual setup:
@@ -299,8 +276,8 @@ cd /path/to/your-project
 ### What Gets Installed
 
 The installer creates:
-- `.claude/agents/` - 8 specialized AI agents
-- `.claude/commands/devflow/` - 10 slash commands
+- `.claude/agents/` - 9 specialized AI agents
+- `.claude/commands/devflow/` - 11 slash commands
 - `.devflow/templates/` - 9 infrastructure templates
 - `.devflow/lib/` - 2 utility libraries (state-io.js, cli.js)
 - `.devflow/` - Schema and instructions files
@@ -1242,8 +1219,8 @@ DevFlow is organized to support multiple AI coding assistants:
 devflow/
 ├── integrations/
 │   └── claude/                    # Claude Code-specific implementation
-│       ├── agents/                # 8 specialized agents
-│       └── commands/devflow/      # 9 workflow commands
+│       ├── agents/                # 9 specialized agents
+│       └── commands/devflow/      # 11 workflow commands
 ├── templates/                     # 6 shared infrastructure templates
 ├── lib/                          # 2 utility libraries
 └── [schema and instructions]     # Shared validation and docs
@@ -1261,9 +1238,10 @@ devflow/
 - Model optimization (haiku for simple, sonnet for medium, opus for complex)
 
 ### Agent Layer
-- Specialized agents in `.claude/agents/` (8 total)
+- Specialized agents in `.claude/agents/` (9 total)
 - Opus for deep thinking (Architect, Code Reviewer, Checkpoint Reviewer)
-- Sonnet for execution (Task Planner, Test Engineer, State Manager, Git Operations, README Maintainer)
+- Sonnet for execution (Task Planner, Test Engineer, State Manager, Git Operations Manager, README Maintainer)
+- Haiku for fast operations (Ideas)
 - Structured outputs (JSON/markdown)
 - Reusable across commands
 
