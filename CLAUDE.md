@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **DevFlow** is an agentic feature management system for Claude Code that provides a structured workflow for building features with automated quality gates. It transforms chaotic feature development into a systematic process: Spec → Plan → Tasks → Execute.
 
 The system consists of:
-- **10 slash commands** (namespaced as `devflow:*`) for workflow phases
-- **8 specialized AI agents** for architecture, planning, code review, testing, and state management
+- **11 slash commands** (namespaced as `devflow:*`) for workflow phases
+- **9 specialized AI agents** for architecture, planning, code review, testing, and state management
 - **Smart context management** using three-tier documentation loading
 - **Living documentation** that stays synchronized with code changes
 
@@ -26,7 +26,7 @@ The system consists of:
 - Specialized agents invoked via `Task()` tool
 - Each agent has structured inputs/outputs
 - Reusable across multiple commands
-- Agents: `architect`, `planner`, `state-manager`, `reviewer`, `tester`
+- Agents: `architect`, `planner`, `reviewer`, `tester`, `state-manager`, `git-operations-manager`, `readme-maintainer`, `checkpoint-reviewer`, `ideas`
 
 **3. State Layer** (`.devflow/lib/state-io.js`)
 - JavaScript utilities for atomic state operations
@@ -144,6 +144,27 @@ The system consists of:
 - Optional: Creates Architecture Decision Record (ADR)
 - Use for: technology selection, architectural patterns, design decisions
 
+### `/consolidate-docs` - Organize Existing Documentation
+- Scans all markdown files in project
+- Consolidates scattered technical docs into DevFlow domains
+- Provides archival recommendations
+- Safe migration preserves original files
+
+### `/readme-manager` - Update Project README
+- Invokes readme-maintainer agent
+- Analyzes current project state
+- Updates or creates comprehensive README.md
+- Ensures documentation accuracy
+
+### `/idea [text | complete N | clear]` - Quick Idea Capture
+- Capture ideas without leaving terminal
+- Add: `/idea "Your idea here"`
+- List: `/idea` (shows all ideas)
+- Mark complete: `/idea complete 3`
+- Clear done: `/idea clear`
+- Stored in `.devflow/ideas.md`
+- Uses ideas agent for isolated context
+
 ## Key Behavioral Patterns
 
 ### Smart Context Loading (Three-Tier System)
@@ -231,9 +252,34 @@ Format: `yyyymmdd-feature-slug`
 - **Philosophy:** Guided flexibility (warns but allows skipping phases)
 - **Output:** Structured success/warning status with next action guidance
 
+### Git Operations Manager Agent
+- **Model:** sonnet
+- **Purpose:** Git workflow automation
+- **Functions:** Commits, pushes, pulls, branch management, worktree management
+- **Standards:** Conventional commit format enforcement
+- **Output:** Conflict detection and resolution guidance
+
+### README Maintainer Agent
+- **Model:** sonnet
+- **Purpose:** Comprehensive README.md creation and updates
+- **Functions:** Project structure analysis, accuracy verification
+- **Output:** Multi-audience documentation (users, contributors, operators)
+
+### Checkpoint Reviewer Agent
+- **Model:** opus (extended thinking)
+- **Purpose:** Phase-level integration validation
+- **Functions:** Post-parent-task review gate, remediation subtask creation
+- **Output:** Multi-level quality assurance validation
+
+### Ideas Agent
+- **Model:** haiku
+- **Purpose:** Quick idea capture and management
+- **Functions:** Add, list, complete, and clear ideas
+- **Output:** Maintains `.devflow/ideas.md` checklist with fast, isolated context
+
 ## Development Commands
 
-### Testing DevFlow
+### Testing DevFlow in Target Projects
 ```bash
 # In a test project directory
 cd /path/to/test-project
@@ -281,6 +327,52 @@ node -pe "Object.keys(require('./.devflow/state.json').features).join('\n')"
 node -pe "const s=require('./.devflow/state.json'); Object.values(s.features).filter(f=>f.status==='active').length"
 ```
 
+## DevFlow Repository Development
+
+### Repository Structure
+```
+devflow/
+├── devflow/
+│   ├── integrations/claude/
+│   │   ├── agents/              # 9 specialized agents
+│   │   └── commands/devflow/    # 11 workflow commands
+│   ├── templates/               # Shared infrastructure templates
+│   ├── lib/                     # Utilities (state-io.js, cli.js)
+│   └── instructions.md          # Core documentation
+├── scripts/
+│   └── install-devflow.sh       # Bash installer (Linux/Mac/Git Bash)
+├── README.md                    # User-facing documentation
+└── CLAUDE.md                    # This file
+```
+
+### Installation Path Mapping
+When users install DevFlow in their projects:
+- `devflow/integrations/claude/agents/` → `.claude/agents/`
+- `devflow/integrations/claude/commands/devflow/` → `.claude/commands/devflow/`
+- `devflow/templates/` → `.devflow/templates/`
+- `devflow/lib/` → `.devflow/lib/`
+- `devflow/state.json.schema` → `.devflow/state.json.schema`
+- `devflow/instructions.md` → `.devflow/instructions.md`
+
+### Branch Strategy
+- **`main`** - Current stable branch with manual installation (formerly `stable-manual-install`)
+- **`v2`** - Previous main branch preserved for reference
+- See `BRANCHES.md` for historical context (note: may contain outdated branch names)
+
+### Testing Changes
+```bash
+# Test installer in a separate directory
+cd /tmp/test-project
+bash /path/to/devflow/scripts/install-devflow.sh
+
+# Verify installation
+ls -la .claude/
+ls -la .devflow/
+
+# Test a workflow command
+/init
+```
+
 ## Critical Implementation Notes
 
 ### Slash Command Best Practices
@@ -292,7 +384,7 @@ node -pe "const s=require('./.devflow/state.json'); Object.values(s.features).fi
 ### Agent Design Principles
 1. **Concise prompts** with YAML frontmatter (40-65 lines)
 2. **Structured outputs** (JSON or markdown with specific sections)
-3. **Model selection** matches task complexity (opus for thinking, sonnet for execution)
+3. **Model selection** matches task complexity (opus for thinking, sonnet for execution, haiku for fast operations)
 4. **Reusability** across multiple commands
 
 ### State Transitions
@@ -365,18 +457,25 @@ node -pe "const s=require('./.devflow/state.json'); Object.values(s.features).fi
 - `.claude/commands/devflow/execute.md` - Implementation with quality gates
 - `.claude/commands/devflow/status.md` - Progress dashboard
 - `.claude/commands/devflow/think.md` - Deep analysis and ADRs
+- `.claude/commands/devflow/consolidate-docs.md` - Documentation organization
+- `.claude/commands/devflow/readme-manager.md` - README maintenance
+- `.claude/commands/devflow/idea.md` - Quick idea capture
 
 **Quality agents:**
 - `.claude/agents/architect.md` - Technical planning (opus + extended thinking)
 - `.claude/agents/planner.md` - Task breakdown (sonnet)
 - `.claude/agents/reviewer.md` - Code review (opus + extended thinking)
 - `.claude/agents/tester.md` - Test generation and validation (sonnet)
+- `.claude/agents/checkpoint-reviewer.md` - Phase-level integration validation (opus)
+- `.claude/agents/state-manager.md` - State transition validation (sonnet)
+- `.claude/agents/git-operations-manager.md` - Git workflow automation (sonnet)
+- `.claude/agents/readme-maintainer.md` - README maintenance (sonnet)
+- `.claude/agents/ideas.md` - Idea capture (haiku)
 
 **Installation scripts:**
-- `scripts/install-devflow.sh` - Bash installer (Linux/Mac/Git Bash)
-- `scripts/Install-DevFlow.ps1` - PowerShell installer (Windows)
-- Both download files from `devflow/` repo folder to `.devflow/` in target project
-- Path mapping: `devflow/templates/` → `.devflow/templates/` (strip leading dot)
+- `scripts/install-devflow.sh` - Bash installer (Linux/Mac/Git Bash on Windows)
+- Downloads files from GitHub `main` branch to target project
+- Path mapping: `devflow/` repo folder → `.devflow/` in target project
 - Template files NOT backed up on update (infrastructure, not user data)
 
 ## Philosophy and Design Goals
