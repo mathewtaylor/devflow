@@ -22,9 +22,10 @@ Building software features is often chaotic:
 
 DevFlow brings structure, automation, and intelligence to feature development:
 
-- **Structured workflow**: Spec → Plan → Tasks → Execute
+- **Structured workflow**: Spec → Plan → Tasks → Execute → Validate
 - **Living documentation**: Constitution, architecture, and per-feature specs stay current
 - **Automated quality**: Every task gets code review and testing before proceeding
+- **Intelligent validation**: AI-powered bug analysis with automated root cause detection and fixes
 - **Smart context**: Loads only relevant docs (15-20K tokens vs 100K+)
 - **Progress tracking**: State management means you always know where you are
 - **Decision capture**: ADRs document important architectural choices
@@ -84,8 +85,44 @@ DevFlow brings structure, automation, and intelligence to feature development:
   - Warns at 150K tokens (75% of 200K budget)
   - Offers context compaction to maintain performance
 - Progress logging to implementation.md
-- Architecture updates on completion
-- Generates retrospectives
+- Transitions to VALIDATE phase on completion
+
+**`/validate`** - Start validation phase (NEW in v2025.10.27)
+- Parses acceptance criteria from spec.md
+- Creates validation.md tracking document
+- Sets up intelligent bug reporting system
+- Transitions feature from EXECUTE → VALIDATE
+
+**`/test-fail "<error or logs>"`** - Report bugs with intelligent analysis (NEW in v2025.10.27)
+- Accepts any input format: stack traces, test output, manual descriptions
+- **Validation Analyzer Agent** (Opus + extended thinking)
+  - Deep root cause analysis with extended thinking
+  - Identifies error type, location, and code path
+  - Determines severity (CRITICAL/HIGH/MEDIUM/LOW)
+  - Creates structured resolution plan
+- Auto-generates atomic fix tasks with file paths
+- Implements fixes with same quality gates as /execute
+- Re-validation prompt after fixes applied
+
+**`/test-pass <criterion-number>`** - Mark acceptance criterion as passing (NEW in v2025.10.27)
+- Updates validation.md checklist
+- Updates state metrics (passed/pending counts)
+- Shows progress toward completion
+- Detects when ready to finalize
+
+**`/validate-status`** - View validation progress dashboard (NEW in v2025.10.27)
+- Acceptance criteria progress with visual bar
+- Issues summary by status and severity
+- Detailed issue list with timestamps
+- Validation metrics and time tracking
+- Clear next steps guidance
+
+**`/validate-complete`** - Finalize validation and mark feature DONE (NEW in v2025.10.27)
+- Validates all criteria passed and no open issues
+- Updates architecture.md with changes
+- Generates comprehensive retrospective
+- Marks feature complete (VALIDATE → DONE)
+- Cleans up temporary files
 
 ### Utility Commands
 
@@ -123,7 +160,7 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Stored in `.devflow/ideas.md`
 - Uses ideas agent for isolated context
 
-### Intelligent Agents (9 total)
+### Intelligent Agents (10 total)
 
 **Architect Agent** (Opus)
 - Technical planning and design
@@ -148,6 +185,14 @@ DevFlow brings structure, automation, and intelligence to feature development:
 - Unit and integration tests
 - Coverage validation
 - Test execution and failure analysis
+
+**Validation Analyzer Agent** (Opus) - NEW in v2025.10.27
+- Deep root cause analysis of bugs and test failures
+- Extended thinking for complex error patterns
+- Accepts any input format (stack traces, logs, descriptions)
+- Structured resolution plans with atomic fix tasks
+- Severity assessment and impact analysis
+- Prevention recommendations
 
 **State Manager Agent** (Sonnet)
 - State transition validation
@@ -276,13 +321,13 @@ cd /path/to/your-project
 ### What Gets Installed
 
 The installer creates:
-- `.claude/agents/` - 9 specialized AI agents
-- `.claude/commands/devflow/` - 11 slash commands
-- `.devflow/templates/` - 9 infrastructure templates
+- `.claude/agents/` - 10 specialized AI agents
+- `.claude/commands/devflow/` - 15 slash commands
+- `.devflow/templates/` - 10 infrastructure templates
 - `.devflow/lib/` - 2 utility libraries (state-io.js, cli.js)
 - `.devflow/` - Schema and instructions files
 
-**Version:** 2025.10.24 (latest)
+**Version:** 2025.10.27 (latest)
 
 **Note on Repository Structure:**
 DevFlow's repository is organized for multi-agent support:

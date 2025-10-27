@@ -970,7 +970,7 @@ Resume: /execute (without arguments)
 When all tasks are marked complete:
 
 ```
-🎉 All tasks complete!
+🎉 All implementation tasks complete!
 
 Summary:
 - Feature: {{display_name}}
@@ -980,86 +980,61 @@ Summary:
 - Time: {{duration if trackable}}
 ```
 
-**1. Update Architecture**
-
-Ask: "Update architecture.md with changes from this feature? (y/n)"
-
-If yes:
-- Analyze code changes made
-- Identify: new services, endpoints, database changes, patterns used
-- **Minor updates** (auto-apply): new endpoints, utility functions
-- **Major updates** (show diff, ask approval): new architectural patterns, new tech stack items
-- Update architecture.md
-
-**2. Generate Retrospective**
-
-Create `features/{{featureKey}}/retrospective.md`:
-```markdown
-# Feature Retrospective: {{display_name}}
-
-**Completed:** {{ISO timestamp}}
-**Duration:** {{duration if trackable}}
-**Tasks:** {{total}}
-**Tests Added:** {{count}}
-
-## What Went Well
-- {{positive outcome 1}}
-- {{positive outcome 2}}
-
-## Challenges Faced
-- {{challenge 1 and how it was resolved}}
-- {{challenge 2 and how it was resolved}}
-
-## Lessons Learned
-- {{lesson 1}}
-- {{lesson 2}}
-
-## Technical Debt Created
-{{#if any}}
-- {{debt item 1}}
-- {{debt item 2}}
-{{else}}
-None identified
-{{/if}}
-
-## Recommendations for Future
-- {{recommendation 1}}
-- {{recommendation 2}}
-```
-
-**3. Clean Up Snapshot**
+**1. Clean Up Snapshot**
 
 If snapshot exists:
 1. **Check state.json** for snapshot value
 2. **If not null:**
    - Construct path: `.devflow/features/{{featureKey}}/snapshot.md`
    - If file exists, delete it using Bash: `rm .devflow/features/{{featureKey}}/snapshot.md`
-   - Confirm: `✓ Snapshot cleared (feature complete)`
+   - Confirm: `✓ Snapshot cleared (implementation complete)`
 
-**4. Mark Feature Complete**
+**2. Transition to Validation Phase**
 
 Invoke State Manager to:
-- Set phase=DONE
-- Set status=completed
-- Set completed_at timestamp
-- Set snapshot=null (cleanup)
-- Clear active_feature
+- Set phase=VALIDATE (not DONE - validation phase comes next)
+- Keep status=active
+- Keep feature as active_feature (validation continues on same feature)
 
-**5. Celebration!**
+**3. Implementation Complete!**
 
 ```
-✅ Feature complete: {{display_name}}!
+✅ Implementation complete: {{display_name}}!
 
 Documentation:
 - Spec: features/{{key}}/spec.md
 - Plan: features/{{key}}/plan.md
 - Tasks: features/{{key}}/tasks.md ({{total}} ✓)
 - Implementation: features/{{key}}/implementation.md
-- Retrospective: features/{{key}}/retrospective.md
 
-Architecture: {{updated/unchanged}}
+─────────────────────────────────────────────────────────────
+🔍 Next: Validation Phase
+─────────────────────────────────────────────────────────────
 
-Next: Run /spec to start a new feature!
+Implementation is done, but the feature needs validation testing
+before it can be marked complete.
+
+**Start validation:**
+  /validate
+
+This will:
+  - Parse acceptance criteria from spec.md
+  - Create validation.md tracking document
+  - Set up intelligent bug reporting
+
+**During validation:**
+  - Test each acceptance criterion
+  - Report bugs: /test-fail "<error logs or description>"
+  - Mark passing: /test-pass <criterion-number>
+  - Check progress: /validate-status
+
+**When all tests pass:**
+  - Finalize: /validate-complete
+  - Generates retrospective and marks feature DONE
+
+─────────────────────────────────────────────────────────────
+
+Start validation now: /validate
 ```
 
 ---

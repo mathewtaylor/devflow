@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**DevFlow** is an agentic feature management system for Claude Code that provides a structured workflow for building features with automated quality gates. It transforms chaotic feature development into a systematic process: Spec → Plan → Tasks → Execute.
+**DevFlow** is an agentic feature management system for Claude Code that provides a structured workflow for building features with automated quality gates. It transforms chaotic feature development into a systematic process: Spec → Plan → Tasks → Execute → Validate.
 
 The system consists of:
-- **11 slash commands** (namespaced as `devflow:*`) for workflow phases
-- **9 specialized AI agents** for architecture, planning, code review, testing, and state management
+- **15 slash commands** (namespaced as `devflow:*`) for workflow phases
+- **10 specialized AI agents** for architecture, planning, code review, testing, validation, and state management
 - **Smart context management** using three-tier documentation loading
 - **Living documentation** that stays synchronized with code changes
 
@@ -26,7 +26,7 @@ The system consists of:
 - Specialized agents invoked via `Task()` tool
 - Each agent has structured inputs/outputs
 - Reusable across multiple commands
-- Agents: `architect`, `planner`, `reviewer`, `tester`, `state-manager`, `git-operations-manager`, `readme-maintainer`, `checkpoint-reviewer`, `ideas`
+- Agents: `architect`, `planner`, `reviewer`, `tester`, `validation-analyzer`, `state-manager`, `git-operations-manager`, `readme-maintainer`, `checkpoint-reviewer`, `ideas`
 
 **3. State Layer** (`.devflow/lib/state-io.js`)
 - JavaScript utilities for atomic state operations
@@ -61,6 +61,7 @@ The system consists of:
         ├── plan.md            # Technical design
         ├── tasks.md           # Executable checklist
         ├── implementation.md  # Execution log
+        ├── validation.md      # Testing and issues (VALIDATE phase)
         ├── retrospective.md   # Lessons learned
         └── snapshot.md        # Resume context (created on pause)
 ```
@@ -127,10 +128,52 @@ The system consists of:
   - Snapshot helpful after Claude Code's `/compact` command
   - Resume automatically loads snapshot for context
 - **On completion:**
-  - Updates architecture.md with changes
-  - Generates retrospective.md
   - Cleans up snapshot.md
-  - Marks feature complete: `phase=DONE`, `status=completed`
+  - Transitions to VALIDATE phase: `phase=VALIDATE`, `status=active`
+
+### `/validate [feature-name]?` - Start Validation Phase
+- Transitions feature from EXECUTE → VALIDATE phase
+- Parses acceptance criteria from spec.md
+- Creates validation.md tracking document
+- Sets up intelligent bug reporting system
+- Displays testing instructions and available commands
+
+### `/test-fail "<error or logs>"` - Report Bug with Intelligent Analysis
+- Accepts any input format: stack traces, test output, manual descriptions
+- **Validation Analyzer Agent** (Opus + extended thinking)
+  - Deep root cause analysis using extended thinking
+  - Identifies error type, location, and code path
+  - Determines severity (CRITICAL/HIGH/MEDIUM/LOW)
+  - Creates structured resolution plan with atomic fix tasks
+- Auto-generates fix tasks with file paths and estimates
+- Implements fixes with same quality gates as /execute
+  - Code Review Gate (Opus)
+  - Testing Gate (Sonnet)
+- Logs fixes to validation.md
+- Updates state with issue tracking
+- Re-validation prompt after fixes applied
+
+### `/test-pass <criterion-number>` - Mark Criterion Passing
+- Updates validation.md checklist (`[ ]` → `[x]`)
+- Updates state metrics (passed/pending counts)
+- Shows progress toward validation completion
+- Detects when all criteria passed and ready to finalize
+
+### `/validate-status [feature-name]?` - View Validation Dashboard
+- Acceptance criteria progress with visual bar
+- Issues summary by status (open/fixing/fixed/closed)
+- Issues summary by severity (CRITICAL/HIGH/MEDIUM/LOW)
+- Detailed issue list with timestamps and tasks
+- Validation metrics and time tracking
+- Clear next steps guidance
+
+### `/validate-complete [feature-name]?` - Finalize Validation
+- Validates all criteria passed and no open issues
+- Offers architecture.md updates (minor auto-apply, major require approval)
+- Generates comprehensive retrospective.md
+- Cleans up snapshot.md
+- Marks feature complete: `phase=DONE`, `status=completed`
+- Clears active_feature
 
 ### `/status` - View Progress Dashboard
 - Active feature and current task
@@ -244,6 +287,19 @@ Format: `yyyymmdd-feature-slug`
 - **Generates:** Unit tests (AAA pattern) and integration tests
 - **Validates:** Coverage requirements from constitution
 - **Output:** Test files + execution results (PASS/FAIL with specifics)
+
+### Validation Analyzer Agent
+- **Model:** opus (extended thinking)
+- **Purpose:** Intelligent bug analysis during validation phase
+- **Accepts:** Any input format (stack traces, test output, manual descriptions, logs)
+- **Analysis:** Deep root cause detection with extended thinking
+  - Error type and location identification
+  - Code path tracing
+  - Severity assessment (CRITICAL/HIGH/MEDIUM/LOW)
+  - Pattern recognition (null_check, error_handling, validation, integration)
+- **Output:** Structured JSON with resolution plan and atomic fix tasks
+- **Prevention:** Recommends patterns to avoid similar issues
+- **Used in:** `/test-fail` command for intelligent bug reporting and auto-fixing
 
 ### State Manager Agent
 - **Model:** sonnet
@@ -388,7 +444,7 @@ ls -la .devflow/
 4. **Reusability** across multiple commands
 
 ### State Transitions
-**Valid phases:** `SPEC → PLAN → TASKS → EXECUTE → DONE`
+**Valid phases:** `SPEC → PLAN → TASKS → EXECUTE → VALIDATE → DONE`
 - Skipping allowed (with warnings)
 - Backward movement allowed (rare, for corrections)
 - Single active feature enforced
@@ -455,6 +511,11 @@ ls -la .devflow/
 - `.claude/commands/devflow/plan.md` - Technical planning
 - `.claude/commands/devflow/tasks.md` - Task breakdown
 - `.claude/commands/devflow/execute.md` - Implementation with quality gates
+- `.claude/commands/devflow/validate.md` - Start validation phase
+- `.claude/commands/devflow/test-fail.md` - Report bugs with intelligent analysis
+- `.claude/commands/devflow/test-pass.md` - Mark acceptance criterion passing
+- `.claude/commands/devflow/validate-status.md` - View validation dashboard
+- `.claude/commands/devflow/validate-complete.md` - Finalize validation
 - `.claude/commands/devflow/status.md` - Progress dashboard
 - `.claude/commands/devflow/think.md` - Deep analysis and ADRs
 - `.claude/commands/devflow/consolidate-docs.md` - Documentation organization
@@ -466,6 +527,7 @@ ls -la .devflow/
 - `.claude/agents/planner.md` - Task breakdown (sonnet)
 - `.claude/agents/reviewer.md` - Code review (opus + extended thinking)
 - `.claude/agents/tester.md` - Test generation and validation (sonnet)
+- `.claude/agents/validation-analyzer.md` - Bug root cause analysis (opus + extended thinking)
 - `.claude/agents/checkpoint-reviewer.md` - Phase-level integration validation (opus)
 - `.claude/agents/state-manager.md` - State transition validation (sonnet)
 - `.claude/agents/git-operations-manager.md` - Git workflow automation (sonnet)
