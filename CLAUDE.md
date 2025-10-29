@@ -333,42 +333,89 @@ Format: `yyyymmdd-feature-slug`
 - **Functions:** Add, list, complete, and clear ideas
 - **Output:** Maintains `.devflow/ideas.md` checklist with fast, isolated context
 
-## Development Commands
+## Build, Test, and Development Commands
 
-### Testing DevFlow in Target Projects
+### No Traditional Build System
+
+DevFlow is **documentation and script-based** - there is no compilation, transpilation, bundling, or package management.
+
+**Technology stack:**
+- Markdown files for commands, agents, and templates
+- JavaScript (Node.js) for state utilities
+- Bash scripts for installation
+
+**No dependencies:**
+- No `package.json` or `npm install` required
+- No build step
+- No automated test suite (tested through actual usage)
+
+### Installation and Testing
+
+**Production installation (one-line):**
 ```bash
-# In a test project directory
-cd /path/to/test-project
+curl -sSL https://raw.githubusercontent.com/mathewtaylor/devflow/main/scripts/install-devflow.sh | bash
+```
 
-# Initialize DevFlow
+**Local development installation:**
+```bash
+# From DevFlow repository root
+cd /path/to/devflow
+./scripts/local-install.sh /path/to/test-project
+```
+
+**Manual testing workflow:**
+```bash
+# 1. Make changes in DevFlow repo
+# 2. Install to test project
+cd /path/to/devflow
+./scripts/local-install.sh /tmp/test-project
+
+# 3. Test in target project
+cd /tmp/test-project
 /init
-
-# Create a simple feature
 /spec test-feature
-
-# Generate plan
 /plan
-
-# Create tasks
 /tasks
-
-# Execute (with quality gates)
 /execute
-
-# Check status
 /status
 ```
 
-### Working with State
+### Working with State (cli.js)
+
+The `cli.js` utility provides a centralized interface for state operations, reducing permission prompts.
+
+**Query operations (read-only):**
 ```bash
-# Read current state
-node -e "console.log(JSON.stringify(require('./.devflow/state.json'), null, 2))"
+# Active feature info
+node .devflow/lib/cli.js query active_feature
+node .devflow/lib/cli.js query active_feature_name
+node .devflow/lib/cli.js query active_phase
+node .devflow/lib/cli.js query active_progress
 
-# Get active feature
-node -pe "require('./.devflow/state.json').active_feature"
+# Feature queries
+node .devflow/lib/cli.js query feature_count
+node .devflow/lib/cli.js query has_spec feature-name
+node .devflow/lib/cli.js query feature_phase feature-name
+node .devflow/lib/cli.js query current_task feature-name
 
-# Restore from backup
-cp .devflow/state.json.bak .devflow/state.json
+# Validation queries (NEW)
+node .devflow/lib/cli.js query validation_criteria feature-name
+node .devflow/lib/cli.js query validation_issues feature-name
+node .devflow/lib/cli.js query validation_progress feature-name
+```
+
+**Update operations (state mutations):**
+```bash
+# Phase transitions
+node .devflow/lib/cli.js update transition-phase feature-key EXECUTE 1.1
+
+# Task updates
+node .devflow/lib/cli.js update set-current-task feature-key 1.2
+node .devflow/lib/cli.js update increment-task feature-key
+
+# Validation updates
+node .devflow/lib/cli.js update mark-criterion-passed feature-key 1
+node .devflow/lib/cli.js update add-issue feature-key "Bug description"
 ```
 
 ### Debugging Commands
@@ -376,12 +423,38 @@ cp .devflow/state.json.bak .devflow/state.json
 # Check if DevFlow initialized
 test -f .devflow/constitution.md && echo "Initialized" || echo "Not initialized"
 
-# List all features
-node -pe "Object.keys(require('./.devflow/state.json').features).join('\n')"
+# Restore from backup
+cp .devflow/state.json.bak .devflow/state.json
 
-# Count features by status
-node -pe "const s=require('./.devflow/state.json'); Object.values(s.features).filter(f=>f.status==='active').length"
+# Check state directly (use cli.js queries instead for production)
+cat .devflow/state.json | jq '.'
 ```
+
+### Adding New Files to Installation
+
+When adding new commands, agents, or templates:
+
+1. **Create the file** in appropriate location:
+   - Commands: `devflow/integrations/claude/commands/devflow/new-command.md`
+   - Agents: `devflow/integrations/claude/agents/new-agent.md`
+   - Templates: `devflow/templates/new-template.md.template`
+
+2. **Update install script** (`scripts/install-devflow.sh`):
+   ```bash
+   # Add to FILES array
+   "devflow/integrations/claude/commands/devflow/new-command.md:.claude/commands/devflow/new-command.md"
+   ```
+
+3. **Update file count** in script comments:
+   ```bash
+   # Example: "10 agents" → "11 agents"
+   ```
+
+4. **Test installation:**
+   ```bash
+   ./scripts/local-install.sh /tmp/test-project
+   # Verify file exists in target location
+   ```
 
 ## DevFlow Repository Development
 
@@ -427,6 +500,88 @@ ls -la .devflow/
 
 # Test a workflow command
 /init
+```
+
+### Common Development Patterns
+
+**Modifying an existing command:**
+```bash
+# 1. Edit the command file
+# Example: devflow/integrations/claude/commands/devflow/execute.md
+
+# 2. Install to test project
+./scripts/local-install.sh /tmp/test-project
+
+# 3. Test the command in test project
+cd /tmp/test-project
+/execute
+
+# 4. Iterate until working correctly
+# 5. Commit changes to DevFlow repo
+```
+
+**Adding a new agent:**
+```bash
+# 1. Create agent file with YAML frontmatter
+# devflow/integrations/claude/agents/new-agent.md
+
+---
+name: new-agent
+description: Brief description of what agent does
+model: sonnet
+color: blue
+version: 2025.10.29
+---
+
+# Agent prompt content...
+
+# 2. Update installation script
+# Add to FILES array in scripts/install-devflow.sh
+
+# 3. Update CLAUDE.md agent count
+# Example: "10 specialized agents" → "11 specialized agents"
+
+# 4. Test installation
+./scripts/local-install.sh /tmp/test-project
+ls -la /tmp/test-project/.claude/agents/new-agent.md
+
+# 5. Invoke from command using Task tool
+# In a command: Task(subagent_type: "new-agent", ...)
+```
+
+**Updating templates:**
+```bash
+# Templates are infrastructure files (overwritten on update)
+# Users should NOT customize templates directly
+
+# 1. Edit template
+# devflow/templates/some-template.md.template
+
+# 2. Test by running command that uses it
+# Example: /spec uses spec.md.template
+
+# 3. Verify template placeholders work correctly
+# Check: {{FEATURE_NAME}}, {{CREATED_DATE}}, etc.
+```
+
+**Testing state transitions:**
+```bash
+# 1. Initialize DevFlow in test project
+cd /tmp/test-project
+/init
+
+# 2. Create feature
+/spec test-feature
+
+# 3. Check state after each command
+node .devflow/lib/cli.js query active_phase
+
+# 4. Test transition validation
+# Try skipping phases (should warn but allow)
+/execute  # Skip /plan and /tasks
+
+# 5. Check state.json directly
+cat .devflow/state.json | jq '.features'
 ```
 
 ## Critical Implementation Notes
@@ -570,4 +725,6 @@ The comprehensive development guide above is for working on DevFlow itself. For 
 
 This file contains context management guidelines, workflow instructions, and agent behaviors that Claude Code uses during feature development.
 
-Last updated: 2025-10-29
+---
+
+Last updated: 2025-10-29 (Enhanced with build/test commands, cli.js usage, and common development patterns)
