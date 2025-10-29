@@ -14,9 +14,30 @@ version: 2025.10.23
 
 Create a comprehensive specification for: **$ARGUMENTS**
 
+## Pre-flight Check
+
+**First, verify DevFlow is initialized:**
+
+Check if `.devflow/constitution.md` exists:
+- If **YES**: Continue with spec creation
+- If **NO**: Stop and inform the user:
+
+  ```
+  ❌ DevFlow has not been initialized yet.
+
+  Please run `/devflow:init` first to:
+  • Create your project's constitution (principles and standards)
+  • Generate architecture documentation
+  • Set up the DevFlow state system
+
+  After initialization, you can create feature specs with `/devflow:spec`.
+  ```
+
+  **Do not proceed without initialization.**
+
 ## Current State
 
-- DevFlow initialized: !`test -f .devflow/constitution.md && echo "✓" || (echo "✗ Run /init first" && exit 1)`
+- DevFlow initialized: !`test -f .devflow/constitution.md && echo "✓" || echo "✗"`
 - Active feature: !`node .devflow/lib/cli.js query active_feature`
 - Total features: !`node .devflow/lib/cli.js query feature_count`
 

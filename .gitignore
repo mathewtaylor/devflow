@@ -5,3 +5,7 @@
 # DevFlow runtime files (if .devflow/ is tracked in other projects)
 *.bak
 *.tmp
+
+
+TODO.md
+scripts/local-install.sh

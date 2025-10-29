@@ -559,3 +559,15 @@ ls -la .devflow/
 ---
 
 **DevFlow transforms feature development from chaos to systematic, high-quality execution with AI-powered quality gates.**
+
+---
+
+## DevFlow Runtime Instructions
+
+The comprehensive development guide above is for working on DevFlow itself. For **runtime instructions** when DevFlow is being used (testing workflows in this repo), see:
+
+@.devflow/instructions.md
+
+This file contains context management guidelines, workflow instructions, and agent behaviors that Claude Code uses during feature development.
+
+Last updated: 2025-10-29
