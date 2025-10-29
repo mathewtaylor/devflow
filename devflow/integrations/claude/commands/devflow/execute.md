@@ -200,26 +200,7 @@ Read constitution.md for `quality_gates.checkpoint_review` setting:
 5. **Extract design**:
    - From plan.md: Technical design for all reviewed parent tasks
 
-**Check context before review:**
-
-```
-Current context usage: {{current_tokens}}/200,000 tokens
-```
-
-- If > 150K tokens (75% of budget):
-  ```
-  ⚠️ Context Warning: {{current_tokens}}/200,000 tokens ({{percentage}}%)
-
-  Running checkpoint review with high context may fail mid-review.
-
-  Options:
-  a) Compact now before review (recommended)
-  b) Continue anyway (may need to compact during fixes)
-
-  Choose:
-  ```
-- If user chooses compact: Run `/compact`, then resume checkpoint review
-- If user chooses continue: Proceed to review
+💡 **Tip:** For long checkpoint reviews, consider creating a snapshot first to preserve progress.
 
 **Invoke Checkpoint Reviewer (Attempt 1):**
 
@@ -299,7 +280,6 @@ Files: {{file_count}} files checked
 
 - Log success to implementation.md (see section 6)
 - Mark Review Checkpoint parent task complete `[x]`
-- Check context usage (see Context Management section)
 - Continue to next parent task
 
 **If status = ISSUES_FOUND:**
@@ -343,17 +323,6 @@ For each HIGH issue:
 2. Analyze issue and suggested fix from review
 3. Implement fix (add missing feature, fix spec violation, align architecture, etc.)
 4. Log fix to implementation.md
-
-**Check context after fixes:**
-
-- If context > 170K tokens:
-  ```
-  ⚠️ Context usage high after fixes: {{tokens}}/200,000
-
-  Compacting before re-review to ensure clean execution...
-  ```
-  - Run `/compact`
-  - Resume with re-review
 
 **Re-run checkpoint review (attempt 2-5):**
 
@@ -496,12 +465,6 @@ Append checkpoint review section:
 {{list persistent critical/high issues}}
 User action: {{what user chose}}
 {{/if}}
-
-### Context Management
-
-- Before review: {{tokens}} tokens
-- After review: {{tokens}} tokens
-{{if compacted}}✓ Context compacted during review{{/if}}
 
 ---
 ```
@@ -790,65 +753,20 @@ Parent task number is derived by parsing current_task string ("1.2" → parent 1
 
 ---
 
-### Context Management (After Parent Task Completion)
+### After Parent Task Completion
 
-**CRITICAL: After completing each parent task, check context usage before continuing.**
+After completing each parent task:
 
-**Check current context:**
-- Claude Code tracks token usage throughout the session
-- Current budget: 200,000 tokens
-- Warning threshold: 150,000 tokens (75% usage)
+1. Check if more parent tasks remain
+2. If yes, show confirmation and proceed to next parent task
+3. If no, proceed to Completion Flow
 
-**If context usage > 150K tokens:**
+**💡 Context Management Tip:**
 
-```
-⚠️ Context Warning
-
-Current usage: {{current_tokens}}/200,000 tokens ({{percentage}}%)
-Remaining: {{remaining_tokens}} tokens
-
-Large context may impact performance and increase costs.
-
-Options:
-a) Compact context now (recommended - creates summary and continues fresh)
-b) Continue without compacting (may hit limit during next phase)
-c) Pause execution (save progress and exit)
-
-Choose:
-```
-
-**If user chooses "compact":**
-1. **Suggest snapshot creation first:**
-   ```
-   💡 Create/update snapshot before compacting? (y/n)
-
-   Recommended: Snapshot helps resume after /compact resets context.
-   ```
-
-   If yes: Follow Pause Handling snapshot creation steps
-   If no: Continue to compact
-
-2. Use `/compact` command to create conversation summary
-3. Context resets with summary preserved
-4. Resume execution from next parent task
-5. All progress saved in state.json, tasks.md, and snapshot.md (if created)
-
-**If user chooses "continue":**
-- Log warning to implementation.md
-- Continue to next parent task
-- May need to compact mid-phase if limit reached
-
-**If user chooses "pause":**
-- Follow Pause Handling procedure (section below)
-
-**If context usage < 150K tokens:**
-- No action needed, continue silently
-
-**Auto-compact option (optional enhancement):**
-- If implementing auto-compact: Set threshold to 170K tokens
-- Automatically run `/compact` without asking
-- Log compaction to implementation.md
-- Note: User preference - some may prefer manual control
+If you notice sluggish performance or Claude Code shows high token usage warnings:
+- Consider creating a snapshot (offered on pause or before large parent tasks)
+- Use `/compact` to create summary and continue fresh
+- Both approaches preserve progress in state.json and tasks.md
 
 ---
 

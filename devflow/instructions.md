@@ -4,63 +4,25 @@ This project uses **DevFlow** - an agentic workflow system for structured featur
 
 ---
 
-## ⚠️ CRITICAL: Context Space Management
+## Context Management
 
-**BEFORE executing ANY DevFlow command**, you MUST:
-
-1. **Check current context usage** against your token budget
-2. **Estimate token cost** of the command you're about to execute
-3. **Alert the user** if the command may require context compacting before completion
-
-### Context Estimation by Command
-
-| Command | Estimated Context Usage | Notes |
-|---------|------------------------|-------|
-| `/init` | 5,000-10,000 tokens | Scans codebase, creates constitution + architecture |
-| `/spec` | 3,000-5,000 tokens | Loads constitution, architecture, domains index |
-| `/plan` | 10,000-20,000 tokens | Loads constitution, architecture, spec, domain docs (Architect agent uses extended thinking) |
-| `/tasks` | 8,000-15,000 tokens | Loads constitution, spec, plan, domain docs |
-| `/execute` | 15,000-30,000+ tokens PER TASK | Highest cost - loads all docs + source code + runs review/test agents |
-| `/status` | 2,000-3,000 tokens | Minimal - mostly state queries |
-| `/think` | 5,000-15,000 tokens | Deep analysis with extended thinking |
-
-### Warning Protocol
-
-**IF** (current context usage + estimated command cost) > (80% of total budget):
+Claude Code displays token usage in system warnings throughout your session. Watch for warnings like:
 
 ```
-⚠️ CONTEXT ALERT
-
-Current Usage: XX,XXX / XXX,XXX tokens (XX%)
-Estimated for [command]: ~XX,XXX tokens
-Total Expected: ~XX,XXX tokens (XX% of budget)
-
-This command may trigger context compacting during execution.
-
-Options:
-a) Continue - Risk compacting mid-command (may lose context)
-b) Create snapshot first - Save current state, compact, then proceed
-c) Cancel - Review context and decide next steps
-
-Your choice:
+Token usage: XX,XXX/200,000; remaining YY,YYY
 ```
 
-### Snapshot Creation Before Large Commands
+**Best Practices:**
+- Monitor Claude Code's system warnings regularly
+- Create snapshots before long operations (`/execute` with many tasks)
+- Use `/compact` when context feels heavy or sluggish
+- Break large features into smaller, manageable pieces
 
-For commands estimated >20K tokens, **recommend creating a snapshot**:
-
-```bash
-# Suggest to user:
-Before running /execute, I recommend creating a context snapshot
-to ensure we can resume if compacting is needed.
-
-Create snapshot? (y/n):
-```
-
-If yes:
-1. Create `.devflow/snapshots/snap_[feature]_[timestamp].md`
-2. Include: completed tasks, current state, key decisions, next steps
-3. Proceed with command
+**DevFlow helps through:**
+- Smart context loading (only loads relevant documentation)
+- Snapshot creation on pause for easy resume
+- Minimal documentation overhead
+- Tier-based document loading (core, feature-specific, on-demand)
 
 ---
 
@@ -236,10 +198,10 @@ Examples:
 ## Important Behaviors
 
 ### Context-Aware Execution
-- **ALWAYS** check context space before executing commands
-- **WARN** user if command may trigger compacting
-- **SUGGEST** snapshot creation for large operations (/execute, /plan with complex features)
-- **PAUSE** execution if context critically low and ask user for guidance
+- Monitor Claude Code's system warnings for token usage
+- Suggest snapshot creation for long-running features
+- Use `/compact` if context feels sluggish
+- Break large features into smaller phases when appropriate
 
 ### Guided Flexibility
 - Workflow is **Spec → Plan → Tasks → Execute**

@@ -81,9 +81,10 @@ DevFlow brings structure, automation, and intelligence to feature development:
   - Validates coverage requirements
   - Ensures tests pass before proceeding
 - **Context Management**
-  - Monitors token usage during execution
-  - Warns at 150K tokens (75% of 200K budget)
-  - Offers context compaction to maintain performance
+  - Smart context loading (only relevant documentation)
+  - Snapshot creation for pause/resume capability
+  - Compatible with Claude Code's `/compact` command
+  - Proactive guidance for long operations
 - Progress logging to implementation.md
 - Transitions to VALIDATE phase on completion
 
@@ -672,8 +673,7 @@ For each parent task:
      c. If issues found: Create remediation subtasks
      d. Re-run phase review after remediation
      e. Max 3 review cycles, then ask user
-  5. Check context usage (warn at 150K tokens)
-  6. Move to next parent task
+  5. Move to next parent task
 
 On completion:
   - Update architecture.md with feature changes
@@ -1198,33 +1198,35 @@ cp .devflow/state.json.bak .devflow/state.json
 /init
 ```
 
-### Context too large warning
+### Managing context during long features
 
-**NEW in v2025.10.24:** `/execute` automatically monitors context usage and warns at 150K tokens.
+**NEW in v2025.10.24:** `/execute` offers snapshot creation before large parent tasks (>5 subtasks).
 
-```bash
-# Automatic warning during execution
-⚠️ Context Warning
-Current usage: 152,000/200,000 tokens (76%)
-
-Options:
-a) Compact context now (recommended)
-b) Continue without compacting
-c) Pause execution
-
-# Choose option 'a' to compact and continue
-# All progress is preserved in state.json and tasks.md
+Claude Code displays token usage in system warnings. Watch for:
+```
+Token usage: XX,XXX/200,000; remaining YY,YYY
 ```
 
-**Manual approach:**
+**When you see high token usage:**
+
 ```bash
-# Create snapshot and pause
+# Option 1: Create snapshot and pause
 /execute
-# When prompted at any time: pause → snapshot created
+# Choose 'pause' → snapshot created automatically
 
 # Resume later with fresh context
-/execute  # State preserved, continues from where you left off
+/execute  # Continues from where you left off
+
+# Option 2: Use /compact during execution
+# Creates summary and continues fresh
+# All progress preserved in state.json and tasks.md
 ```
+
+**Best practices:**
+- Accept snapshot offer for large parent tasks
+- Monitor Claude Code's system warnings
+- Use `/compact` if context feels sluggish
+- Break very large features into smaller phases
 
 ### Stuck in review/test cycle
 
