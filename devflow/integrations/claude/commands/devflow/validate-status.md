@@ -3,7 +3,7 @@ allowed-tools: Read, Bash
 argument-hint: [feature-name]?
 description: View validation progress dashboard
 model: haiku
-version: 2025.10.27
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)

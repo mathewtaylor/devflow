@@ -6,16 +6,32 @@
 
 ---
 
-## 1. Project Overview
+## 1. Project Mission & Domain Context
 
-### What This Project Does
-{{PROJECT_DESCRIPTION}}
+### Mission & Purpose
+{{PROJECT_MISSION}}
 
-### Target Users
-{{TARGET_USERS}}
+### Target Users & Their Needs
+{{TARGET_USERS_NEEDS}}
 
-### Core Business Rules
+### Core Domain Concepts
+{{DOMAIN_CONCEPTS}}
+
+**Examples:**
+- E-commerce: Products, Orders, Customers, Inventory, Shopping Cart
+- Healthcare: Patients, Providers, Appointments, Medical Records, Prescriptions
+- Finance: Accounts, Transactions, Portfolios, Risk Assessments, Compliance Reports
+
+### Success Criteria
+{{SUCCESS_CRITERIA}}
+
+### Business Rules & Constraints
 {{BUSINESS_RULES}}
+
+### Regulatory & Compliance Requirements
+{{REGULATORY_REQUIREMENTS}}
+
+**Note:** If no regulatory requirements apply, this section will state "None" or "Not applicable."
 
 ---
 

@@ -1,11 +1,11 @@
 ---
 # Note: Bash unrestricted - intentional for feature implementation flexibility
 # This command needs to run tests, migrations, build tools, etc.
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task(checkpoint-reviewer), Task(tester), Task(state-manager), Bash(node:*)
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task(reviewer), Task(checkpoint-reviewer), Task(tester), Task(state-manager), Bash(node:*)
 argument-hint: [feature-name]?
 description: Execute feature tasks with automated code review and testing
 model: sonnet
-version: 2025.10.25
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
@@ -79,13 +79,33 @@ Tasks.md uses a hierarchical structure with parent tasks and subtasks:
    - Invoke State Manager to set status="active"
    - Update active_feature in state.json
 
-4. **Load context:**
+4. **Verify constitution summary exists:**
+   - Check if `.devflow/constitution-summary.md` exists
+   - If not found:
+     ```
+     ❌ Constitution summary not found
 
-@.devflow/constitution.md
+     The constitution-summary.md file is required for efficient code reviews.
+
+     Options:
+     a) Run /init to generate it automatically
+     b) Create it manually from constitution.md
+
+     Cannot proceed without constitution summary.
+     ```
+   - Stop execution
+
+5. **Load context:**
+
+@.devflow/constitution-summary.md
 @.devflow/architecture.md
 @.devflow/features/{{featureKey}}/spec.md
 @.devflow/features/{{featureKey}}/plan.md
 @.devflow/features/{{featureKey}}/tasks.md
+
+<!-- Note: Uses constitution-summary (200-300 tokens) instead of full constitution (2,500 tokens)
+     for efficiency during code reviews. Full constitution available at .devflow/constitution.md
+     if detailed reference needed. -->
 
 **Load relevant domain docs** based on feature's `concerns` array from state.json
 
@@ -227,7 +247,7 @@ Task tool invocation:
   {{extract design from plan.md for all reviewed parent tasks}}
 
   **Context:**
-  @constitution.md
+  @constitution-summary.md
   @architecture.md
 
   **Checkpoint Review Focus:**

@@ -3,7 +3,7 @@ allowed-tools: Read, Write, Bash, Task(state-manager), AskUserQuestion
 argument-hint: [feature-name]?
 description: Complete validation phase and transition to DONE
 model: sonnet
-version: 2025.10.27
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)

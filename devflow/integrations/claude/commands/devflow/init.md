@@ -5,7 +5,7 @@ allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task(architect), Bash
 argument-hint:
 description: Initialize DevFlow - create constitution and architecture documentation
 model: sonnet
-version: 2025.10.23
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
@@ -26,43 +26,51 @@ If already initialized, ask user whether to reinitialize (create backups of exis
 
 Run an interactive constitution wizard to gather:
 
-**Project Overview:**
-1. What does this project do? (brief description)
-2. Who are the target users?
-3. Core business rules or constraints
+**Project Mission & Domain Context:**
+1. What problem does this project solve? What is its mission or purpose?
+2. Who are the primary users/customers and what are their key needs?
+3. What are the core domain concepts or business entities?
+   - Examples: In e-commerce: products, orders, customers, inventory
+   - In healthcare: patients, providers, appointments, medical records
+   - In finance: accounts, transactions, portfolios, risk assessments
+4. What does success look like for this project? (business goals, metrics, outcomes)
+5. What are the core business rules or constraints?
+6. [Optional] Any regulatory/compliance requirements?
+   - Examples: HIPAA, GDPR, SOC2, PCI-DSS, FERPA, etc.
+   - Skip if not applicable
 
 **Tech Stack:**
-4. Primary language (JavaScript, TypeScript, C#, Python, Java, Go, etc.)
-5. Framework (React, Next.js, ASP.NET Core, Django, Spring Boot, etc.)
-6. Database (PostgreSQL, MySQL, SQL Server, MongoDB, etc.)
-7. Additional technologies (Redis, Docker, etc.)
+7. Primary language (JavaScript, TypeScript, C#, Python, Java, Go, etc.)
+8. Framework (React, Next.js, ASP.NET Core, Django, Spring Boot, etc.)
+9. Database (PostgreSQL, MySQL, SQL Server, MongoDB, etc.)
+10. Additional technologies (Redis, Docker, etc.)
 
 **Architecture:**
-8. Based on tech stack, suggest patterns:
+11. Based on tech stack, suggest patterns:
    - **.NET:** Clean Architecture + CQRS, Vertical Slice, Traditional Layered
    - **Node.js:** MVC, Clean Architecture, Feature-based
    - **React:** Atomic Design, Feature-based, Pages + Components
    - *Ask follow-up questions based on selection (e.g., MediatR? FluentValidation?)*
 
 **Standards:**
-9. Linter (ESLint, Pylint, etc.)
-10. Formatter (Prettier, Black, etc.)
-11. Naming conventions
+12. Linter (ESLint, Pylint, etc.)
+13. Formatter (Prettier, Black, etc.)
+14. Naming conventions
 
 **Testing:**
-12. Unit test framework
-13. Coverage requirement
-14. Integration testing approach
+15. Unit test framework
+16. Coverage requirement
+17. Integration testing approach
 
 **Security:**
-15. Authentication (JWT, OAuth, session cookies, etc.)
-16. Authorization (RBAC, ABAC, custom)
+18. Authentication (JWT, OAuth, session cookies, etc.)
+19. Authorization (RBAC, ABAC, custom)
 
 **Performance:**
-17. Performance requirements or SLAs
+20. Performance requirements or SLAs
 
 **Cross-Cutting Concerns:**
-18. Which patterns apply? (multi-select)
+21. Which patterns apply? (multi-select)
     - Multi-tenancy
     - RBAC/ABAC
     - Caching
@@ -72,6 +80,73 @@ Run an interactive constitution wizard to gather:
     - Rate limiting
 
 Generate `@../../../.devflow/constitution.md` from template, filling all {{PLACEHOLDERS}} with gathered info.
+
+---
+
+## Generate Constitution Summary
+
+**CRITICAL:** After creating constitution.md, immediately generate the constitution summary for efficient code reviews.
+
+**Step 1: Read constitution-summary template**
+
+Read: `@../../../.devflow/templates/constitution-summary.md.template`
+
+**Step 2: Generate brief versions of complex fields**
+
+For the following fields, create 1-2 sentence summaries from the full constitution data:
+
+- **NAMING_CONVENTIONS_BRIEF**: Extract core naming rules (1-2 lines)
+  - Example: "PascalCase for classes, camelCase for methods, UPPER_CASE for constants"
+
+- **FILE_ORGANIZATION_BRIEF**: Summarize folder structure (1-2 lines)
+  - Example: "Feature-based organization: /features/[name]/{components,services,tests}"
+
+- **AUTHENTICATION_STANDARD_BRIEF**: Core auth method (1 line)
+  - Example: "JWT tokens with HttpOnly cookies, 15min access + 7day refresh"
+
+- **DATA_PROTECTION_STANDARD_BRIEF**: Key protection rules (1 line)
+  - Example: "AES-256 for PII, bcrypt for passwords, TLS 1.3 in transit"
+
+- **SECURITY_BEST_PRACTICES_BRIEF**: Top 3 security rules (1-2 lines)
+  - Example: "Input validation on all endpoints, parameterized queries, principle of least privilege"
+
+- **KEY_ARCHITECTURAL_PRINCIPLES_BRIEF**: Top architectural rules (2-3 lines)
+  - Example: "Clean Architecture with CQRS. Dependencies flow inward. Domain logic isolated from infrastructure."
+
+**Step 3: Fill template with gathered data**
+
+Replace placeholders in constitution-summary template:
+
+**Direct mappings (same as constitution.md):**
+- {{PROGRAMMING_LANGUAGE}}
+- {{FRAMEWORK}}
+- {{DATABASE}}
+- {{LINTER}}
+- {{FORMATTER}}
+- {{UNIT_TEST_FRAMEWORK}}
+- {{COVERAGE_REQUIREMENT}}
+- {{INTEGRATION_TEST_FRAMEWORK}}
+- {{WHEN_TO_WRITE_UNIT_TESTS}}
+
+**Brief versions (created in Step 2):**
+- {{NAMING_CONVENTIONS_BRIEF}}
+- {{FILE_ORGANIZATION_BRIEF}}
+- {{AUTHENTICATION_STANDARD_BRIEF}}
+- {{DATA_PROTECTION_STANDARD_BRIEF}}
+- {{SECURITY_BEST_PRACTICES_BRIEF}}
+- {{KEY_ARCHITECTURAL_PRINCIPLES_BRIEF}}
+
+**Step 4: Write constitution-summary.md**
+
+Write to: `.devflow/constitution-summary.md`
+
+Result should be 200-300 tokens vs 2,500 tokens for full constitution.
+
+**Why this matters:**
+- execute.md loads constitution-summary for every code review (10-20+ times per feature)
+- Saves ~2,200 tokens per review
+- 10-task feature: ~28,600 tokens saved
+- 20-task feature: ~55,000 tokens saved
 
 ---
 
@@ -123,15 +198,21 @@ Update `@../../../.devflow/domains/_index.md` with one-line summaries.
 
 ## Initialize State
 
-Create `.devflow/state.json`:
-```json
-{
-  "initialized": true,
-  "initialized_at": "{{ISO_TIMESTAMP}}",
-  "active_feature": null,
-  "features": {}
-}
+Preserve existing state.json if valid, or create fresh if missing/corrupted.
+
+```bash
+node .devflow/lib/cli.js update init-or-migrate-state
 ```
+
+**Behavior:**
+- If state.json exists and is valid: **Preserve it** (keeps all features and active_feature)
+- If state.json is corrupted or missing: Create fresh empty state
+- Validates schema to ensure state integrity
+
+**Result:**
+- Existing features preserved during reinit (no data loss)
+- Fresh state created on first init
+- Constitution/architecture can be updated without affecting feature progress
 
 ---
 
@@ -247,6 +328,7 @@ Automatically integrate DevFlow reference with project's CLAUDE.md file.
 
 Files created:
 - .devflow/constitution.md
+- .devflow/constitution-summary.md (for efficient code reviews)
 - .devflow/architecture.md
 - .devflow/state.json
 - .devflow/domains/_index.md

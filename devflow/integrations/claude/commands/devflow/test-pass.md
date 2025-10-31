@@ -3,7 +3,7 @@ allowed-tools: Read, Edit, Task(state-manager), Bash
 argument-hint: <criterion-number>
 description: Mark acceptance criterion as passing
 model: haiku
-version: 2025.10.27
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)

@@ -3,7 +3,7 @@ allowed-tools: Read, Task(planner), Task(state-manager), Bash(find:*), Bash(node
 argument-hint: [feature-name]?
 description: Break technical plan into atomic executable tasks
 model: sonnet
-version: 2025.10.23
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)

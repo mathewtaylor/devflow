@@ -55,7 +55,8 @@ DevFlow provides:
 
 ```
 .devflow/
-├── constitution.md        # Project principles & standards (ALWAYS READ FIRST)
+├── constitution.md        # Project mission, domain, principles & standards (full version ~3,000 tokens)
+├── constitution-summary.md # Condensed version for code reviews (~200-300 tokens, excludes mission/domain)
 ├── architecture.md        # Current system state (ALWAYS READ FIRST)
 ├── state.json            # Current progress and feature tracking
 │
@@ -95,11 +96,15 @@ DevFlow provides:
 ## Context Loading Strategy
 
 ### Always Load (Tier 1 - Core Context)
-1. **constitution.md** (~1000 tokens) - Project principles, tech stack, standards
-2. **architecture.md** (~1500 tokens) - Current system structure
+1. **constitution-summary.md** (~200-300 tokens) - Condensed technical standards for code reviews
+   - **Note:** Full constitution.md (~3,000 tokens) used only for initial planning and specific queries
+   - Full version includes: project mission, domain context, business rules, and technical standards
+   - Summary excludes mission/domain, focuses only on coding standards
+   - This optimization saves ~2,700 tokens per code review (10-20+ reviews per feature)
+2. **architecture.md** (~1,500 tokens) - Current system structure
 3. **domains/_index.md** (~500 tokens) - Quick reference for cross-cutting concerns
 
-**Total Tier 1:** ~3000 tokens
+**Total Tier 1:** ~2,200-2,300 tokens (down from ~4,500)
 
 ### Feature-Specific (Tier 2 - Dynamic Loading)
 When working on a feature, load:
@@ -148,9 +153,15 @@ Load full concern documentation from `domains/` when:
 
 ### When User Asks General Questions
 
-1. **Check constitution.md** for project principles and standards
+1. **Check constitution.md** for:
+   - Project mission and purpose (why the project exists)
+   - Domain concepts and business entities
+   - Business rules and constraints
+   - Success criteria and goals
+   - Regulatory/compliance requirements
+   - Technical principles and coding standards
 2. **Check architecture.md** for system structure and components
-3. **Check domains/_index.md** for relevant concerns
+3. **Check domains/_index.md** for relevant cross-cutting concerns
 4. **Load full concern docs** only when detailed info needed
 
 ### Reading State
@@ -250,13 +261,16 @@ Agents are invoked automatically by slash commands.
 ## Best Practices
 
 1. **Check context space FIRST** before any DevFlow command
-2. **Always read constitution first** when starting a new session
+2. **Use constitution-summary.md for code reviews** - Full constitution only for planning/architecture/business questions
+   - Summary: 200-300 tokens (used by `/execute` and `/build-feature`) - excludes mission/domain context
+   - Full: 3,000 tokens (used by `/plan`, `/tasks`, manual reference) - includes mission, domain, business rules
+   - Saves ~2,700 tokens per review × 10-20 reviews per feature
 3. **Check state.json** to understand current progress
 4. **Load concern docs intelligently** based on feature needs
 5. **Update architecture.md** after significant features
 6. **Create ADRs** for major architectural decisions
 7. **Use snapshots** for long-running features to manage context
-8. **Warn users proactively** about context consumption
+8. **Monitor token usage** via Claude Code's system warnings
 
 ---
 
@@ -268,4 +282,4 @@ Agents are invoked automatically by slash commands.
 
 ---
 
-**DevFlow Version:** 1.0
+**DevFlow Version:** 1.0.0

@@ -5,6 +5,7 @@ model: opus
 extended-thinking: true
 tools: Read, Grep
 color: purple
+version: 1.0.0
 ---
 
 You are the **Validation Analyzer** for DevFlow, responsible for intelligent analysis of bugs and test failures found during the VALIDATE phase.

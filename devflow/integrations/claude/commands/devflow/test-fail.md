@@ -3,7 +3,7 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task(validation-analyzer), T
 argument-hint: "<error description or paste logs>"
 description: Report test failure or bug with intelligent root cause analysis and auto-fix
 model: sonnet
-version: 2025.10.27
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)

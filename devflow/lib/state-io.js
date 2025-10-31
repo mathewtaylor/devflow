@@ -173,6 +173,55 @@ function initializeState() {
 }
 
 /**
+ * Initialize or migrate state.json - preserves existing state during reinitialization
+ * @returns {Object} State object (existing if valid, or newly created)
+ */
+function initializeOrMigrateState() {
+    const statePath = path.resolve(process.cwd(), STATE_FILE);
+
+    // If state exists, try to preserve it
+    if (fs.existsSync(statePath)) {
+        try {
+            const state = readState();
+            const validation = validateSchema(state);
+
+            if (validation.valid) {
+                // State exists and is valid - preserve it
+                // Ensure initialized flag and timestamp are set
+                if (!state.initialized) {
+                    state.initialized = true;
+                }
+                if (!state.initialized_at) {
+                    state.initialized_at = new Date().toISOString();
+                    writeState(state);
+                }
+                return state;
+            } else {
+                // State exists but invalid - warn and create fresh
+                console.error('Warning: Existing state.json failed validation:');
+                validation.errors.forEach(err => console.error(`  - ${err}`));
+                console.error('Creating fresh state.json...');
+            }
+        } catch (error) {
+            // State exists but corrupted - warn and create fresh
+            console.error(`Warning: Existing state.json is corrupted: ${error.message}`);
+            console.error('Creating fresh state.json...');
+        }
+    }
+
+    // No existing state, or it's invalid/corrupted - create fresh
+    const newState = {
+        initialized: true,
+        initialized_at: new Date().toISOString(),
+        active_feature: null,
+        features: {}
+    };
+
+    writeState(newState);
+    return newState;
+}
+
+/**
  * Restore state from backup
  * @throws {Error} If backup doesn't exist
  */
@@ -193,5 +242,6 @@ module.exports = {
     validateSchema,
     ensureStateExists,
     initializeState,
+    initializeOrMigrateState,
     restoreFromBackup
 };

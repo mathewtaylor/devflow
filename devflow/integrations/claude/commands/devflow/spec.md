@@ -5,7 +5,7 @@ allowed-tools: Read, Write, AskUserQuestion, Task(state-manager), Bash
 argument-hint: [feature-name]
 description: Create feature specification through interactive wizard
 model: sonnet
-version: 2025.10.23
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)

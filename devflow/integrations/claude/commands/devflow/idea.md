@@ -3,7 +3,7 @@ allowed-tools: Read, Task(ideas)
 argument-hint: [idea text] | complete <number> | clear
 description: Capture ideas quickly without leaving the terminal
 model: haiku
-version: 2025.10.25
+version: 1.0.0
 ---
 
 # Capture Ideas

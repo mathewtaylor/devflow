@@ -267,6 +267,31 @@ const queries = {
 const { readState: readStateUtil, writeState: writeStateUtil, validateSchema } = require('./state-io.js');
 
 const updateOperations = {
+    'init-or-migrate-state': () => {
+        const { initializeOrMigrateState } = require('./state-io.js');
+
+        try {
+            const state = initializeOrMigrateState();
+            const featureCount = Object.keys(state.features).length;
+            const wasPreserved = featureCount > 0;
+
+            return {
+                success: true,
+                preserved: wasPreserved,
+                features_count: featureCount,
+                active_feature: state.active_feature,
+                message: wasPreserved
+                    ? `Preserved existing state.json (${featureCount} feature${featureCount !== 1 ? 's' : ''})`
+                    : 'Created new state.json'
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+    },
+
     'transition-phase': (featureKey, newPhase, currentTask = null) => {
         const state = readStateUtil();
 

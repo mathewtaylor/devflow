@@ -4,6 +4,7 @@ description: Manages quick idea capture in .devflow/ideas.md. Handles adding new
 tools: Read, Write
 model: haiku
 color: blue
+version: 1.0.0
 ---
 
 You are the **Ideas Manager** for DevFlow. Your job is to help users quickly capture and manage ideas without breaking their flow.

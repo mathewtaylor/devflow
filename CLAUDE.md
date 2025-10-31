@@ -40,6 +40,7 @@ The system consists of:
 .devflow/
 ├── templates/                  # Infrastructure templates (overwritten on update)
 │   ├── constitution.md.template
+│   ├── constitution-summary.md.template
 │   ├── architecture.md.template
 │   ├── .devflowignore.template
 │   ├── CLAUDE.md.template
@@ -49,7 +50,8 @@ The system consists of:
 ├── lib/                        # Utilities
 │   └── state-io.js
 ├── state.json.schema          # Validation schema
-├── constitution.md            # Project principles (always loaded)
+├── constitution.md            # Project mission, domain context, and standards (full version)
+├── constitution-summary.md    # Condensed version for code reviews
 ├── architecture.md            # Living system docs (always loaded)
 ├── state.json                 # Progress tracking
 ├── domains/                   # Cross-cutting concerns (user-created)
@@ -69,10 +71,24 @@ The system consists of:
 ## Core Workflow Commands
 
 ### `/init` - Initialize DevFlow
-- Creates constitution.md (project principles and standards)
+- Interactive wizard captures project context and technical standards (21 questions total)
+  - **Project Mission & Domain Context (6 questions):** Mission, users, domain concepts, success criteria, business rules, compliance
+  - **Tech Stack (4 questions):** Language, framework, database, additional technologies
+  - **Architecture (1 question + follow-ups):** Pattern selection based on tech stack
+  - **Standards (3 questions):** Linter, formatter, naming conventions
+  - **Testing (3 questions):** Framework, coverage, integration approach
+  - **Security (2 questions):** Authentication, authorization
+  - **Performance (1 question):** Requirements and SLAs
+  - **Cross-Cutting Concerns (1 question):** Multi-select patterns (multi-tenancy, caching, etc.)
+- Creates constitution.md (project mission, domain context, principles, and technical standards)
+- Creates constitution-summary.md (condensed version for efficient code reviews)
 - For existing projects: scans codebase → presents findings → user reviews → generates architecture.md
 - For new projects: suggests tech stack patterns → user chooses → generates blueprint
 - Sets up cross-cutting concerns documentation structure
+- **Reinitialization behavior**: Preserves existing state.json (no feature data loss) while regenerating constitution/architecture
+  - Allows updating project standards without affecting active features
+  - State validation ensures integrity before preserving
+  - Fresh state created only on first init or if corrupted
 
 ### `/spec [feature-name]` - Create Feature Specification (Full Workflow)
 - Interactive wizard captures requirements
@@ -212,10 +228,14 @@ The system consists of:
 
 ### Smart Context Loading (Three-Tier System)
 
-**Tier 1: Always Loaded** (~3K tokens)
-- `.devflow/constitution.md` - Project principles
-- `.devflow/architecture.md` - System overview
-- `.devflow/domains/_index.md` - Concerns reference
+**Tier 1: Always Loaded** (~2,200-2,300 tokens for planning; ~200-300 for code reviews)
+- `.devflow/constitution.md` (~3,000 tokens) - Project principles, mission, domain context, technical standards
+  - **For planning/architecture:** Full version loaded (~3,000 tokens)
+  - **For code reviews:** `.devflow/constitution-summary.md` loaded instead (~200-300 tokens)
+  - Summary excludes mission/domain context, focuses on coding standards only
+  - Saves ~2,700 tokens per review × 10-20+ reviews per feature
+- `.devflow/architecture.md` (~1,500 tokens) - System overview
+- `.devflow/domains/_index.md` (~500 tokens) - Concerns reference
 
 **Tier 2: Feature-Specific** (~5-7K tokens)
 - Current feature: spec.md, plan.md, tasks.md
@@ -406,6 +426,9 @@ node .devflow/lib/cli.js query validation_progress feature-name
 
 **Update operations (state mutations):**
 ```bash
+# State initialization (preserves existing state during reinit)
+node .devflow/lib/cli.js update init-or-migrate-state
+
 # Phase transitions
 node .devflow/lib/cli.js update transition-phase feature-key EXECUTE 1.1
 
@@ -530,7 +553,7 @@ name: new-agent
 description: Brief description of what agent does
 model: sonnet
 color: blue
-version: 2025.10.29
+version: 1.0.0
 ---
 
 # Agent prompt content...
@@ -651,12 +674,14 @@ cat .devflow/state.json | jq '.features'
 ## Key Files Reference
 
 **Core configuration:**
-- `.devflow/constitution.md` - Project principles and standards
+- `.devflow/constitution.md` - Project mission, domain context, principles, and technical standards (~3,000 tokens)
+- `.devflow/constitution-summary.md` - Condensed version for code reviews (~200-300 tokens)
 - `.devflow/architecture.md` - System structure and patterns
 - `.devflow/state.json` - Current workflow state
 
 **State management:**
-- `.devflow/lib/state-io.js` - Atomic state operations (readState, writeState, validateSchema)
+- `.devflow/lib/state-io.js` - Atomic state operations (readState, writeState, validateSchema, initializeOrMigrateState)
+  - `initializeOrMigrateState()` - Preserves existing state during reinitialization, creates fresh on first init
 - `.claude/agents/state-manager.md` - Intelligent validation agent
 
 **Workflow commands:**
@@ -727,4 +752,6 @@ This file contains context management guidelines, workflow instructions, and age
 
 ---
 
-Last updated: 2025-10-29 (Enhanced with build/test commands, cli.js usage, and common development patterns)
+Last updated: 2025-10-31
+
+**Version:** 1.0.0 - Project mission & domain context capture added to init

@@ -3,7 +3,7 @@ allowed-tools: Read, Write, AskUserQuestion, Task(state-manager, planner), Bash
 argument-hint: ["brief description"]?
 description: Streamlined workflow for small features (<2 hours) - combines spec + tasks + execute
 model: sonnet
-version: 2025.10.24
+version: 1.0.0
 ---
 
 > **Windows Users:** This command uses bash syntax. Ensure you have Git Bash installed and are running Claude Code from a Git Bash terminal, not PowerShell. [Installation guide](https://github.com/mathewtaylor/devflow#requirements)
@@ -40,6 +40,26 @@ Check if `.devflow/constitution.md` exists:
 
   **Do not proceed without initialization.**
 
+**Second, verify constitution summary exists:**
+
+Check if `.devflow/constitution-summary.md` exists:
+- If **YES**: Continue with feature creation
+- If **NO**: Stop and inform the user:
+
+  ```
+  ❌ Constitution summary not found.
+
+  The constitution-summary.md file is required for efficient code reviews.
+
+  Options:
+  a) Run /devflow:init to generate it automatically
+  b) Create it manually from constitution.md
+
+  Cannot proceed without constitution summary.
+  ```
+
+  **Do not proceed without constitution summary.**
+
 ## Current State
 
 - DevFlow initialized: !`test -f .devflow/constitution.md && echo "✓" || echo "✗"`
@@ -48,7 +68,10 @@ Check if `.devflow/constitution.md` exists:
 
 ## Project Context
 
-@.devflow/constitution.md
+@.devflow/constitution-summary.md
+
+<!-- Note: Uses constitution-summary (200-300 tokens) instead of full constitution (2,500 tokens)
+     for efficiency. Full constitution available at .devflow/constitution.md if needed. -->
 
 ---
 
