@@ -20,7 +20,7 @@ MAX_RETRIES=3
 
 # File list to download
 # ⚠️ IMPORTANT: When adding new agents or commands, update this list!
-# Current counts: 10 agents, 15 commands, 14 templates/utilities
+# Current counts: 10 agents, 15 commands, 15 templates/utilities
 # Format: "source_path:destination_path" (source from repo, destination in user project)
 declare -a FILES=(
     # Agents (10 total) - Source: devflow/integrations/claude/agents, Dest: .claude/agents
@@ -53,12 +53,13 @@ declare -a FILES=(
     ".devflow/integrations/claude/commands/devflow/idea.md:.claude/commands/devflow/idea.md"
     ".devflow/integrations/claude/commands/devflow/readme-manager.md:.claude/commands/devflow/readme-manager.md"
 
-    # Templates and utilities (14 total) - Source and destination are the same
+    # Templates and utilities (15 total) - Source and destination are the same
     ".devflow/lib/state-io.js:.devflow/lib/state-io.js"
     ".devflow/lib/cli.js:.devflow/lib/cli.js"
     ".devflow/state.json.schema:.devflow/state.json.schema"
     ".devflow/instructions.md:.devflow/instructions.md"
     ".devflow/templates/constitution.md.template:.devflow/templates/constitution.md.template"
+    ".devflow/templates/constitution-summary.md.template:.devflow/templates/constitution-summary.md.template"
     ".devflow/templates/architecture.md.template:.devflow/templates/architecture.md.template"
     ".devflow/templates/snapshot.md.template:.devflow/templates/snapshot.md.template"
     ".devflow/templates/validation.md.template:.devflow/templates/validation.md.template"
@@ -90,7 +91,7 @@ Example:
 What gets installed:
   • 10 agents in .claude/agents/
   • 15 commands in .claude/commands/devflow/
-  • 14 templates and utilities in .devflow/
+  • 15 templates and utilities in .devflow/
 
 After installation, run: /init
 EOF
@@ -329,7 +330,7 @@ show_success() {
     echo "Files installed:"
     echo "  • 10 agents in .claude/agents/"
     echo "  • 15 commands in .claude/commands/devflow/"
-    echo "  • 14 templates and utilities in .devflow/"
+    echo "  • 15 templates and utilities in .devflow/"
     echo ""
     echo "Next steps:"
     echo "  1. Run: /init"
